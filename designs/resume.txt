@@ -1,45 +1,44 @@
 Josh Henry
 Senior React Native Mobile Software Engineer
-[email withheld: contact via the site form] | Portland, OR
+Portland, OR
 SUMMARY
-Senior mobile engineer with 10 years shipping production iOS, Android, and React Native apps, from greenfield
-builds through App Store and Google Play releases, plus deep native-module work across Swift, Objective-C,
-Java, and Kotlin. Quality-focused, with depth in mobile performance, reliability, and testing strategy. AI-assisted
-development is a daily part of my workflow.
+Senior mobile engineer with 10 years shipping production iOS, Android, and React Native apps, from
+greenfield builds through App Store and Google Play releases, plus deep native-module work across Swift,
+Objective-C, Java, and Kotlin. Quality-focused, with depth in mobile performance, reliability, and testing
+strategy. AI-assisted development is a daily part of my workflow.
 SKILLS
 Languages: TypeScript, JavaScript, Swift, Objective-C, Java, Kotlin, HTML, CSS
 React Native: React Native, Expo, React Native Web, React, Native Modules
 UI/UX: React Navigation, Reanimated, Animated, Gesture Handler
 Media: WebRTC, AVFoundation, CallKit
-Data & State: REST, GraphQL, Apollo, Node, Express, Protobuf, Postman, Redux, MobX / MobX State Tree,
-Context, AsyncStorage, Realm, Twilio Sync, offline-first design, data synchronization
-Testing: Jest, React Native Testing Library, React Testing Library, Cypress, Nightwatch, WDIO, LambdaTest,
-Accessibility (WCAG)
-Build & Release: CI/CD, Bitrise, App Store & Google Play deployment, TestFlight, Gradle, CocoaPods, Yarn
-Workspaces, patch-package, Docker, Git
-Tools: AWS, AWS Amplify, Azure, Firebase, Datadog, Reactotron, Xcode Instruments, Android Profiler, Storybook
+Data & State: REST, GraphQL, Apollo, Node, Express, Protobuf, Postman, Redux, MobX / MobX State
+Tree, Context, AsyncStorage, Realm, Twilio Sync, offline-first design, data synchronization
+Testing: Jest, React Native Testing Library, React Testing Library, Cypress, Nightwatch, WDIO,
+LambdaTest, Accessibility (WCAG)
+Build & Release: CI/CD, Bitrise, App Store & Google Play deployment, TestFlight, Gradle, CocoaPods,
+Yarn Workspaces, patch-package, Docker, Git
+Tools: AWS, AWS Amplify, Azure, Firebase, Datadog, Reactotron, Xcode Instruments, Android Profiler,
+Storybook
 Methodologies: Agile, Scrum, test-driven development
 AI: GitHub Copilot, GitLab Duo, Claude
 EXPERIENCE
 Streem (acquired by Frontdoor) | Remote - February 2023 - July 2026
 Senior React Native Mobile Software Engineer
-Architected and built a React Native video-calling SDK from the ground up in Expo and TypeScript, powering
-100,000+ WebRTC video calls between remote home warranty experts and customers.
-Engineered and patched native modules across four languages - Swift, Objective-C, Java, and Kotlin - for both
-iOS and Android, integrating AWS Chime, Twilio Video, and CallKeep.
-Implemented front-end observability across iOS and Android in Datadog, standardizing event-driven logging
-and curating client-side error signals to track and resolve production issues and improve app reliability.
-Participated in integrating the SDK into the consuming apps, partnering closely with the app teams to support
-the AHS app's launch on the App Store and Google Play.
-Designed a network-quality scoring algorithm implementing the standard E-model against the AWS Chime
-SDK's WebRTC statistics to drive an in-call Weak Connection indicator.
-Founded and led weekly React Native Collab meetings across Frontdoor's app teams; set an example through
-code reviews, mob debugging sessions, and multiple technical talks on React Native-related topics.
+Architected and built a React Native video-calling SDK from the ground up in Expo and TypeScript,
+powering 100,000+ WebRTC video calls between remote home warranty experts and customers.
+Engineered and patched native modules across four languages - Swift, Objective-C, Java, and Kotlin -
+for both iOS and Android, integrating AWS Chime, Twilio Video, and CallKeep.
+Participated in integrating the SDK into the consuming apps, partnering closely with the app teams to
+support the AHS app's launch on the App Store and Google Play.
+Founded and led weekly React Native Collab meetings across Frontdoor's app teams; set an example
+through code reviews, mob debugging sessions, and multiple technical talks on React Native-related
+topics.
 Fall Guy Consulting | Seattle, WA - November 2021 - October 2022
 Senior Mobile Software Engineer
-Shipped v2 of the Diablo Golf handicap and score-tracking app, building features natively in Swift, Objective-C,
-and Java in parity across iOS and Android.
-•
+Shipped v2 of the Diablo Golf handicap and score-tracking app, building features natively in Swift,
+Objective-C, and Java in parity across iOS and Android.
+Deployed the frontend and backend applications for the v2 release on AWS and added reporting features
+in the React single-page admin app.
 •
 •
 •
@@ -49,31 +48,30 @@ and Java in parity across iOS and Android.
 
 -- 1 of 2 --
 
-Deployed the frontend and backend applications for the v2 release on AWS and added reporting features in the
-React single-page admin app.
 Committee for Children | Seattle, WA - March 2020 - November 2021
 Senior Software Engineer
-Developed two React lesson players for SecondStep.org, a social-emotional learning platform serving 45,000+
-schools and 10M+ students annually.
-Participated in accessibility audits and remediation on the lesson players to meet WCAG standards and deliver
-inclusive experiences for students and classrooms.
-Served as interim team lead for 6 weeks, releasing the MVP of Second Step SEL for Adults during that span.
-Formed and implemented a comprehensive test plan for the team's projects using four testing frameworks: Jest,
-React Testing Library, Nightwatch, and Cypress.
+Developed two React lesson players for SecondStep.org, a social-emotional learning platform serving
+45,000+ schools and 10M+ students annually.
+Participated in accessibility audits and remediation on the lesson players to meet WCAG standards and
+deliver inclusive experiences for students and classrooms.
+Served as interim team lead for 6 weeks, releasing the MVP of Second Step SEL for Adults during that
+span.
+Formed and implemented a comprehensive test plan for the team's projects using four testing
+frameworks: Jest, React Testing Library, Nightwatch, and Cypress.
 Fall Guy Consulting | Seattle, WA - July 2017 - March 2020
 React Native Mobile Software Engineer
-Delivered the official Gen Con convention app in React Native for 60,000+ attendees: an offline-first app that
-downloads events over a REST API and stores and queries ~20,000 locally with Realm and Lunr.js, engineered
-for low-connectivity convention halls, with camera badge scanning for e-ticketed event entry.
+Delivered the official Gen Con convention app in React Native for 60,000+ attendees: an offline-first app
+that downloads events over a REST API and stores and queries ~20,000 locally with Realm and Lunr.js,
+engineered for low-connectivity convention halls, with camera badge scanning for e-ticketed event entry.
 Developed Mind Yeti, a React Native Web mindfulness app for schools and children; built its full-featured
-meditation media player with closed captioning and managed services across AWS and Google App Engine.
+meditation media player with closed captioning and managed services across AWS and Google App
+Engine.
 Big Smash Software, LLC | Seattle, WA - June 2016 - July 2017
 Founder / iOS Developer
-Founded an independent studio and shipped 4 iOS apps and 1 open-source CocoaPod in Swift and Objective-
-C.
+Founded an independent studio and shipped 4 iOS apps and 1 open-source CocoaPod in Swift and
+Objective-C.
 EDUCATION
-Bachelor of Science, Computer Information Systems - DeVry University
-•
+Bachelor of Science, Computer Information Systems
 •
 •
 •

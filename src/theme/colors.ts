@@ -1,0 +1,29 @@
+/**
+ * Named color tokens. Values and use-cases per designs/README.md's "Design
+ * tokens" table and CLAUDE.md's color spec (the authoritative sources for
+ * this site's palette). Components must reference these by name, never a
+ * raw hex/rgba literal.
+ */
+export const colors = {
+    bg: "#F5F6F8",
+    surface: "#FFFFFF",
+    border: "#E2E5EA",
+    ink: "#14181F",
+    inkMuted: "#5B6472",
+    inkMutedLight: "#98A1B0",
+    primary: "#4338CA",
+    // Reserved for hover/press states on primary-colored elements in later
+    // sections; the hero's own press feedback uses motion (scale/lift), not
+    // a color swap, so this isn't consumed yet.
+    primaryHover: "#3730A3",
+    statusPassing: "#16A34A",
+    // Reserved for in-progress/highlight status chips in later sections
+    // (Projects, Experience); the hero has no "in progress" state.
+    statusAttention: "#F59E0B",
+    focusRing: "#4338CA",
+    trafficLightRed: "#FF5F57",
+    trafficLightYellow: "#FEBC2E",
+    trafficLightGreen: "#28C840",
+    openToWorkBackground: "rgba(22, 163, 74, 0.06)",
+    openToWorkBorder: "rgba(22, 163, 74, 0.28)",
+};
