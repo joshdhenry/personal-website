@@ -146,3 +146,41 @@ export const projectsSpace = {
     compactDetailPaddingTop: 12,
     compactDetailGap: 8,
 };
+
+/**
+ * Escape hatch for Skills section measurements, same rationale as
+ * projectsSpace above: exact designs/README.md pixel values, named and
+ * commented rather than snapped to the space.* grid.
+ */
+export const skillsSpace = {
+    /** Section top/bottom padding at desktop widths (skills/experience's exception to the general 80px). */
+    sectionPaddingVerticalWide: 64,
+    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingVerticalNarrow: 56,
+    /** Section horizontal padding at desktop widths. */
+    sectionPaddingHorizontalWide: 40,
+    /** Section horizontal padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingHorizontalNarrow: 24,
+    /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
+    sectionPaddingHorizontalCompact: 18,
+    /** Section container max-width, matches projectsSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Margin below the heading, before the group grid. */
+    headingBottomMargin: 28,
+    /** Group grid: row gap and column gap between the two columns of groups. */
+    gridRowGap: 18,
+    gridColumnGap: 48,
+    /** Fixed width of a group row's mono label column at wide widths. */
+    groupLabelColumnWidth: 132,
+    /** Gap between a group row's label and its chip area. */
+    groupLabelChipGap: 16,
+    /** Bottom padding under each group row, above its 1px bottom border. */
+    groupRowBottomPadding: 14,
+    /** Gap between chips within a group's chip row. */
+    chipRowGap: 6,
+    /** Chip internal padding. */
+    chipPaddingVertical: 4,
+    chipPaddingHorizontal: 9,
+    /** Optical alignment of the group label's first line with the chip row. */
+    groupLabelPaddingTop: 3,
+};
