@@ -19,11 +19,6 @@ export type HeroStat = {
     suffix: string;
 };
 
-export type HeroLayoutMode = {
-    isCompact: boolean;
-    isNarrow: boolean;
-};
-
 export type ActionBadgeProps = {
     badge: HeroActionBadgeDescriptor;
 };

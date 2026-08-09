@@ -32,4 +32,16 @@ export const shadow = {
             elevation: 4,
         },
     }),
+    projectCard: Platform.select({
+        web: {
+            boxShadow: "0 1px 2px rgba(20,24,31,.04), 0 16px 34px -16px rgba(20,24,31,.24)",
+        },
+        default: {
+            shadowColor: "#14181F",
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.24,
+            shadowRadius: 17,
+            elevation: 5,
+        },
+    }),
 };
