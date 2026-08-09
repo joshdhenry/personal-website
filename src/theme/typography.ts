@@ -213,4 +213,19 @@ export const typeScale = {
         lineHeight: 16.8,
         fontWeight: "400",
     } satisfies TextStyleToken,
+
+    // Skills-specific entries, values taken directly from designs/README.md.
+    skillGroupLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, e.g. "LANGUAGES"
+        lineHeight: 15,
+        fontWeight: "400",
+        letterSpacing: 0.72, // .06em * 12
+    } satisfies TextStyleToken,
+    skillChip: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem
+        lineHeight: 15.4,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
 };
