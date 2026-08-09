@@ -5,8 +5,9 @@ import type { HeroActionBadgeDescriptor, HeroStat, HeroTechLogRow } from "@/type
 
 /**
  * Typed content for the Hero section. Copy strings are verbatim per
- * COPY_RULES.md ("do not rewrite copy Josh supplied"); do not edit them
- * without updating the source spec in designs/README.md first.
+ * designs/CLAUDE.md's "Copy rules" section ("do not rewrite copy Josh
+ * supplied"); do not edit them without updating the source spec in
+ * designs/README.md first.
  */
 
 export const heroEyebrowLabel = "SENIOR MOBILE SOFTWARE ENGINEER";

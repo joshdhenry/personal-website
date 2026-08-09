@@ -14,7 +14,7 @@ describe("heroContent", () => {
         expect(heroActionBadges).toHaveLength(3);
     });
 
-    it("matches the exact spec copy, verbatim, per COPY_RULES.md", () => {
+    it("matches the exact spec copy, verbatim, per designs/CLAUDE.md's Copy rules", () => {
         expect(heroHeadline).toBe(
             "Ten years building apps that hold up, on iOS, Android, and the web.",
         );

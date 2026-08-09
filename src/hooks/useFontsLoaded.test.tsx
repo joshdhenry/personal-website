@@ -25,6 +25,14 @@ describe("useFontsLoaded", () => {
     it("is false while FontsLoadedProvider's useFonts call hasn't resolved", () => {
         mockedUseFonts.mockReturnValue([false, null]);
 
+        const { result } = renderHook(() => useFontsLoaded(), { wrapper });
+
+        expect(result.current).toBe(false);
+    });
+
+    it("renders children immediately regardless of fonts-loaded state", () => {
+        mockedUseFonts.mockReturnValue([false, null]);
+
         render(
             <FontsLoadedProvider>
                 <Text>content</Text>

@@ -64,11 +64,11 @@ export const TerminalCommandLine = ({ commandText }: TerminalCommandLineProps) =
             <Text importantForAccessibility="no-hide-descendants" style={styles.prompt}>
                 $
             </Text>
-            {/* flexShrink lets this wrap on narrow Android/web widths instead of
+            {/* flexShrink lets this wrap on narrow web widths instead of
           overflowing and getting clipped by the terminal card's overflow:
           hidden — this exact command string is load-bearing copy that must
-          never be truncated. iOS instead shrink-to-fits onto one line via
-          singleLineCommandTextProps above. */}
+          never be truncated. iOS and Android instead shrink-to-fit onto one
+          line via singleLineCommandTextProps above. */}
             <Text style={styles.command} {...singleLineCommandTextProps}>
                 {commandText}
             </Text>
