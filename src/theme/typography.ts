@@ -1,0 +1,146 @@
+import type { TextStyleToken } from "@/types/theme";
+
+/**
+ * Font family constants. These string values must exactly match the
+ * PostScript names registered by the loaded @expo-google-fonts packages
+ * (see src/app/_layout.tsx's useFonts call) — they are the single place
+ * mapping "semantic weight" to "loaded font constant name."
+ */
+export const fontFamily = {
+    spaceGroteskSemiBold: "SpaceGrotesk_600SemiBold",
+    interRegular: "Inter_400Regular",
+    interMedium: "Inter_500Medium",
+    interSemiBold: "Inter_600SemiBold",
+    plexMonoRegular: "IBMPlexMono_400Regular",
+    plexMonoMedium: "IBMPlexMono_500Medium",
+    plexMonoSemiBold: "IBMPlexMono_600SemiBold",
+};
+
+/**
+ * Named text styles. Sizes are converted from designs/README.md's rem
+ * values at a 16px root (1rem = 16px). Letter-spacing is converted from em
+ * to px per entry (RN's letterSpacing is absolute, not relative to font
+ * size), so each responsive headline tier gets its own computed value.
+ */
+export const typeScale = {
+    // General scale from CLAUDE.md, kept for use by later sections.
+    display: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 56,
+        lineHeight: 58.8,
+        fontWeight: "600",
+        letterSpacing: -1.23,
+    } satisfies TextStyleToken,
+    h2: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 32,
+        lineHeight: 38.4,
+        fontWeight: "600",
+        letterSpacing: -0.48,
+    } satisfies TextStyleToken,
+    body: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 17,
+        lineHeight: 27.2,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    small: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 14,
+        lineHeight: 21,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    mono: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13,
+        lineHeight: 18.2,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+
+    // Hero-specific entries, values taken directly from designs/README.md.
+    heroHeadline: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 56, // 3.5rem
+        lineHeight: 58.8, // 1.05
+        fontWeight: "600",
+        letterSpacing: -1.232, // -.022em * 56
+    } satisfies TextStyleToken,
+    heroHeadlineNarrow: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 40, // 2.5rem, <= layoutBreakpoint.narrow
+        lineHeight: 42,
+        fontWeight: "600",
+        letterSpacing: -0.88,
+    } satisfies TextStyleToken,
+    heroHeadlineCompact: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 32, // 2rem, <= layoutBreakpoint.compact
+        lineHeight: 33.6,
+        fontWeight: "600",
+        letterSpacing: -0.704,
+    } satisfies TextStyleToken,
+    heroIntro: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 17, // 1.0625rem
+        lineHeight: 28.05, // 1.65
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    eyebrow: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13, // .8125rem
+        lineHeight: 16,
+        fontWeight: "500",
+        letterSpacing: 1.17, // .09em * 13
+    } satisfies TextStyleToken,
+    openToWorkLabel: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    badgeLabel: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13, // .8125rem
+        lineHeight: 16,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    chromeLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    terminalCommand: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13, // .8125rem
+        lineHeight: 22.75, // 1.75
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    terminalLogRow: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13, // .8125rem
+        lineHeight: 22.1, // 1.7
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    statNumber: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 22, // 1.375rem
+        lineHeight: 26,
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    statLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+
+    /**
+     * Floor for the native shrink-to-fit applied to the terminal command
+     * line (see TerminalCommandLine.tsx) — how far adjustsFontSizeToFit is
+     * allowed to shrink terminalCommand's fontSize on iOS/Android before
+     * falling back to ellipsizeMode. Low enough to cover both platforms'
+     * font-metric differences at the narrowest verified phone width.
+     */
+    terminalCommandMinimumFontScale: 0.62,
+};
