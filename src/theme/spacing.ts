@@ -189,3 +189,70 @@ export const skillsSpace = {
     /** Optical alignment of the group label's first line with the chip row. */
     groupLabelPaddingTop: 3,
 };
+
+/**
+ * Escape hatch for Experience section measurements, same rationale as
+ * skillsSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
+ * pixel values, named and commented rather than snapped to the space.* grid.
+ */
+export const experienceSpace = {
+    /** Section top/bottom padding at desktop widths (skills/experience's exception to the general 80px). */
+    sectionPaddingVerticalWide: 64,
+    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingVerticalNarrow: 56,
+    /** Section horizontal padding at desktop widths. */
+    sectionPaddingHorizontalWide: 40,
+    /** Section horizontal padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingHorizontalNarrow: 24,
+    /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
+    sectionPaddingHorizontalCompact: 18,
+    /** Section container max-width, matches skillsSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Gap between the "Experience" heading and its "2016 to 2026" mono span. */
+    headingRowGap: 16,
+    /** Margin below the heading row, before the timeline. */
+    headingBottomMargin: 32,
+    /** Timeline container max-width. */
+    timelineMaxWidth: 820,
+    /** Timeline container left padding at desktop widths, where the rail/dots live. */
+    timelinePaddingLeftWide: 56,
+    /** Timeline container left padding at widths <= layoutBreakpoint.narrow. */
+    timelinePaddingLeftNarrow: 26,
+    /** Rail track/fill horizontal offset from the timeline container's left edge. */
+    railLeft: 6,
+    /** Rail track/fill top and bottom inset from the timeline container's edges. */
+    railInset: 10,
+    /** Gap between timeline rows. */
+    rowGap: 8,
+    /** Row card padding. */
+    rowPaddingVertical: 14,
+    rowPaddingHorizontal: 20,
+    /** Row's fixed-width date column at desktop widths. */
+    rowGridDateColumnWidth: 104,
+    /** Gap between a row's date column and its content block at desktop widths. */
+    rowGridGap: 22,
+    /** Row's date-above-role gap at widths <= layoutBreakpoint.narrow. */
+    rowGridGapNarrow: 6,
+    /** Gap between role/company line/note within a row's content block. */
+    rowContentGap: 3,
+    /** Row dot diameter. */
+    dotSize: 9,
+    /** Row dot's paper ring diameter (dotSize + dotRingInset * 2). */
+    dotRingSize: 17,
+    /** Row dot's paper ring thickness on each side. */
+    dotRingInset: 4,
+    /** Dot left/top offset, calibrated to timelinePaddingLeftWide (56px). */
+    dotLeftWide: -54,
+    dotTopWide: 21,
+    /** Dot left/top offset, calibrated to timelinePaddingLeftNarrow (26px). */
+    dotLeftNarrow: -24,
+    dotTopNarrow: 20,
+    /** Connector left/top/width, calibrated to timelinePaddingLeftWide (56px). */
+    connectorLeftWide: -49,
+    connectorTopWide: 25,
+    connectorWidthWide: 49,
+    /** Connector left/top/width, calibrated to timelinePaddingLeftNarrow (26px). */
+    connectorLeftNarrow: -19,
+    connectorTopNarrow: 24,
+    connectorWidthNarrow: 19,
+};

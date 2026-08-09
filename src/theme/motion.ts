@@ -24,6 +24,8 @@ export const motion = {
         caretBlinkCycle: 1000,
         /** Hero stat count-up, ms. */
         statCounter: 2200,
+        /** Experience timeline rail's drawY fill, ms. */
+        experienceRailDraw: 1600,
     },
     delay: {
         /** Terminal progress rail fill start delay, ms. */
@@ -38,13 +40,21 @@ export const motion = {
         riseProjectsHeading: 0,
         /** Skills section heading's single, modest entrance, matches riseProjectsHeading. */
         riseSkillsHeading: 0,
+        /** Experience section heading's single, modest entrance, matches riseProjectsHeading. */
+        riseExperienceHeading: 0,
         /**
          * First tech-log row's rise delay, ms. The remaining 6 rows step by
          * logRowStaggerStep, landing exactly on designs/README.md's "1.5s to
          * 3.9s in 0.4s steps" spec: 1500, 1900, 2300, 2700, 3100, 3500, 3900.
          */
         logRowStaggerStart: 1500,
+        /** First Experience timeline row's rise delay, ms; remaining 4 rows step by experienceRowStaggerStep. */
+        experienceRowStaggerStart: 0,
+        /** Experience timeline rail's drawY start delay, ms. */
+        experienceRailDraw: 300,
     },
     /** Per-row stagger step between the 7 tech-log rows, ms. */
     logRowStaggerStep: 400,
+    /** Per-row stagger step between the 5 Experience timeline rows, ms, per designs/README.md's "0.09s intervals". */
+    experienceRowStaggerStep: 90,
 };

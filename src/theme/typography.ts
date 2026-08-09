@@ -228,4 +228,38 @@ export const typeScale = {
         lineHeight: 15.4,
         fontWeight: "400",
     } satisfies TextStyleToken,
+
+    // Experience-specific entries, values taken directly from designs/README.md
+    // and designs/joshhenry.info.dc.html.
+    experienceRangeLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 13, // .8125rem, e.g. "2016 to 2026"
+        lineHeight: 18.2,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    experienceRole: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 16, // 1rem
+        lineHeight: 21.6, // 1.35
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    experienceCompanyLine: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 14, // .875rem
+        lineHeight: 21,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    experienceNote: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem
+        lineHeight: 15.4,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    experienceDateLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "400",
+        letterSpacing: 0.24, // .02em * 12
+    } satisfies TextStyleToken,
 };

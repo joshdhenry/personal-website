@@ -30,4 +30,7 @@ export const colors = {
     trafficLightGreen: "#28C840",
     openToWorkBackground: "rgba(22, 163, 74, 0.06)",
     openToWorkBorder: "rgba(22, 163, 74, 0.28)",
+    // Experience row mono note text - lightest tint in the ink scale, per
+    // designs/README.md's Experience row spec.
+    inkFaint: "#B6BDC7",
 };
