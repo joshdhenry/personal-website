@@ -43,7 +43,6 @@ export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: Expe
     const cardStyle = [
         styles.card,
         isActive && isHoverShadowSupported && shadow.experienceRow,
-        riseStyle,
         activeAnimatedStyle,
     ];
     const dotStyle = [styles.dotRing, isNarrow ? styles.dotRingNarrow : styles.dotRingWide];
@@ -56,32 +55,39 @@ export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: Expe
     const accessibilityLabel = `${role.role}, ${role.companyLine}, ${role.dateRangeLabel}, ${role.note}`;
 
     return (
-        <Animated.View style={cardStyle}>
-            <Pressable
-                accessibilityLabel={accessibilityLabel}
-                accessibilityRole="none"
-                accessible
-                onHoverIn={handleHoverIn}
-                onHoverOut={handleHoverOut}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                style={isNarrow ? styles.rowNarrow : styles.rowWide}
-            >
-                <View importantForAccessibility="no-hide-descendants" style={dotStyle}>
-                    <View style={styles.dot} />
-                </View>
-                <View importantForAccessibility="no-hide-descendants" style={connectorStyle} />
+        // Rise-entrance (riseStyle) and hover/press lift (activeAnimatedStyle)
+        // are two independent animated `transform`s; splitting them across
+        // two nested Animated.Views keeps each in its own style, since a
+        // single element's style array would let the later one clobber the
+        // earlier one's transform entirely instead of composing them.
+        <Animated.View style={riseStyle}>
+            <Animated.View style={cardStyle}>
+                <Pressable
+                    accessibilityLabel={accessibilityLabel}
+                    accessibilityRole="none"
+                    accessible
+                    onHoverIn={handleHoverIn}
+                    onHoverOut={handleHoverOut}
+                    onPressIn={handlePressIn}
+                    onPressOut={handlePressOut}
+                    style={isNarrow ? styles.rowNarrow : styles.rowWide}
+                >
+                    <View importantForAccessibility="no-hide-descendants" style={dotStyle}>
+                        <View style={styles.dot} />
+                    </View>
+                    <View importantForAccessibility="no-hide-descendants" style={connectorStyle} />
 
-                <Text importantForAccessibility="no-hide-descendants" style={dateLabelStyle}>
-                    {role.dateRangeLabel}
-                </Text>
+                    <Text importantForAccessibility="no-hide-descendants" style={dateLabelStyle}>
+                        {role.dateRangeLabel}
+                    </Text>
 
-                <View importantForAccessibility="no-hide-descendants" style={contentStyle}>
-                    <Text style={styles.role}>{role.role}</Text>
-                    <Text style={styles.companyLine}>{role.companyLine}</Text>
-                    <Text style={styles.note}>{role.note}</Text>
-                </View>
-            </Pressable>
+                    <View importantForAccessibility="no-hide-descendants" style={contentStyle}>
+                        <Text style={styles.role}>{role.role}</Text>
+                        <Text style={styles.companyLine}>{role.companyLine}</Text>
+                        <Text style={styles.note}>{role.note}</Text>
+                    </View>
+                </Pressable>
+            </Animated.View>
         </Animated.View>
     );
 };
@@ -94,7 +100,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         paddingHorizontal: experienceSpace.rowPaddingHorizontal,
         paddingVertical: experienceSpace.rowPaddingVertical,
-        position: "relative",
     },
     companyLine: {
         ...typeScale.experienceCompanyLine,
