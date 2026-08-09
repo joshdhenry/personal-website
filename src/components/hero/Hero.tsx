@@ -18,7 +18,7 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
-import { resolveHeroLayoutMode } from "@/utils/heroLayout";
+import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 
 import { ActionBadgeRow } from "./ActionBadgeRow";
 import { StatusEyebrow } from "./StatusEyebrow";
@@ -26,7 +26,7 @@ import { TerminalCard } from "./TerminalCard";
 
 export const Hero = () => {
     const { width } = useWindowDimensions();
-    const { isCompact, isNarrow } = resolveHeroLayoutMode(width);
+    const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
     const headlineRiseStyle = useRiseEntrance(motion.delay.riseHeadline);
     const introRiseStyle = useRiseEntrance(motion.delay.riseIntro);

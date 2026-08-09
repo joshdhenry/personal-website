@@ -5,3 +5,8 @@ export type TextStyleToken = {
     fontWeight: "400" | "500" | "600";
     letterSpacing?: number;
 };
+
+export type ResponsiveLayoutMode = {
+    isCompact: boolean;
+    isNarrow: boolean;
+};

@@ -72,3 +72,77 @@ export const heroSpace = {
     /** Hero section container max-width. */
     containerMaxWidth: 1180,
 };
+
+/**
+ * Escape hatch for Projects section measurements, same rationale as
+ * heroSpace above: exact designs/README.md pixel values, named and commented
+ * rather than snapped to the space.* grid.
+ */
+export const projectsSpace = {
+    /** Section top/bottom padding at desktop widths. */
+    sectionPaddingVerticalWide: 80,
+    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingVerticalNarrow: 56,
+    /** Section horizontal padding at desktop widths. */
+    sectionPaddingHorizontalWide: 40,
+    /** Section horizontal padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingHorizontalNarrow: 24,
+    /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
+    sectionPaddingHorizontalCompact: 18,
+    /** Section container max-width, matches heroSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Gap between the "Projects" heading and the "click a card to expand" caption. */
+    headingRowGap: 16,
+    /** Margin below the heading row, before the featured grid. */
+    headingBottomMargin: 12,
+    /** Featured grid's own top margin, below the heading row. */
+    featuredGridTopMargin: 36,
+    /** Featured grid (2-column) gap at desktop/narrow-collapsed widths. */
+    featuredGridGap: 20,
+    /** Compact grid (3-column) gap at desktop widths. */
+    compactGridGap: 16,
+    /** Both grids collapse to 1 column at layoutBreakpoint.narrow with this gap. */
+    narrowGridGap: 16,
+    /** Featured card padding. */
+    featuredCardPaddingVertical: 26,
+    featuredCardPaddingHorizontal: 28,
+    /** Image band bottom margin inside a featured card. */
+    imageBandMarginBottom: 22,
+    /**
+     * Streem-only image band exception: the wordmark asset must never be
+     * cropped or oversized, so it gets padding instead of filling the band.
+     */
+    streemImageBandPaddingVertical: 58,
+    streemImageBandPaddingHorizontal: "27%",
+    /** Gap between the title/subtitle block and the expand affordance in a featured card's header row. */
+    featuredHeaderGap: 20,
+    /** Gap between title and subtitle within a featured card's header block. */
+    titleBlockGap: 7,
+    /** Stack chip row: gap between chips, margin-top above the row. */
+    chipRowGap: 7,
+    chipRowMarginTop: 16,
+    /** Stack chip internal padding. */
+    chipPaddingVertical: 5,
+    chipPaddingHorizontal: 11,
+    /** Expanded detail stack: gap between fields, top margin/padding above the 1px top border. */
+    detailGap: 18,
+    detailTopMargin: 24,
+    detailTopPadding: 24,
+    /** Gap between a detail field's mono label and its paragraph. */
+    detailFieldGap: 6,
+    /** "ALSO SHIPPED" divider: top/bottom margin, gap between label and rule. */
+    dividerMarginTop: 44,
+    dividerMarginBottom: 20,
+    dividerGap: 14,
+    /** Compact card body padding. */
+    compactBodyPaddingVertical: 18,
+    compactBodyPaddingHorizontal: 20,
+    /** Compact card body's internal vertical gap (header row -> tech line -> expanded content). */
+    compactBodyGap: 6,
+    /** Gap between title and expand affordance in a compact card's header row. */
+    compactHeaderGap: 12,
+    /** Compact card expanded content: top margin/padding above the 1px top border, internal gap. */
+    compactDetailMarginTop: 12,
+    compactDetailPaddingTop: 12,
+    compactDetailGap: 8,
+};

@@ -2,6 +2,7 @@ import Head from "expo-router/head";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
 import { Hero } from "@/components/hero/Hero";
+import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { colors } from "@/theme/colors";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
@@ -23,6 +24,7 @@ export default () => {
                 />
             </Head>
             <Hero />
+            <ProjectsSection />
         </ScrollView>
     );
 };

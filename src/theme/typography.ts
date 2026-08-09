@@ -143,4 +143,74 @@ export const typeScale = {
      * font-metric differences at the narrowest verified phone width.
      */
     terminalCommandMinimumFontScale: 0.62,
+
+    // Projects-specific entries, values taken directly from designs/README.md.
+    projectsCaption: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 13, // .8125rem, "click a card to expand"
+        lineHeight: 18.2,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    projectsDividerLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, "ALSO SHIPPED"
+        lineHeight: 16.8,
+        fontWeight: "400",
+        letterSpacing: 1.08, // .09em * 12
+    } satisfies TextStyleToken,
+    projectFeaturedTitle: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 20, // 1.25rem
+        lineHeight: 26,
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    projectCompactTitle: {
+        fontFamily: fontFamily.spaceGroteskSemiBold,
+        fontSize: 16, // 1rem
+        lineHeight: 21.6, // 1.35
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    /**
+     * Shared by the featured card subtitle and the expanded detail
+     * paragraphs (PROBLEM/WHAT I BUILT/STACK/OUTCOME); color differs by
+     * context (colors.inkMuted for the subtitle, colors.inkSecondary for
+     * detail body copy).
+     */
+    projectSubtitleAndBody: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 24, // 1.6
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    projectExpandAffordance: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, featured card "+ details" / "− close"
+        lineHeight: 16.8,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    projectExpandAffordanceCompact: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem, compact card "+ details" / "− close"
+        lineHeight: 15.4,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    projectStackChip: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem
+        lineHeight: 15.4,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    projectDetailLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem, PROBLEM/WHAT I BUILT/STACK/OUTCOME labels
+        lineHeight: 15.4,
+        fontWeight: "400",
+        letterSpacing: 0.88, // .08em * 11
+    } satisfies TextStyleToken,
+    projectCompactTechLine: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, e.g. "Swift" or "Objective-C · Swift · Java"
+        lineHeight: 16.8,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
 };

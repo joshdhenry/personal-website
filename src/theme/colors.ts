@@ -11,6 +11,10 @@ export const colors = {
     ink: "#14181F",
     inkMuted: "#5B6472",
     inkMutedLight: "#98A1B0",
+    // Body copy inside Projects cards (PROBLEM/WHAT I BUILT/STACK/OUTCOME
+    // paragraphs, compact card paragraph) - darker than inkMuted so long-form
+    // reading text stays comfortable, per designs/README.md's "ink-secondary".
+    inkSecondary: "#3A424F",
     primary: "#4338CA",
     // Reserved for hover/press states on primary-colored elements in later
     // sections; the hero's own press feedback uses motion (scale/lift), not
