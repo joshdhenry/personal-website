@@ -155,7 +155,12 @@ export const projectsSpace = {
 export const skillsSpace = {
     /** Section top/bottom padding at desktop widths (skills/experience's exception to the general 80px). */
     sectionPaddingVerticalWide: 64,
-    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow. */
+    /**
+     * Section top/bottom padding at widths <= layoutBreakpoint.narrow. Per
+     * the prototype's own responsive CSS (designs/joshhenry.info.dc.html's
+     * `[data-r="sect"]` rule at max-width: 900px), this general narrow
+     * override applies uniformly with no Skills-specific exception.
+     */
     sectionPaddingVerticalNarrow: 56,
     /** Section horizontal padding at desktop widths. */
     sectionPaddingHorizontalWide: 40,

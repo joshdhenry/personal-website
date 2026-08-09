@@ -14,5 +14,6 @@ export type SkillGroupRowProps = {
 };
 
 export type SkillChipRowProps = {
+    isNarrow: boolean;
     items: readonly string[];
 };

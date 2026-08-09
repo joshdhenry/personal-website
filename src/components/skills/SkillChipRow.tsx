@@ -6,15 +6,19 @@ import { skillsSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { SkillChipRowProps } from "@/types/skills";
 
-export const SkillChipRow = ({ items }: SkillChipRowProps) => (
-    <View style={styles.row}>
-        {items.map((item) => (
-            <View key={item} style={styles.chip}>
-                <Text style={styles.chipLabel}>{item}</Text>
-            </View>
-        ))}
-    </View>
-);
+export const SkillChipRow = ({ isNarrow, items }: SkillChipRowProps) => {
+    const rowStyle = [styles.row, isNarrow ? undefined : styles.rowWide];
+
+    return (
+        <View importantForAccessibility="no-hide-descendants" style={rowStyle}>
+            {items.map((item) => (
+                <View key={item} style={styles.chip}>
+                    <Text style={styles.chipLabel}>{item}</Text>
+                </View>
+            ))}
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     chip: {
@@ -30,9 +34,14 @@ const styles = StyleSheet.create({
         color: colors.inkSecondary,
     },
     row: {
-        flex: 1,
         flexDirection: "row",
         flexWrap: "wrap",
         gap: skillsSpace.chipRowGap,
+    },
+    rowWide: {
+        // Fills the remaining width next to SkillGroupRow's fixed-width label
+        // column; the narrow/stacked layout has no sibling to share space
+        // with, so this is skipped there rather than left as a no-op.
+        flex: 1,
     },
 });

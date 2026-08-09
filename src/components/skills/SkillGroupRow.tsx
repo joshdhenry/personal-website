@@ -10,11 +10,14 @@ import { SkillChipRow } from "./SkillChipRow";
 export const SkillGroupRow = ({ group, isNarrow }: SkillGroupRowProps) => {
     const rowStyle = [styles.row, isNarrow ? styles.rowNarrow : styles.rowWide];
     const labelStyle = [styles.label, isNarrow ? undefined : styles.labelWide];
+    const rowAccessibilityLabel = `${group.label}: ${group.items.join(", ")}`;
 
     return (
-        <View style={rowStyle}>
-            <Text style={labelStyle}>{group.label}</Text>
-            <SkillChipRow items={group.items} />
+        <View accessibilityLabel={rowAccessibilityLabel} accessible style={rowStyle}>
+            <Text importantForAccessibility="no-hide-descendants" style={labelStyle}>
+                {group.label}
+            </Text>
+            <SkillChipRow isNarrow={isNarrow} items={group.items} />
         </View>
     );
 };
