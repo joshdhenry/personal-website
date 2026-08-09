@@ -1,6 +1,7 @@
 import Head from "expo-router/head";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 
+import { AboutSection } from "@/components/about/AboutSection";
 import { ExperienceSection } from "@/components/experience/ExperienceSection";
 import { Hero } from "@/components/hero/Hero";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
@@ -29,6 +30,7 @@ export default () => {
             <ProjectsSection />
             <SkillsSection />
             <ExperienceSection />
+            <AboutSection />
         </ScrollView>
     );
 };

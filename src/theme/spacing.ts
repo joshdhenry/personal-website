@@ -195,6 +195,43 @@ export const skillsSpace = {
  * skillsSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
  * pixel values, named and commented rather than snapped to the space.* grid.
  */
+/**
+ * Escape hatch for About section measurements, same rationale as
+ * projectsSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
+ * pixel values, named and commented rather than snapped to the space.* grid.
+ */
+export const aboutSpace = {
+    /** Section top/bottom padding at desktop widths (standard 80px, not the skills/experience exception). */
+    sectionPaddingVerticalWide: 80,
+    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingVerticalNarrow: 56,
+    /** Section horizontal padding at desktop widths. */
+    sectionPaddingHorizontalWide: 40,
+    /** Section horizontal padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingHorizontalNarrow: 24,
+    /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
+    sectionPaddingHorizontalCompact: 18,
+    /** Section container max-width, matches projectsSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Gap between the heading and the two paragraphs in the text column. */
+    textColumnGap: 20,
+    /** Two-column grid gap between the text column and the portrait, above layoutBreakpoint.narrow. */
+    gridGap: 56,
+    /** Grid gap at widths <= layoutBreakpoint.narrow, where it stacks to one column. */
+    gridGapNarrow: 28,
+    /** Fixed portrait column width above layoutBreakpoint.narrow (grid's "260px" track). */
+    portraitColumnWidth: 260,
+    /** Portrait max-width when stacked at widths <= layoutBreakpoint.narrow. */
+    portraitMaxWidthNarrow: 200,
+    /**
+     * Approximates the paragraphs' 62ch max-width (RN has no ch unit) at
+     * Inter 1.0625rem's average glyph width, same conversion
+     * heroSpace.introMaxWidth uses (46ch -> 520px; 520/46 ~= 11.3px/ch, so
+     * 62ch ~= 700px).
+     */
+    paragraphMaxWidth: 700,
+};
+
 export const experienceSpace = {
     /** Section top/bottom padding at desktop widths (skills/experience's exception to the general 80px). */
     sectionPaddingVerticalWide: 64,
