@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
-import { useRiseEntrance } from "@/hooks/useRiseEntrance";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
@@ -12,6 +11,7 @@ import { typeScale } from "@/theme/typography";
 import type { FeaturedProjectCardProps } from "@/types/projects";
 
 import { ProjectDetailField } from "./ProjectDetailField";
+import { ProjectDetailReveal } from "./ProjectDetailReveal";
 import { ProjectExpandAffordance } from "./ProjectExpandAffordance";
 import { ProjectImageBand } from "./ProjectImageBand";
 import { ProjectStackChips } from "./ProjectStackChips";
@@ -29,7 +29,6 @@ export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
     const [isActive, setIsActive] = useState(false);
     const scale = useSharedValue(1);
     const liftY = useSharedValue(0);
-    const detailRiseStyle = useRiseEntrance(0);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }, { translateY: liftY.value }],
@@ -53,7 +52,6 @@ export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
         isActive && isHoverShadowSupported && shadow.projectCard,
         animatedStyle,
     ];
-    const detailStyle = [styles.detail, detailRiseStyle];
     const accessibilityLabel = `${project.title}, ${project.subtitle}`;
 
     return (
@@ -96,14 +94,14 @@ export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
                 <ProjectStackChips chips={project.stackChips} />
 
                 {isOpen && (
-                    <Animated.View style={detailStyle}>
+                    <ProjectDetailReveal style={styles.detail}>
                         <ProjectDetailField label="PROBLEM" value={project.problem} />
                         <ProjectDetailField label="WHAT I BUILT" value={project.whatIBuilt} />
                         <ProjectDetailField label="STACK" value={project.stackSentence} />
                         {project.outcome && (
                             <ProjectDetailField label="OUTCOME" value={project.outcome} />
                         )}
-                    </Animated.View>
+                    </ProjectDetailReveal>
                 )}
             </Pressable>
         </Animated.View>

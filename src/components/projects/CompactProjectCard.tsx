@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
-import { useRiseEntrance } from "@/hooks/useRiseEntrance";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
@@ -11,6 +10,7 @@ import { projectsSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { CompactProjectCardProps } from "@/types/projects";
 
+import { ProjectDetailReveal } from "./ProjectDetailReveal";
 import { ProjectExpandAffordance } from "./ProjectExpandAffordance";
 import { ProjectImageBand } from "./ProjectImageBand";
 
@@ -27,7 +27,6 @@ export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
     const [isActive, setIsActive] = useState(false);
     const scale = useSharedValue(1);
     const liftY = useSharedValue(0);
-    const detailRiseStyle = useRiseEntrance(0);
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }, { translateY: liftY.value }],
@@ -50,7 +49,6 @@ export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
         isActive && isHoverShadowSupported && shadow.projectCard,
         animatedStyle,
     ];
-    const detailStyle = [styles.detail, detailRiseStyle];
     const accessibilityLabel = `${project.title}, ${project.techLine}`;
 
     return (
@@ -86,14 +84,14 @@ export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
                     </Text>
 
                     {isOpen && (
-                        <Animated.View style={detailStyle}>
+                        <ProjectDetailReveal style={styles.detail}>
                             <Text
                                 importantForAccessibility="no-hide-descendants"
                                 style={styles.paragraph}
                             >
                                 {project.paragraph}
                             </Text>
-                        </Animated.View>
+                        </ProjectDetailReveal>
                     )}
                 </View>
             </Pressable>

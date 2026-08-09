@@ -1,4 +1,5 @@
-import type { ImageSourcePropType } from "react-native";
+import type { ReactNode } from "react";
+import type { ImageSourcePropType, StyleProp, ViewStyle } from "react-native";
 
 export type FeaturedProject = {
     id: string;
@@ -65,4 +66,9 @@ export type ProjectExpandAffordanceProps = {
 export type ProjectDetailFieldProps = {
     label: string;
     value: string;
+};
+
+export type ProjectDetailRevealProps = {
+    children: ReactNode;
+    style: StyleProp<ViewStyle>;
 };

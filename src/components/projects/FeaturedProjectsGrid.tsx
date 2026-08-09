@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, type ViewStyle } from "react-native";
 
 import { projectsSpace } from "@/theme/spacing";
 import type { FeaturedProjectsGridProps } from "@/types/projects";
@@ -51,7 +51,11 @@ const styles = StyleSheet.create({
         gap: projectsSpace.featuredGridGap,
     },
     item: {
+        // Caps a lone leftover item in an under-full last row at its normal
+        // column width instead of stretching to fill the row (flex: 1 alone
+        // would otherwise let it grow to 100% when it's the row's only child).
         flex: 1,
+        maxWidth: `${(100 / COLUMN_COUNT).toFixed(4)}%` as ViewStyle["maxWidth"],
     },
     row: {
         flexDirection: "row",
