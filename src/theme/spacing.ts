@@ -299,34 +299,6 @@ export const experienceSpace = {
  * aboutSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
  * pixel values, named and commented rather than snapped to the space.* grid.
  */
-/**
- * Escape hatch for Footer section measurements, same rationale as
- * contactSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
- * pixel values, named and commented rather than snapped to the space.* grid.
- */
-export const footerSpace = {
-    /**
-     * Section vertical/horizontal padding, constant across all widths - the
-     * prototype's <footer> isn't tagged data-r="sect", so unlike every other
-     * section it does not get the narrow/compact horizontal-padding
-     * reduction defined by [data-r="sect"]'s media query.
-     */
-    sectionPaddingVertical: 28,
-    sectionPaddingHorizontal: 40,
-    /** Inner row's container max-width, matches contactSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
-    /** Gap between the note and the links group when the row wraps/stacks at layoutBreakpoint.narrow. */
-    rowGap: 24,
-    /** Gap between the "Source" link and the copyright line. */
-    linksGap: 22,
-    /**
-     * Note's 70ch max-width, approximated in px at heroSpace.introMaxWidth's
-     * ch->px ratio (520/46 ~= 11.3px/ch), same conversion method
-     * aboutSpace.paragraphMaxWidth uses.
-     */
-    noteMaxWidth: 791,
-};
-
 export const contactSpace = {
     /** Section top/bottom padding at desktop widths, per designs/README.md's "Contact is 80px / 96px". */
     sectionPaddingTopWide: 80,
@@ -374,4 +346,32 @@ export const contactSpace = {
     submitButtonPaddingHorizontal: 22,
     /** Gap between the submit button and the inline status text below it. */
     statusMessageMarginTop: 10,
+};
+
+/**
+ * Escape hatch for Footer section measurements, same rationale as
+ * contactSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
+ * pixel values, named and commented rather than snapped to the space.* grid.
+ */
+export const footerSpace = {
+    /**
+     * Section vertical/horizontal padding, constant across all widths - the
+     * prototype's <footer> isn't tagged data-r="sect", so unlike every other
+     * section it does not get the narrow/compact horizontal-padding
+     * reduction defined by [data-r="sect"]'s media query.
+     */
+    sectionPaddingVertical: 28,
+    sectionPaddingHorizontal: 40,
+    /** Inner row's container max-width, matches contactSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Gap between the note and the links group when the row wraps/stacks at layoutBreakpoint.narrow. */
+    rowGap: 24,
+    /** Gap between the "Source" link and the copyright line. */
+    linksGap: 22,
+    /**
+     * Note's 70ch max-width, approximated in px at heroSpace.introMaxWidth's
+     * ch->px ratio (520/46 ~= 11.3px/ch), same conversion method
+     * aboutSpace.paragraphMaxWidth uses.
+     */
+    noteMaxWidth: 791,
 };
