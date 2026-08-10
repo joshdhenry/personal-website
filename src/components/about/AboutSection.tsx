@@ -36,11 +36,8 @@ export const AboutSection = () => {
         { paddingBottom: paddingVertical, paddingHorizontal, paddingTop: paddingVertical },
     ];
     const rowStyle = [
-        styles.row,
-        {
-            flexDirection: isNarrow ? ("column" as const) : ("row" as const),
-            gap: isNarrow ? aboutSpace.gridGapNarrow : aboutSpace.gridGap,
-        },
+        isNarrow ? styles.rowNarrow : styles.rowWide,
+        { gap: isNarrow ? aboutSpace.gridGapNarrow : aboutSpace.gridGap },
     ];
 
     return (
@@ -76,8 +73,16 @@ const styles = StyleSheet.create({
         color: colors.inkSecondary,
         maxWidth: aboutSpace.paragraphMaxWidth,
     },
-    row: {
+    rowNarrow: {
+        // Explicit stretch, matching Hero's gridNarrow, so the text column
+        // deterministically fills the stacked width regardless of copy
+        // length, rather than relying on flexbox's fit-content clamping.
+        alignItems: "stretch",
+        flexDirection: "column",
+    },
+    rowWide: {
         alignItems: "flex-start",
+        flexDirection: "row",
     },
     section: {
         alignSelf: "center",

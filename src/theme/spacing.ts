@@ -191,11 +191,6 @@ export const skillsSpace = {
 };
 
 /**
- * Escape hatch for Experience section measurements, same rationale as
- * skillsSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
- * pixel values, named and commented rather than snapped to the space.* grid.
- */
-/**
  * Escape hatch for About section measurements, same rationale as
  * projectsSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
  * pixel values, named and commented rather than snapped to the space.* grid.
@@ -232,6 +227,11 @@ export const aboutSpace = {
     paragraphMaxWidth: 700,
 };
 
+/**
+ * Escape hatch for Experience section measurements, same rationale as
+ * skillsSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
+ * pixel values, named and commented rather than snapped to the space.* grid.
+ */
 export const experienceSpace = {
     /** Section top/bottom padding at desktop widths (skills/experience's exception to the general 80px). */
     sectionPaddingVerticalWide: 64,
