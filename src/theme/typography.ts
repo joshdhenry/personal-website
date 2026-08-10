@@ -262,4 +262,13 @@ export const typeScale = {
         fontWeight: "400",
         letterSpacing: 0.24, // .02em * 12
     } satisfies TextStyleToken,
+
+    // About-specific entry, values taken directly from
+    // designs/joshhenry.info.dc.html's literal #about paragraph style.
+    aboutParagraph: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 17, // 1.0625rem
+        lineHeight: 28.9, // 1.7 — differs from heroIntro's 1.65, per the prototype's literal value
+        fontWeight: "400",
+    } satisfies TextStyleToken,
 };
