@@ -293,3 +293,57 @@ export const experienceSpace = {
     connectorTopNarrow: 24,
     connectorWidthNarrow: 19,
 };
+
+/**
+ * Escape hatch for Contact section measurements, same rationale as
+ * aboutSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
+ * pixel values, named and commented rather than snapped to the space.* grid.
+ */
+export const contactSpace = {
+    /** Section top/bottom padding at desktop widths, per designs/README.md's "Contact is 80px / 96px". */
+    sectionPaddingTopWide: 80,
+    sectionPaddingBottomWide: 96,
+    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow (the general narrow override). */
+    sectionPaddingVerticalNarrow: 56,
+    /** Section horizontal padding at desktop widths. */
+    sectionPaddingHorizontalWide: 40,
+    /** Section horizontal padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingHorizontalNarrow: 24,
+    /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
+    sectionPaddingHorizontalCompact: 18,
+    /** Section container max-width, matches aboutSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Two-column grid gap between the intro column and the form card, above layoutBreakpoint.narrow. */
+    gridGap: 56,
+    /** Grid gap at widths <= layoutBreakpoint.narrow, where the form stacks below the badges. */
+    gridGapNarrow: 16,
+    /** Vertical gap between the left column's heading/paragraph/badge list. */
+    introColumnGap: 18,
+    /** Left column's availability paragraph max-width (40ch equivalent, same ch->px ratio as heroSpace.introMaxWidth). */
+    availabilityParagraphMaxWidth: 452,
+    /** Badge list max-width and gap between the three stacked badges. */
+    badgeListMaxWidth: 320,
+    badgeListGap: 10,
+    /** Contact badge internal padding. */
+    badgePaddingVertical: 11,
+    badgePaddingHorizontal: 16,
+    /** Gap between a badge's inline SVG icon and its label. */
+    badgeIconGap: 10,
+    /** Contact badge inline SVG icon size (square). */
+    badgeIconSize: 18,
+    /** Form card padding and internal vertical gap between fields. */
+    formCardPadding: 26,
+    formCardGap: 16,
+    /** Gap between a field's label and its input. */
+    fieldGap: 7,
+    /** Field input padding. */
+    inputPaddingVertical: 11,
+    inputPaddingHorizontal: 13,
+    /** Message field textarea row count. */
+    messageFieldRows: 5,
+    /** Submit button padding. */
+    submitButtonPaddingVertical: 12,
+    submitButtonPaddingHorizontal: 22,
+    /** Gap between the submit button and the inline status text below it. */
+    statusMessageMarginTop: 10,
+};

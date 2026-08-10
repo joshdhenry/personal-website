@@ -33,4 +33,9 @@ export const colors = {
     // Experience row mono note text - lightest tint in the ink scale, per
     // designs/README.md's Experience row spec.
     inkFaint: "#B6BDC7",
+    // LinkedIn brand mark fill, Contact section badge icon only.
+    brandLinkedIn: "#0A66C2",
+    // Contact form submit error inline status text. 5.98:1 contrast on
+    // colors.bg, comfortably AA for the mono status line's small size.
+    statusError: "#B91C1C",
 };
