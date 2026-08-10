@@ -311,4 +311,16 @@ export const typeScale = {
         lineHeight: 16.8,
         fontWeight: "400",
     } satisfies TextStyleToken,
+
+    // Footer-specific entry, shared by the note, "Source" link, and
+    // copyright line. Value taken directly from designs/joshhenry.info.dc.html's
+    // literal <footer> styles - none of the three set a font-weight, so
+    // (matching this codebase's existing convention for unspecified-weight
+    // mono text, e.g. projectExpandAffordance/chromeLabel) it's regular.
+    footerText: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem
+        lineHeight: 16.8, // 1.4
+        fontWeight: "400",
+    } satisfies TextStyleToken,
 };
