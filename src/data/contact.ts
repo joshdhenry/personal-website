@@ -7,7 +7,7 @@ import type { ContactBadgeDescriptor } from "@/types/contact";
 
 /**
  * Typed content for the Contact section. The heading and availability
- * paragraph are copy strings are verbatim per designs/CLAUDE.md's "Copy
+ * paragraph are copy strings, verbatim per designs/CLAUDE.md's "Copy
  * rules" ("do not rewrite copy Josh supplied"); do not edit them without
  * updating the source spec in designs/README.md first. Status messages are
  * this build's proposed success/error copy — designs/README.md explicitly

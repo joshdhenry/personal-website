@@ -11,6 +11,9 @@ import { isContactFormValid, validateContactForm } from "@/utils/validateContact
 const EMPTY_VALUES: ContactFormValues = { email: "", honeypot: "", message: "", name: "" };
 const NO_ERRORS: ContactFormFieldErrors = { email: false, message: false, name: false };
 
+const isValidatedField = (field: keyof ContactFormValues): field is keyof ContactFormFieldErrors =>
+    field === "email" || field === "message" || field === "name";
+
 /**
  * Owns the Contact form's field state and submit lifecycle. No DOM <form>
  * per CLAUDE.md's hard rule, so this POSTs via fetch from a Pressable
@@ -26,6 +29,10 @@ export const useContactFormSubmission = () => {
 
     const updateField = (field: keyof ContactFormValues, value: string) => {
         setValues((previousValues) => ({ ...previousValues, [field]: value }));
+
+        if (isValidatedField(field)) {
+            setFieldErrors((previousErrors) => ({ ...previousErrors, [field]: false }));
+        }
     };
 
     const submit = async () => {
@@ -47,9 +54,9 @@ export const useContactFormSubmission = () => {
         try {
             const response = await fetch(contactFormspreeEndpoint, {
                 body: JSON.stringify({
-                    email: values.email,
-                    message: values.message,
-                    name: values.name,
+                    email: values.email.trim(),
+                    message: values.message.trim(),
+                    name: values.name.trim(),
                 }),
                 headers: { Accept: "application/json", "Content-Type": "application/json" },
                 method: "POST",

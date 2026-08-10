@@ -23,6 +23,11 @@ export const ContactForm = () => {
     const { fieldErrors, status, submit, updateField, values } = useContactFormSubmission();
     const isSubmitting = status === "submitting";
 
+    const handleNameChange = (value: string) => updateField("name", value);
+    const handleEmailChange = (value: string) => updateField("email", value);
+    const handleMessageChange = (value: string) => updateField("message", value);
+    const handleHoneypotChange = (value: string) => updateField("honeypot", value);
+
     return (
         <View style={styles.card}>
             <ContactFormField
@@ -30,7 +35,7 @@ export const ContactForm = () => {
                 isDisabled={isSubmitting}
                 isInvalid={fieldErrors.name}
                 label={contactNameLabel}
-                onChangeText={(value) => updateField("name", value)}
+                onChangeText={handleNameChange}
                 value={values.name}
             />
             <ContactFormField
@@ -38,7 +43,7 @@ export const ContactForm = () => {
                 isDisabled={isSubmitting}
                 isInvalid={fieldErrors.email}
                 label={contactEmailLabel}
-                onChangeText={(value) => updateField("email", value)}
+                onChangeText={handleEmailChange}
                 value={values.email}
             />
             <ContactFormField
@@ -47,14 +52,14 @@ export const ContactForm = () => {
                 isInvalid={fieldErrors.message}
                 label={contactMessageLabel}
                 multiline
-                onChangeText={(value) => updateField("message", value)}
+                onChangeText={handleMessageChange}
                 value={values.message}
             />
             <TextInput
                 accessibilityElementsHidden
                 autoComplete="off"
                 importantForAccessibility="no-hide-descendants"
-                onChangeText={(value) => updateField("honeypot", value)}
+                onChangeText={handleHoneypotChange}
                 style={styles.honeypot}
                 value={values.honeypot}
                 // tabIndex isn't in React Native's TextInputProps, but

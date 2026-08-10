@@ -18,6 +18,9 @@ export const ContactFormField = ({
 }: ContactFormFieldProps) => {
     const [isFocused, setIsFocused] = useState(false);
 
+    const handleBlur = () => setIsFocused(false);
+    const handleFocus = () => setIsFocused(true);
+
     const inputStyle = [
         styles.input,
         multiline && styles.inputMultiline,
@@ -33,9 +36,9 @@ export const ContactFormField = ({
                 editable={!isDisabled}
                 multiline={multiline}
                 numberOfLines={multiline ? contactSpace.messageFieldRows : undefined}
-                onBlur={() => setIsFocused(false)}
+                onBlur={handleBlur}
                 onChangeText={onChangeText}
-                onFocus={() => setIsFocused(true)}
+                onFocus={handleFocus}
                 style={inputStyle}
                 value={value}
             />

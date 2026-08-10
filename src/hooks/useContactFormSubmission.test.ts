@@ -34,6 +34,47 @@ describe("useContactFormSubmission", () => {
         expect(fetchSpy).not.toHaveBeenCalled();
     });
 
+    it("clears a field's error as soon as it's edited", async () => {
+        const { result } = renderHook(() => useContactFormSubmission());
+
+        await act(async () => {
+            await result.current.submit();
+        });
+
+        expect(result.current.fieldErrors.name).toBe(true);
+
+        act(() => result.current.updateField("name", "Jane Recruiter"));
+
+        expect(result.current.fieldErrors.name).toBe(false);
+        expect(result.current.fieldErrors.email).toBe(true);
+    });
+
+    it("trims whitespace from name, email, and message before posting", async () => {
+        fetchSpy.mockResolvedValue({ ok: true });
+        const { result } = renderHook(() => useContactFormSubmission());
+
+        act(() => {
+            result.current.updateField("name", "  Jane Recruiter  ");
+            result.current.updateField("email", " jane@example.com ");
+            result.current.updateField("message", " Are you open to a new role? ");
+        });
+
+        await act(async () => {
+            await result.current.submit();
+        });
+
+        expect(fetchSpy).toHaveBeenCalledWith(
+            "https://formspree.io/f/xljrgjpe",
+            expect.objectContaining({
+                body: JSON.stringify({
+                    email: "jane@example.com",
+                    message: "Are you open to a new role?",
+                    name: "Jane Recruiter",
+                }),
+            }),
+        );
+    });
+
     it("pretends success without making a request when the honeypot field is filled", async () => {
         const { result } = renderHook(() => useContactFormSubmission());
 

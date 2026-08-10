@@ -19,6 +19,11 @@ export const ContactSubmitButton = ({ isDisabled, label, onPress }: ContactSubmi
         scale.value = withSpring(active && !isDisabled ? 0.97 : 1, motion.spring.snappy);
     };
 
+    const handleHoverIn = () => setActive(true);
+    const handleHoverOut = () => setActive(false);
+    const handlePressIn = () => setActive(true);
+    const handlePressOut = () => setActive(false);
+
     const buttonStyle = [styles.button, isDisabled && styles.buttonDisabled, animatedStyle];
 
     return (
@@ -27,11 +32,11 @@ export const ContactSubmitButton = ({ isDisabled, label, onPress }: ContactSubmi
                 accessibilityLabel={label}
                 accessibilityRole="button"
                 disabled={isDisabled}
-                onHoverIn={() => setActive(true)}
-                onHoverOut={() => setActive(false)}
+                onHoverIn={handleHoverIn}
+                onHoverOut={handleHoverOut}
                 onPress={onPress}
-                onPressIn={() => setActive(true)}
-                onPressOut={() => setActive(false)}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
                 style={styles.pressable}
             >
                 <Text style={styles.label}>{label}</Text>
