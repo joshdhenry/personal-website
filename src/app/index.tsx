@@ -4,6 +4,7 @@ import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { AboutSection } from "@/components/about/AboutSection";
 import { ContactSection } from "@/components/contact/ContactSection";
 import { ExperienceSection } from "@/components/experience/ExperienceSection";
+import { Footer } from "@/components/footer/Footer";
 import { Hero } from "@/components/hero/Hero";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
@@ -33,6 +34,7 @@ export default () => {
             <ExperienceSection />
             <AboutSection />
             <ContactSection />
+            <Footer />
         </ScrollView>
     );
 };
