@@ -44,6 +44,8 @@ export const motion = {
         riseExperienceHeading: 0,
         /** About section heading's single, modest entrance, matches riseProjectsHeading. */
         riseAboutHeading: 0,
+        /** Contact section heading's single, modest entrance, matches riseProjectsHeading. */
+        riseContactHeading: 0,
         /**
          * First tech-log row's rise delay, ms. The remaining 6 rows step by
          * logRowStaggerStep, landing exactly on designs/README.md's "1.5s to

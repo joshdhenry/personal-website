@@ -271,4 +271,44 @@ export const typeScale = {
         lineHeight: 28.9, // 1.7 — differs from heroIntro's 1.65, per the prototype's literal value
         fontWeight: "400",
     } satisfies TextStyleToken,
+
+    // Contact-specific entries, values taken directly from
+    // designs/joshhenry.info.dc.html's literal #contact styles.
+    contactAvailability: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 17, // 1.0625rem
+        lineHeight: 28.9, // 1.7, matches aboutParagraph's literal prototype value
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    contactBadgeLabel: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13, // .8125rem
+        lineHeight: 16,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    contactFieldLabel: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 12, // .75rem, e.g. "NAME"
+        lineHeight: 15,
+        fontWeight: "500",
+        letterSpacing: 0.72, // .06em * 12
+    } satisfies TextStyleToken,
+    contactInputText: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 22.5, // 1.5
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    contactSubmitLabel: {
+        fontFamily: fontFamily.interSemiBold,
+        fontSize: 15, // .9375rem
+        lineHeight: 21,
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    contactStatusMessage: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem
+        lineHeight: 16.8,
+        fontWeight: "400",
+    } satisfies TextStyleToken,
 };
