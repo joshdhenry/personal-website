@@ -94,8 +94,13 @@ Also serves as a Claude Code learning project.
   components)
 - src/types/ shared TypeScript types, one file per domain (e.g. hero.ts,
   theme.ts) — see "No barrel imports" below
-- src/utils/ pure helper/utility functions (e.g. layout-mode resolution),
-  aliased via `@/utils/*`; every util has a colocated `*.test.ts`
+- src/utils/ pure helper/utility functions, aliased via `@/utils/*`; grouped
+  and named by the domain they deal with (e.g. `snack.ts` for everything Snack
+  embed-related, `scroll.ts` for the page's scroll-driven effects), never by
+  an individual function's own name; every util file has a colocated
+  `*.test.ts`
+- src/constants/ global or common constant values that aren't design tokens
+  (theme/) or page content (data/) — e.g. `snack.ts`'s published Snack URL
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/

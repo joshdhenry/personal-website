@@ -1,41 +1,107 @@
 import Head from "expo-router/head";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { useRef } from "react";
+import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AboutSection } from "@/components/about/AboutSection";
 import { ContactSection } from "@/components/contact/ContactSection";
+import { DemoSection } from "@/components/demo/DemoSection";
 import { ExperienceSection } from "@/components/experience/ExperienceSection";
 import { Footer } from "@/components/footer/Footer";
 import { Hero } from "@/components/hero/Hero";
+import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
+import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { colors } from "@/theme/colors";
+import type { SectionId, SectionOffsets } from "@/types/nav";
+import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
+
+const createSectionOffsets = (): SectionOffsets => ({
+    about: 0,
+    contact: 0,
+    demo: 0,
+    experience: 0,
+    projects: 0,
+    skills: 0,
+    top: 0,
+});
 
 export default () => {
     const fontsLoaded = useFontsLoaded();
+    const insets = useSafeAreaInsets();
+    const { width } = useWindowDimensions();
+    const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
+
+    const scrollY = useSharedValue(0);
+    const scrollViewRef = useRef<ScrollView>(null);
+    const sectionOffsets = useRef<SectionOffsets>(createSectionOffsets());
+    const scrollToSection = useScrollToSection({ scrollViewRef, sectionOffsets });
+
+    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        scrollY.value = event.nativeEvent.contentOffset.y;
+    };
+
+    const handleSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
+        sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
+    };
+
+    const handleTalkToMePress = () => scrollToSection("contact");
+    const contentContainerStyle = [styles.content, { paddingBottom: insets.bottom }];
 
     if (shouldGateOnFontsLoaded(Platform.OS, fontsLoaded)) {
         return <View style={styles.loadingPlaceholder} />;
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.content} style={styles.scrollView}>
-            <Head>
-                <title>Josh Henry, Senior Mobile Software Engineer</title>
-                <meta
-                    content="Josh Henry is a Senior Mobile Software Engineer in Portland, OR building cross-platform apps in React Native, iOS, and Android."
-                    name="description"
-                />
-            </Head>
-            <Hero />
-            <ProjectsSection />
-            <SkillsSection />
-            <ExperienceSection />
-            <AboutSection />
-            <ContactSection />
-            <Footer />
-        </ScrollView>
+        <View style={styles.root}>
+            <ScrollView
+                contentContainerStyle={contentContainerStyle}
+                onScroll={handleScroll}
+                ref={scrollViewRef}
+                scrollEventThrottle={16}
+                style={styles.scrollView}
+            >
+                <Head>
+                    <title>Josh Henry, Senior Mobile Software Engineer</title>
+                    <meta
+                        content="Josh Henry is a Senior Mobile Software Engineer in Portland, OR building cross-platform apps in React Native, iOS, and Android."
+                        name="description"
+                    />
+                </Head>
+                <Hero scrollY={scrollY} />
+                <View onLayout={handleSectionLayout("projects")}>
+                    <ProjectsSection />
+                </View>
+                <View onLayout={handleSectionLayout("skills")}>
+                    <SkillsSection />
+                </View>
+                <View onLayout={handleSectionLayout("experience")}>
+                    <ExperienceSection />
+                </View>
+                <View onLayout={handleSectionLayout("about")}>
+                    <AboutSection />
+                </View>
+                <View onLayout={handleSectionLayout("demo")}>
+                    <DemoSection onTalkToMePress={handleTalkToMePress} />
+                </View>
+                <View onLayout={handleSectionLayout("contact")}>
+                    <ContactSection />
+                </View>
+                <Footer />
+            </ScrollView>
+
+            <StickyNav
+                isCompact={isCompact}
+                isNarrow={isNarrow}
+                onLinkPress={scrollToSection}
+                scrollY={scrollY}
+            />
+        </View>
     );
 };
 
@@ -47,7 +113,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.bg,
         flex: 1,
     },
+    root: {
+        flex: 1,
+    },
     scrollView: {
         backgroundColor: colors.bg,
+        flex: 1,
     },
 });

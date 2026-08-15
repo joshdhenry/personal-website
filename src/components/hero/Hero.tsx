@@ -18,13 +18,14 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
+import type { HeroProps } from "@/types/hero";
 import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 
 import { ActionBadgeRow } from "./ActionBadgeRow";
 import { StatusEyebrow } from "./StatusEyebrow";
 import { TerminalCard } from "./TerminalCard";
 
-export const Hero = () => {
+export const Hero = ({ scrollY }: HeroProps) => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
@@ -80,6 +81,7 @@ export const Hero = () => {
                         commandText={heroTerminalCommandText}
                         isNarrow={isNarrow}
                         pathLabel={heroTerminalPathLabel}
+                        scrollY={scrollY}
                         shellLabel={heroTerminalShellLabel}
                         stats={heroStats}
                         techLogRows={heroTechLogRows}

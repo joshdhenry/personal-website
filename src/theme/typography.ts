@@ -312,6 +312,110 @@ export const typeScale = {
         fontWeight: "400",
     } satisfies TextStyleToken,
 
+    // Sticky nav specific entries, values taken directly from
+    // designs/joshhenry.info.dc.html's literal nav styles and
+    // designs/README.md's narrow/compact responsive notes.
+    navWordmark: {
+        fontFamily: fontFamily.plexMonoSemiBold,
+        fontSize: 13, // .8125rem
+        lineHeight: 16,
+        fontWeight: "600",
+        letterSpacing: 0.78, // .06em * 13
+    } satisfies TextStyleToken,
+    navLink: {
+        fontFamily: fontFamily.interMedium,
+        fontSize: 14, // .875rem
+        lineHeight: 21,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    navLinkNarrow: {
+        fontFamily: fontFamily.interMedium,
+        fontSize: 13, // .8125rem, <= layoutBreakpoint.narrow
+        lineHeight: 19.5,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    navLinkCompact: {
+        fontFamily: fontFamily.interMedium,
+        fontSize: 12, // .75rem, <= layoutBreakpoint.compact
+        lineHeight: 18,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+
+    // Demo ("Run this site as an app") specific entries, values taken
+    // directly from designs/joshhenry.info.dc.html's literal #app styles.
+    // Intro paragraph, matches aboutParagraph/contactAvailability's literal
+    // 1.0625rem/1.7/400 values.
+    demoIntroParagraph: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 17, // 1.0625rem
+        lineHeight: 28.9, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    demoPlatformTag: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, "iOS + ANDROID"
+        lineHeight: 15,
+        fontWeight: "400",
+        letterSpacing: 1.08, // .09em * 12
+    } satisfies TextStyleToken,
+    // Shared by the pitch card's paragraph and the fallback card's
+    // explanatory paragraph - both are .9375rem/1.7/400 in the prototype.
+    demoBody: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 25.5, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // Shared by the numbered step number ("01"/"02"/"03") - no other mono
+    // 12/600 token exists yet.
+    demoStepNumber: {
+        fontFamily: fontFamily.plexMonoSemiBold,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    // Numbered step description text, matches projectSubtitleAndBody's
+    // literal values (.9375rem/1.6/400).
+    demoStepText: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 24, // 1.6
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // Shared by the pitch card's "I CAN DO THIS FOR YOU" label and the
+    // fallback card's "NEEDS A WIDER WINDOW" label - both .75rem/.06em/400,
+    // matches skillGroupLabel's literal values.
+    demoEyebrowLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "400",
+        letterSpacing: 0.72, // .06em * 12
+    } satisfies TextStyleToken,
+    // Shared by the pitch card's "Talk to me about your app ->" CTA and the
+    // "Open the Snack ->" badge label - both .8125rem/500, matches
+    // badgeLabel/contactBadgeLabel's literal values.
+    demoMonoActionLabel: {
+        fontFamily: fontFamily.plexMonoMedium,
+        fontSize: 13, // .8125rem
+        lineHeight: 16,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    // No-snack-url placeholder's "Snack embed loads here" line.
+    demoPlaceholderLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 13, // .8125rem
+        lineHeight: 18.2, // 1.4
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // No-snack-url placeholder's hint line below the label.
+    demoPlaceholderHint: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem
+        lineHeight: 18.7, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+
     // Footer-specific entry, shared by the note, "Source" link, and
     // copyright line. Value taken directly from designs/joshhenry.info.dc.html's
     // literal <footer> styles - none of the three set a font-weight, so

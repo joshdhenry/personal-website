@@ -1,9 +1,12 @@
 # Handoff: joshhenry.info personal site
 
 ## Overview
-The visual specification for joshhenry.info, a single-page portfolio for Josh Henry aimed at hiring managers, engineers, recruiters, and general visitors. Sections in order: hero, projects, skills, experience, about, contact, footer.
+The visual specification for joshhenry.info, a single-page portfolio for Josh Henry aimed at hiring managers, engineers, recruiters, and general visitors. Sections in order: hero, projects, skills, experience, about, run this site as an app, contact, footer.
 
 `joshhenry.info.dc.html` is a **prototype written in HTML**, not production code. Open it in a browser to see the intended look and behavior, then recreate it in React Native using that environment's patterns. Nothing in the HTML should be lifted verbatim.
+
+## Where this folder goes
+Unzip it as `designs/` at the root of the React Native project. CLAUDE.md refers to these files by that path (`designs/README.md`, `designs/resume.txt`). Only `assets/` gets copied into the app itself; everything else here is reference.
 
 ## Relationship to CLAUDE.md
 CLAUDE.md governs engineering: stack, structure, code rules, privacy, testing, git, deploy, and the canonical facts. This file governs visual design. Where the two disagree on anything visual, this file wins. Neither file repeats the other, so follow a pointer rather than assuming.
@@ -13,6 +16,7 @@ CLAUDE.md governs engineering: stack, structure, code rules, privacy, testing, g
 
 1. Hover states are web-only. Native needs press equivalents. See "Hover, and its native equivalent" below.
 2. The HTML uses `<form>`, `<a>`, and `<input>` because it is a browser prototype. The build target bans DOM elements, so these become `Pressable`, `TextInput`, and a `fetch` POST. The design intent is the layout and behavior, not the element choice.
+3. One block is deliberately web-only rather than ported: the Expo Snack embed in the demo section. See that section for the native replacement.
 
 ## Design tokens
 
@@ -80,9 +84,11 @@ Spacing sits on a 2px grid, not 4px. CLAUDE.md carries the named token set; the 
 This is one scrolling page. "Screens" below are sections.
 
 ### Sticky nav
-Hidden until scroll position exceeds **560px** (`motion.navRevealScrollY`, a scroll distance, not the compact breakpoint of the same number), then fades and slides down (`opacity` 0 to 1, `translateY(-100%)` to 0, 350ms). Fixed, full width, `rgba(245,246,248,.86)` with a 12px backdrop blur, 1px bottom border. Inner row is the 1180px container with 14px/40px padding: wordmark "JOSH HENRY" left (IBM Plex Mono 0.8125rem 600, letter-spacing 0.06em), links right with 26px gap: Projects, Skills, Experience, About, Contact. Links are muted, indigo on hover. `pointer-events` is none while hidden.
+Hidden until scroll position exceeds **560px** (`motion.navRevealScrollY`, a scroll distance, not the compact breakpoint of the same number), then fades and slides down (`opacity` 0 to 1, `translateY(-100%)` to 0, 350ms). Fixed, full width, `rgba(245,246,248,.86)` with a 12px backdrop blur, 1px bottom border. Inner row is the 1180px container with 14px/40px padding: wordmark "JOSH HENRY" left (IBM Plex Mono 0.8125rem 600, letter-spacing 0.06em), links right with 26px gap: Projects, Skills, Experience, About, Demo, Contact. Links are muted, indigo on hover. `pointer-events` is none while hidden.
 
-RN note: there is no `position: fixed`. Use an absolutely positioned header over the ScrollView driven by `useAnimatedScrollHandler`.
+RN note: there is no `position: fixed`. Use an absolutely positioned header over the ScrollView, with a shared scroll value the header's reveal animation reads.
+
+RN note: on iOS and Android the nav's top padding adds the device's safe-area top inset (status bar / notch) via `useSafeAreaInsets`, on top of the 14px prototype value - the row's content clears the status bar while the translucent/blurred background still extends all the way to the true top of the screen. The hidden-state slide-up offset grows by the same inset, so the nav doesn't peek out from under the status bar while scrolled up. Web has no such inset, so this is a no-op there.
 
 ### Hero (`#top`)
 Two-column grid, `1.05fr / 0.95fr`, 64px gap, vertically centered.
@@ -140,6 +146,22 @@ The five roles and their dates are canonical facts in CLAUDE.md. Render them fro
 ### About (`#about`)
 Grid `1fr / 260px`, 56px gap, top-aligned. Left is the heading plus two paragraphs at max-width 62ch: one professional, one personal. Right is the headshot at 100% width, 10px radius, 1px border. No chips or tags; the degree is folded into the prose.
 
+### Run this site as an app (`#app`)
+Nav label "Demo". Standard section shell: 1180px container, 80px vertical padding, 1px top border. Inside, a 36px-gap column holding an intro row above a full-width Snack card.
+
+**Intro row**: grid `1.05fr / 0.95fr`, 56px gap, top-aligned.
+
+Left, 20px gap: a baseline row of the h2 "Run this site as an app" plus "iOS + ANDROID" in mono 0.75rem `#98A1B0` at 0.09em; the intro paragraph at max-width 56ch in `#3A424F`; then a three-step list, 12px gap, each step a mono 0.75rem 600 indigo number (`01`, `02`, `03`) beside 0.9375rem body at line-height 1.6. The list is a numbered sequence, so use an ordered list semantically even though the numbers are drawn manually.
+
+Right is the pitch card: white, 1px border, 10px radius, 22px/24px padding, 12px gap. A mono 0.75rem `#5B6472` label reading "I CAN DO THIS FOR YOU" at 0.06em, a 0.9375rem paragraph at line-height 1.7, then a mono 0.8125rem indigo link "Talk to me about your app →" anchored to `#contact`. This card is the commercial point of the section and shows on every platform, including native.
+
+**Snack card**, full content width: white, 1px border, 10px radius, terminal shadow, `overflow: hidden`. Chrome bar matches the hero terminal's proportions (13px/18px padding, paper background, 1px bottom border): "expo snack" in mono 0.75rem muted left, a green "live editor" pill with a 6px dot right. Below it the embed at **560px** tall, full width, no border.
+
+Embed rules:
+- Show Expo's standard embed in full, code pane and simulator side by side. An earlier pass cropped the iframe to hide the editor; that was reverted. Expo has no parameter for a preview-only embed, its split is responsive, and on this section the visible source is part of the argument.
+- The embed is **web only**. On web at `breakpoint.compact` and below, the iframe is replaced by the "NEEDS A WIDER WINDOW" card: mono label, a short paragraph explaining the editor needs a wider window, and an "Open the Snack" badge (styled like the contact badges) that opens the Snack URL via `Linking.openURL` - a new tab on web, the system browser on native, no popup sizing. On iOS and Android the iframe is replaced instead by a "SEE IT ON THE WEB" card pointing at the live joshhenry.info site, since the app is already running natively there. Do not attempt to load the embed in a `WebView`.
+- The Snack URL is a single config value, not hardcoded per platform. While it is unset the web build shows a striped placeholder card at the same 560px height reading "Snack embed loads here", and the mobile card shows plain "Snack link goes here once published" text instead of a button. Never ship a placeholder that points at a real-looking URL.
+
 ### Contact (`#contact`)
 Grid `1fr / 1fr`, 56px gap.
 
@@ -149,6 +171,8 @@ Right column is the form: white card, 1px border, 10px radius, 26px padding, 16p
 
 ### Footer
 White, 1px top border, 28px/40px padding inside the 1180px container, `space-between`. Left: a mono note that Josh designed and built the site in React Native and Expo, one codebase across iOS, Android, and web, developed AI-assisted with Claude Code. Right: a "Source" link and a copyright line.
+
+RN note: on iOS and Android the page's ScrollView adds the device's safe-area bottom inset (home indicator / gesture or button bar) as extra padding below the footer, via `useSafeAreaInsets`. Web has no such inset, so this is a no-op there.
 
 ## Interactions and behavior
 
@@ -171,7 +195,7 @@ Web hover: project cards and timeline rows lift 4px and gain the card shadow; im
 **React Native has no hover.** Josh's decision: use `onHoverIn`/`onHoverOut` on web and `onPressIn`/`onPressOut` on native so the feel matches on every platform. `Pressable` gives you both.
 
 ### Scroll-driven effects
-Two: the sticky nav appearing past 560px **of vertical scroll** (unrelated to the 560px compact breakpoint, which is a window width; give it its own token, for example `motion.navRevealScrollY`), and a parallax on the terminal card (`translateY` clamped to ±28px at `(scrollY - 120) * -0.055`). On web these read `window.scrollY` or the nearest scrollable ancestor. On native, drive both from a shared scroll value via `useAnimatedScrollHandler`.
+Two: the sticky nav appearing past 560px **of vertical scroll** (unrelated to the 560px compact breakpoint, which is a window width; give it its own token, for example `motion.navRevealScrollY`), and a parallax on the terminal card (`translateY` clamped to ±28px at `(scrollY - 120) * -0.055`). One shared scroll value, written from the page ScrollView's own `onScroll`, drives both across every platform - no separate web/native scroll listeners needed.
 
 Section reveals in the HTML fire on scroll position. Josh chose scroll math over animate-on-mount specifically so sections below the fold do not finish animating before you reach them. On native this is `onLayout` plus scroll offset comparison, and it is the fiddliest part of the port.
 
@@ -195,6 +219,7 @@ On **iOS and Android the narrow layout always applies**, since a phone is never 
 - **Skills**: 2 columns to 1, and each group's `132px 1fr` row becomes a stacked label above its chips.
 - **Experience**: rail padding drops to 26px and each row goes single-column, with the date above the role. The dot and connector offsets are recalculated for the new padding (`left: -24px` and `left: -19px; width: 19px`).
 - **About** stacks, with the headshot capped at 200px so it doesn't dominate.
+- **Run this site as an app** stacks to one column, intro row above the Snack card and the pitch card moved below it. The Snack iframe itself keeps showing at this width; it only swaps for the "NEEDS A WIDER WINDOW" card once the window also drops below `breakpoint.compact`.
 - **Contact** stacks, form below the badges.
 - **Nav** padding tightens to 20px and link gap to 16px at 0.8125rem.
 

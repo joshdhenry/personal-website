@@ -20,9 +20,7 @@ export const heroIntroParagraph =
     "I'm Josh Henry, a mobile engineer in Portland, Oregon. I have ten years of production React Native, native iOS, and native Android experience under my belt - from greenfield builds to App Store releases to version 2's. I also write and work on native modules in Swift, Objective-C, Java, and Kotlin. Building an app is a craft, and I hold it to that standard. Above all else, quality is paramount to me. I want the people using my software to have an exquisite, bug-free, and secure experience that rivals the best apps they've ever used.";
 
 // Metro asset require, not a JS module import.
-const resumeAsset = Asset.fromModule(
-    require("../../assets/documents/josh-henry-resume.pdf"),
-);
+const resumeAsset = Asset.fromModule(require("../../assets/documents/josh-henry-resume.pdf"));
 
 export const heroActionBadges: readonly HeroActionBadgeDescriptor[] = [
     {

@@ -38,4 +38,10 @@ export const colors = {
     // Contact form submit error inline status text. 5.98:1 contrast on
     // colors.bg, comfortably AA for the mono status line's small size.
     statusError: "#B91C1C",
+    // Sticky nav's translucent background over page content, per
+    // designs/README.md's "Sticky nav" spec.
+    navBackground: "rgba(245, 246, 248, 0.86)",
+    // Lighter stripe in the Demo section's no-snack-url placeholder's
+    // repeating diagonal gradient (paired with colors.bg as the darker one).
+    placeholderStripeLight: "#FAFBFC",
 };

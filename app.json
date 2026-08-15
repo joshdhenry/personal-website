@@ -14,7 +14,11 @@
             "backgroundColor": "#ffffff"
         },
         "ios": {
-            "supportsTablet": true
+            "bundleIdentifier": "info.joshhenry.portfolio",
+            "supportsTablet": true,
+            "infoPlist": {
+                "ITSAppUsesNonExemptEncryption": false
+            }
         },
         "android": {
             "adaptiveIcon": {
@@ -22,6 +26,7 @@
                 "backgroundColor": "#ffffff"
             },
             "edgeToEdgeEnabled": true,
+            "package": "info.joshhenry.portfolio",
             "predictiveBackGestureEnabled": false
         },
         "web": {
