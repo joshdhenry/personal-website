@@ -33,6 +33,13 @@ describe("DemoSnackCard", () => {
         expect(screen.queryByText(demoFallbackLabel)).toBeNull();
     });
 
+    it("renders the placeholder, not a broken iframe, when the Snack URL is malformed", () => {
+        render(<DemoSnackCard isNativeApp={false} shouldRenderIframe snackUrl="not a url" />);
+
+        expect(screen.getByText(demoPlaceholderLabel)).toBeTruthy();
+        expect(screen.UNSAFE_queryByType("iframe" as never)).toBeNull();
+    });
+
     it("renders the Snack fallback card without a chrome bar on narrow web, when a Snack URL is set", () => {
         render(
             <DemoSnackCard isNativeApp={false} shouldRenderIframe={false} snackUrl={snackUrl} />,

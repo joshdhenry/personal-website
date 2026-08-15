@@ -22,12 +22,12 @@ import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
 const createSectionOffsets = (): SectionOffsets => ({
-    about: 0,
-    contact: 0,
-    demo: 0,
-    experience: 0,
-    projects: 0,
-    skills: 0,
+    about: null,
+    contact: null,
+    demo: null,
+    experience: null,
+    projects: null,
+    skills: null,
     top: 0,
 });
 

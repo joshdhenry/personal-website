@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text } from "react-native";
 
+import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
 import type { NavLinkProps } from "@/types/nav";
 
@@ -11,15 +11,16 @@ export const NavLink = ({
     labelStyle,
     onPress,
 }: NavLinkProps) => {
-    const [isActive, setIsActive] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-
-    const handleHoverIn = () => setIsActive(true);
-    const handleHoverOut = () => setIsActive(false);
-    const handlePressIn = () => setIsActive(true);
-    const handlePressOut = () => setIsActive(false);
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
+    const {
+        handleBlur,
+        handleFocus,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
+        isActive,
+        isFocused,
+    } = usePressHoverFocus();
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const textStyle = [

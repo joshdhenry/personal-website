@@ -20,14 +20,23 @@ export const shouldRenderSnackEmbed = (platformOS: string, isCompact: boolean): 
  * platform=web so the embed opens on the running web player rather than the
  * "My Device" QR tab (mydevice would open that tab instead).
  * supportedPlatforms is deliberately left unset so visitors can still switch
- * to My Device from inside the embed.
+ * to My Device from inside the embed. A malformed value (not an absolute
+ * URL) is treated the same as an unset one - falls back to the placeholder
+ * card - rather than throwing during render.
  */
 export const deriveSnackEmbedUrl = (snackUrl: string): string => {
     if (!snackUrl) {
         return "";
     }
 
-    const embedUrl = new URL(snackUrl);
+    let embedUrl: URL;
+
+    try {
+        embedUrl = new URL(snackUrl);
+    } catch {
+        return "";
+    }
+
     embedUrl.pathname = `/embedded${embedUrl.pathname}`;
     embedUrl.searchParams.set("preview", "true");
     embedUrl.searchParams.set("platform", "web");

@@ -25,4 +25,8 @@ describe("deriveSnackEmbedUrl", () => {
             "https://snack.expo.dev/embedded/@joshdhenry/joshhenry-info?preview=true&platform=web&theme=light",
         );
     });
+
+    it("returns an empty string, rather than throwing, for a malformed URL", () => {
+        expect(deriveSnackEmbedUrl("not a url")).toBe("");
+    });
 });

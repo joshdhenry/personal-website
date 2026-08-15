@@ -35,7 +35,8 @@ export const DemoSnackCard = ({
     shouldRenderIframe,
     snackUrl,
 }: DemoSnackCardProps) => {
-    const hasSnack = snackUrl.length > 0;
+    const embedUrl = deriveSnackEmbedUrl(snackUrl);
+    const hasSnack = embedUrl.length > 0;
 
     return (
         <View style={[styles.card, shadow.terminalCard]}>
@@ -48,7 +49,7 @@ export const DemoSnackCard = ({
                     {hasSnack ? (
                         <iframe
                             allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; microphone"
-                            src={deriveSnackEmbedUrl(snackUrl)}
+                            src={embedUrl}
                             style={iframeStyle}
                             title="Expo Snack: joshhenry.info"
                         />

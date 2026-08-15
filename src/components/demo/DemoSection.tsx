@@ -31,7 +31,7 @@ export const DemoSection = ({ onTalkToMePress }: DemoSectionProps) => {
         { paddingBottom: paddingVertical, paddingHorizontal, paddingTop: paddingVertical },
     ];
 
-    const intro = <DemoIntro isMobileReader={!shouldRenderIframe} isNarrow={isNarrow} />;
+    const intro = <DemoIntro isMobileReader={isNativeApp} isNarrow={isNarrow} />;
     const pitchCard = <DemoPitchCard isNarrow={isNarrow} onTalkToMePress={onTalkToMePress} />;
     const snackCard = (
         <DemoSnackCard

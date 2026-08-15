@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 import { demoPitchBody, demoPitchCtaLabel, demoPitchLabel } from "@/data/demo";
+import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
@@ -11,25 +11,23 @@ import { typeScale } from "@/theme/typography";
 import type { DemoPitchCardProps } from "@/types/demo";
 
 export const DemoPitchCard = ({ isNarrow, onTalkToMePress }: DemoPitchCardProps) => {
-    const [isActive, setIsActive] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
     const scale = useSharedValue(1);
+    const {
+        handleBlur,
+        handleFocus,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
+        isActive,
+        isFocused,
+    } = usePressHoverFocus((active) => {
+        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
+    });
 
     const ctaAnimatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }],
     }));
-
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-    };
-
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const ctaLabelStyle = [
@@ -82,7 +80,7 @@ const styles = StyleSheet.create({
         minWidth: 0,
     },
     ctaLabel: {
-        ...typeScale.demoMonoActionLabel,
+        ...typeScale.badgeLabel,
         color: colors.primary,
     },
     ctaLabelActive: {
@@ -97,7 +95,7 @@ const styles = StyleSheet.create({
         outlineWidth: 2,
     } as Record<string, unknown>,
     label: {
-        ...typeScale.demoEyebrowLabel,
+        ...typeScale.skillGroupLabel,
         color: colors.inkMuted,
     },
 });

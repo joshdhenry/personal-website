@@ -4,7 +4,13 @@ import type { SharedValue } from "react-native-reanimated";
 
 export type SectionId = "top" | "projects" | "skills" | "experience" | "about" | "demo" | "contact";
 
-export type SectionOffsets = Record<SectionId, number>;
+/**
+ * A section's last-measured scroll offset, or null until its onLayout has
+ * fired at least once. useScrollToSection skips scrolling to a null offset
+ * rather than falling back to 0 (the top of the page) for a section that
+ * simply hasn't measured yet.
+ */
+export type SectionOffsets = Record<SectionId, number | null>;
 
 export type NavLinkDescriptor = {
     id: string;

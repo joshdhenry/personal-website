@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     label: {
-        ...typeScale.demoEyebrowLabel,
+        ...typeScale.skillGroupLabel,
         color: colors.inkMuted,
     },
 });

@@ -382,25 +382,12 @@ export const typeScale = {
         lineHeight: 24, // 1.6
         fontWeight: "400",
     } satisfies TextStyleToken,
-    // Shared by the pitch card's "I CAN DO THIS FOR YOU" label and the
-    // fallback card's "NEEDS A WIDER WINDOW" label - both .75rem/.06em/400,
-    // matches skillGroupLabel's literal values.
-    demoEyebrowLabel: {
-        fontFamily: fontFamily.plexMonoRegular,
-        fontSize: 12, // .75rem
-        lineHeight: 15,
-        fontWeight: "400",
-        letterSpacing: 0.72, // .06em * 12
-    } satisfies TextStyleToken,
-    // Shared by the pitch card's "Talk to me about your app ->" CTA and the
-    // "Open the Snack ->" badge label - both .8125rem/500, matches
-    // badgeLabel/contactBadgeLabel's literal values.
-    demoMonoActionLabel: {
-        fontFamily: fontFamily.plexMonoMedium,
-        fontSize: 13, // .8125rem
-        lineHeight: 16,
-        fontWeight: "500",
-    } satisfies TextStyleToken,
+    // The pitch card's "I CAN DO THIS FOR YOU" label, the fallback card's
+    // "NEEDS A WIDER WINDOW" label, the pitch card's "Talk to me about your
+    // app ->" CTA, and the "Open the Snack ->" badge label all reuse
+    // skillGroupLabel and badgeLabel above - same .75rem/.06em/400 and
+    // .8125rem/500 values, no need for section-specific duplicates.
+
     // No-snack-url placeholder's "Snack embed loads here" line.
     demoPlaceholderLabel: {
         fontFamily: fontFamily.plexMonoRegular,

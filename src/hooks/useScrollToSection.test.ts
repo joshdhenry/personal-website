@@ -33,4 +33,21 @@ describe("useScrollToSection", () => {
 
         expect(() => result.current("top")).not.toThrow();
     });
+
+    it("does not scroll to a section whose offset hasn't been measured yet", () => {
+        const scrollTo = jest.fn();
+        const scrollViewRef = { current: { scrollTo } };
+        const sectionOffsets = { current: { contact: null, top: 0 } };
+
+        const { result } = renderHook(() =>
+            useScrollToSection({
+                scrollViewRef,
+                sectionOffsets,
+            } as never),
+        );
+
+        result.current("contact");
+
+        expect(scrollTo).not.toHaveBeenCalled();
+    });
 });
