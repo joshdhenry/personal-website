@@ -4,9 +4,10 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 import { demoPitchBody, demoPitchCtaLabel, demoPitchLabel } from "@/data/demo";
 import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
+import { focusRing } from "@/theme/focusRing";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
-import { demoSpace, focusRingSpace } from "@/theme/spacing";
+import { demoSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoPitchCardProps } from "@/types/demo";
 
@@ -33,7 +34,7 @@ export const DemoPitchCard = ({ isNarrow, onTalkToMePress }: DemoPitchCardProps)
     const ctaLabelStyle = [
         styles.ctaLabel,
         isActive && styles.ctaLabelActive,
-        showFocusRing && styles.focusRing,
+        showFocusRing && focusRing,
     ];
     const cardStyle = [styles.card, !isNarrow && styles.cardWide];
 
@@ -87,13 +88,6 @@ const styles = StyleSheet.create({
         color: colors.primaryHover,
         textDecorationLine: "underline",
     },
-    focusRing: {
-        // react-native-web-only style props for a visible keyboard focus ring.
-        outlineColor: colors.focusRing,
-        outlineOffset: focusRingSpace.outlineOffset,
-        outlineStyle: "solid",
-        outlineWidth: focusRingSpace.outlineWidth,
-    } as Record<string, unknown>,
     label: {
         ...typeScale.skillGroupLabel,
         color: colors.inkMuted,

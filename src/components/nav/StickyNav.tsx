@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
@@ -39,6 +40,18 @@ export const StickyNav = ({ isCompact, isNarrow, onLinkPress, scrollY }: StickyN
     const isReducedMotionPreferred = useIsReducedMotionPreferred();
     const opacity = useSharedValue(0);
     const translateY = useSharedValue(hiddenTranslateY);
+
+    // hiddenTranslateY is only otherwise applied when the reveal state
+    // itself flips (see the reaction below), so a device rotation that
+    // changes insets.top while the nav is currently hidden would leave
+    // translateY stale until the next scroll-triggered reveal. Not
+    // visible on its own (opacity is 0 while hidden), but it'd make the
+    // next reveal animation slide in from the wrong distance.
+    useEffect(() => {
+        if (!shouldRevealNav(scrollY.value, motion.navRevealScrollY)) {
+            translateY.value = hiddenTranslateY;
+        }
+    }, [hiddenTranslateY, scrollY, translateY]);
 
     useAnimatedReaction(
         () => shouldRevealNav(scrollY.value, motion.navRevealScrollY),

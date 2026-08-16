@@ -3,10 +3,11 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 
 import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
+import { focusRing } from "@/theme/focusRing";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
-import { contactSpace, demoSpace, focusRingSpace } from "@/theme/spacing";
+import { contactSpace, demoSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoExternalLinkBadgeProps } from "@/types/demo";
 
@@ -49,7 +50,7 @@ export const DemoExternalLinkBadge = ({
         styles.badge,
         isActive && styles.badgeActive,
         isActive && isHoverShadowSupported && shadow.badgeHover,
-        showFocusRing && styles.focusRing,
+        showFocusRing && focusRing,
         animatedStyle,
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
@@ -84,13 +85,6 @@ const styles = StyleSheet.create({
     badgeActive: {
         borderColor: colors.primary,
     },
-    focusRing: {
-        // react-native-web-only style props for a visible keyboard focus ring.
-        outlineColor: colors.focusRing,
-        outlineOffset: focusRingSpace.outlineOffset,
-        outlineStyle: "solid",
-        outlineWidth: focusRingSpace.outlineWidth,
-    } as Record<string, unknown>,
     label: {
         ...typeScale.badgeLabel,
         color: colors.ink,

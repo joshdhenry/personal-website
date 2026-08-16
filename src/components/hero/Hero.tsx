@@ -1,5 +1,6 @@
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
     heroActionBadges,
@@ -26,6 +27,7 @@ import { StatusEyebrow } from "./StatusEyebrow";
 import { TerminalCard } from "./TerminalCard";
 
 export const Hero = ({ scrollY }: HeroProps) => {
+    const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
@@ -42,9 +44,15 @@ export const Hero = ({ scrollY }: HeroProps) => {
         : isNarrow
           ? heroSpace.sectionPaddingHorizontalNarrow
           : heroSpace.sectionPaddingHorizontalWide;
-    const paddingTop = isNarrow
-        ? heroSpace.sectionPaddingTopNarrow
-        : heroSpace.sectionPaddingTopWide;
+    // The Hero is the first thing on screen, above the sticky nav's own
+    // safe-area handling (which only applies once the nav reveals past
+    // 560px of scroll) - Math.max so a device's status bar/notch inset only
+    // adds space when it genuinely exceeds the design's own top padding,
+    // never stacking on top of it.
+    const paddingTop = Math.max(
+        insets.top,
+        isNarrow ? heroSpace.sectionPaddingTopNarrow : heroSpace.sectionPaddingTopWide,
+    );
     const paddingBottom = isNarrow
         ? heroSpace.sectionPaddingBottomNarrow
         : heroSpace.sectionPaddingBottomWide;

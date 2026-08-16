@@ -284,7 +284,11 @@ Snack card.
 - Left column: heading "Run this site as an app", the "iOS + ANDROID" monospace
   tag, the intro paragraph, and a three-step numbered list (it builds and starts
   on its own, tap through it or edit the code, switch the platform picker to My
-  Device for Expo Go).
+  Device for Expo Go). On iOS and Android, where the embed never renders (see
+  the native-reader swap below), this heading/paragraph pair swaps to "Run
+  this site on the web" and a shorter paragraph, and the numbered steps are
+  dropped entirely - they describe interacting with the embed, which native
+  readers never see.
 - Right column: the "I CAN DO THIS FOR YOU" card. This is the pitch: one React
   Native codebase across iOS, Android, and web, native modules where the platform
   calls for them, over-the-air updates, stakeholders testing real builds on their

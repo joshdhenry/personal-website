@@ -1,10 +1,10 @@
-import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import { Platform, Pressable, Text } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
+import { focusRing } from "@/theme/focusRing";
 import { motion } from "@/theme/motion";
-import { focusRingSpace } from "@/theme/spacing";
 import type { NavLinkProps } from "@/types/nav";
 
 export const NavLink = ({
@@ -36,7 +36,7 @@ export const NavLink = ({
     const textStyle = [
         labelStyle,
         { color: isActive ? colors.primary : defaultColor },
-        showFocusRing && styles.focusRing,
+        showFocusRing && focusRing,
     ];
 
     return (
@@ -57,13 +57,3 @@ export const NavLink = ({
         </Animated.View>
     );
 };
-
-const styles = StyleSheet.create({
-    focusRing: {
-        // react-native-web-only style props for a visible keyboard focus ring.
-        outlineColor: colors.focusRing,
-        outlineOffset: focusRingSpace.outlineOffset,
-        outlineStyle: "solid",
-        outlineWidth: focusRingSpace.outlineWidth,
-    } as Record<string, unknown>,
-});

@@ -153,6 +153,8 @@ Nav label "Demo". Standard section shell: 1180px container, 80px vertical paddin
 
 Left, 20px gap: a baseline row of the h2 "Run this site as an app" plus "iOS + ANDROID" in mono 0.75rem `#98A1B0` at 0.09em; the intro paragraph at max-width 56ch in `#3A424F`; then a three-step list, 12px gap, each step a mono 0.75rem 600 indigo number (`01`, `02`, `03`) beside 0.9375rem body at line-height 1.6. The list is a numbered sequence, so use an ordered list semantically even though the numbers are drawn manually.
 
+RN note: on iOS and Android, where the Snack embed never renders, this heading and paragraph swap to "Run this site on the web" and a shorter paragraph, and the numbered steps are dropped entirely - they describe interacting with the embed, which native readers never see.
+
 Right is the pitch card: white, 1px border, 10px radius, 22px/24px padding, 12px gap. A mono 0.75rem `#5B6472` label reading "I CAN DO THIS FOR YOU" at 0.06em, a 0.9375rem paragraph at line-height 1.7, then a mono 0.8125rem indigo link "Talk to me about your app →" anchored to `#contact`. This card is the commercial point of the section and shows on every platform, including native.
 
 **Snack card**, full content width: white, 1px border, 10px radius, terminal shadow, `overflow: hidden`. Chrome bar matches the hero terminal's proportions (13px/18px padding, paper background, 1px bottom border): "expo snack" in mono 0.75rem muted left, a green "live editor" pill with a 6px dot right. Below it the embed at **560px** tall, full width, no border.
