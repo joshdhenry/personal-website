@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
         gap: demoSpace.headingRowGap,
     },
     paragraph: {
-        ...typeScale.demoIntroParagraph,
+        ...typeScale.aboutParagraph,
         color: colors.inkSecondary,
         maxWidth: demoSpace.introParagraphMaxWidth,
     },

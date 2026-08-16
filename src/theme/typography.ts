@@ -343,14 +343,9 @@ export const typeScale = {
 
     // Demo ("Run this site as an app") specific entries, values taken
     // directly from designs/joshhenry.info.dc.html's literal #app styles.
-    // Intro paragraph, matches aboutParagraph/contactAvailability's literal
-    // 1.0625rem/1.7/400 values.
-    demoIntroParagraph: {
-        fontFamily: fontFamily.interRegular,
-        fontSize: 17, // 1.0625rem
-        lineHeight: 28.9, // 1.7
-        fontWeight: "400",
-    } satisfies TextStyleToken,
+    // The intro paragraph reuses aboutParagraph below (both are the
+    // prototype's literal 1.0625rem/1.7/400 values) rather than a
+    // demo-specific duplicate.
     demoPlatformTag: {
         fontFamily: fontFamily.plexMonoRegular,
         fontSize: 12, // .75rem, "iOS + ANDROID"

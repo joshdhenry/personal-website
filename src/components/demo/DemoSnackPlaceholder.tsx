@@ -24,9 +24,11 @@ export const DemoSnackPlaceholder = ({ hint, label }: DemoSnackPlaceholderProps)
 );
 
 const styles = StyleSheet.create({
+    // colors.inkMuted, not colors.inkMutedLight - inkMutedLight is ~2.6:1 on
+    // this near-white background, under WCAG AA's 4.5:1 minimum.
     hint: {
         ...typeScale.demoPlaceholderHint,
-        color: colors.inkMutedLight,
+        color: colors.inkMuted,
         maxWidth: demoSpace.placeholderHintMaxWidth,
         textAlign: "center",
     },

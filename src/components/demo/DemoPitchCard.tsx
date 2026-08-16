@@ -6,7 +6,7 @@ import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
-import { demoSpace } from "@/theme/spacing";
+import { demoSpace, focusRingSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoPitchCardProps } from "@/types/demo";
 
@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
     focusRing: {
         // react-native-web-only style props for a visible keyboard focus ring.
         outlineColor: colors.focusRing,
-        outlineOffset: 2,
+        outlineOffset: focusRingSpace.outlineOffset,
         outlineStyle: "solid",
-        outlineWidth: 2,
+        outlineWidth: focusRingSpace.outlineWidth,
     } as Record<string, unknown>,
     label: {
         ...typeScale.skillGroupLabel,

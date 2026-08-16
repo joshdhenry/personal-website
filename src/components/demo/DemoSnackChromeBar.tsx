@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { colors } from "@/theme/colors";
 import { radius } from "@/theme/radii";
-import { demoSpace } from "@/theme/spacing";
+import { demoSpace, heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoSnackChromeBarProps } from "@/types/demo";
 
@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        paddingHorizontal: demoSpace.chromeBarPaddingHorizontal,
-        paddingVertical: demoSpace.chromeBarPaddingVertical,
+        paddingHorizontal: heroSpace.terminalChromePaddingHorizontal,
+        paddingVertical: heroSpace.terminalChromePaddingVertical,
     },
     label: {
         ...typeScale.chromeLabel,

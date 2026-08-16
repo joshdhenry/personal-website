@@ -15,6 +15,16 @@ export const space = {
 };
 
 /**
+ * The visible keyboard focus ring's outline offset/width, shared by every
+ * interactive element that renders one (nav links, badges, links) - one
+ * pair of values rather than the same two literals repeated per component.
+ */
+export const focusRingSpace = {
+    outlineOffset: 2,
+    outlineWidth: 2,
+};
+
+/**
  * Escape hatch for measurements that come directly from the high-fidelity
  * designs/README.md spec and do not land cleanly on the 4px grid above.
  * Rounding these to the nearest space.* token would be a visible regression
@@ -422,9 +432,11 @@ export const demoSpace = {
     pitchCardPaddingVertical: 22,
     pitchCardPaddingHorizontal: 24,
     pitchCardGap: 12,
-    /** Snack card chrome bar padding, matches heroSpace.terminalChromePaddingVertical/Horizontal. */
-    chromeBarPaddingVertical: 13,
-    chromeBarPaddingHorizontal: 18,
+    /**
+     * Snack card chrome bar padding: reuses
+     * heroSpace.terminalChromePaddingVertical/Horizontal directly rather
+     * than duplicating the same 13/18 values under a demo-specific name.
+     */
     /** "live editor" status dot diameter and its gap from the label text. */
     liveEditorDotSize: 6,
     liveEditorGap: 7,
@@ -433,9 +445,11 @@ export const demoSpace = {
     /** "NEEDS A WIDER WINDOW" fallback card padding and internal gap. */
     fallbackCardPadding: 26,
     fallbackCardGap: 14,
-    /** External-link badge padding (Open the Snack / Open joshhenry.info), matches contactSpace.badgePaddingVertical/Horizontal. */
-    externalLinkBadgePaddingVertical: 11,
-    externalLinkBadgePaddingHorizontal: 16,
+    /**
+     * External-link badge (Open the Snack / Open joshhenry.info) padding
+     * reuses contactSpace.badgePaddingVertical/Horizontal directly; only
+     * its gap is demo-specific.
+     */
     externalLinkBadgeGap: 8,
     /** No-snack-url placeholder padding and internal gap. */
     placeholderPadding: 32,

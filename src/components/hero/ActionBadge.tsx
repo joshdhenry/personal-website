@@ -6,7 +6,7 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
-import { heroSpace } from "@/theme/spacing";
+import { focusRingSpace, heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ActionBadgeProps } from "@/types/hero";
 
@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
     focusRing: {
         // react-native-web-only style props for a visible keyboard focus ring.
         outlineColor: colors.focusRing,
-        outlineOffset: 2,
+        outlineOffset: focusRingSpace.outlineOffset,
         outlineStyle: "solid",
-        outlineWidth: 2,
+        outlineWidth: focusRingSpace.outlineWidth,
     } as Record<string, unknown>,
     label: {
         ...typeScale.badgeLabel,

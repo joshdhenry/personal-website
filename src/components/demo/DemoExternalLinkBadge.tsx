@@ -6,7 +6,7 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
-import { demoSpace } from "@/theme/spacing";
+import { contactSpace, demoSpace, focusRingSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoExternalLinkBadgeProps } from "@/types/demo";
 
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
     focusRing: {
         // react-native-web-only style props for a visible keyboard focus ring.
         outlineColor: colors.focusRing,
-        outlineOffset: 2,
+        outlineOffset: focusRingSpace.outlineOffset,
         outlineStyle: "solid",
-        outlineWidth: 2,
+        outlineWidth: focusRingSpace.outlineWidth,
     } as Record<string, unknown>,
     label: {
         ...typeScale.badgeLabel,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
         gap: demoSpace.externalLinkBadgeGap,
-        paddingHorizontal: demoSpace.externalLinkBadgePaddingHorizontal,
-        paddingVertical: demoSpace.externalLinkBadgePaddingVertical,
+        paddingHorizontal: contactSpace.badgePaddingHorizontal,
+        paddingVertical: contactSpace.badgePaddingVertical,
     },
 });

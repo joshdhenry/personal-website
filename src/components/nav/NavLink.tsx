@@ -1,7 +1,10 @@
 import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
 import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
+import { motion } from "@/theme/motion";
+import { focusRingSpace } from "@/theme/spacing";
 import type { NavLinkProps } from "@/types/nav";
 
 export const NavLink = ({
@@ -11,6 +14,7 @@ export const NavLink = ({
     labelStyle,
     onPress,
 }: NavLinkProps) => {
+    const scale = useSharedValue(1);
     const {
         handleBlur,
         handleFocus,
@@ -20,7 +24,13 @@ export const NavLink = ({
         handlePressOut,
         isActive,
         isFocused,
-    } = usePressHoverFocus();
+    } = usePressHoverFocus((active) => {
+        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
+    });
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const textStyle = [
@@ -30,19 +40,21 @@ export const NavLink = ({
     ];
 
     return (
-        <Pressable
-            accessibilityLabel={accessibilityLabel}
-            accessibilityRole="link"
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-            onHoverIn={handleHoverIn}
-            onHoverOut={handleHoverOut}
-            onPress={onPress}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-        >
-            <Text style={textStyle}>{label}</Text>
-        </Pressable>
+        <Animated.View style={animatedStyle}>
+            <Pressable
+                accessibilityLabel={accessibilityLabel}
+                accessibilityRole="link"
+                onBlur={handleBlur}
+                onFocus={handleFocus}
+                onHoverIn={handleHoverIn}
+                onHoverOut={handleHoverOut}
+                onPress={onPress}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}
+            >
+                <Text style={textStyle}>{label}</Text>
+            </Pressable>
+        </Animated.View>
     );
 };
 
@@ -50,8 +62,8 @@ const styles = StyleSheet.create({
     focusRing: {
         // react-native-web-only style props for a visible keyboard focus ring.
         outlineColor: colors.focusRing,
-        outlineOffset: 2,
+        outlineOffset: focusRingSpace.outlineOffset,
         outlineStyle: "solid",
-        outlineWidth: 2,
+        outlineWidth: focusRingSpace.outlineWidth,
     } as Record<string, unknown>,
 });
