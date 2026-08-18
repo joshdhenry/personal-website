@@ -1,3 +1,5 @@
+import { Asset } from "expo-asset";
+
 import { GitHubIcon } from "@/components/contact/icons/GitHubIcon";
 import { LinkedInIcon } from "@/components/contact/icons/LinkedInIcon";
 import { ResumeIcon } from "@/components/contact/icons/ResumeIcon";
@@ -21,6 +23,9 @@ export const contactAvailabilityParagraph =
 // designs/CLAUDE.md's Contact spec.
 export const contactFormspreeEndpoint = "https://formspree.io/f/xljrgjpe";
 
+// Metro asset require, not a JS module import.
+const resumeAsset = Asset.fromModule(require("../../assets/documents/josh-henry-resume.pdf"));
+
 export const contactBadges: readonly ContactBadgeDescriptor[] = [
     {
         accessibilityLabel: "LinkedIn profile",
@@ -38,7 +43,7 @@ export const contactBadges: readonly ContactBadgeDescriptor[] = [
     },
     {
         accessibilityLabel: "Resume PDF",
-        href: "", // TEMP: Snack asset-import experiment, see heroContent.ts too
+        href: resumeAsset.uri,
         icon: ResumeIcon,
         id: "resume",
         label: "resume.pdf",
