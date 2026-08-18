@@ -29,4 +29,12 @@ describe("deriveSnackEmbedUrl", () => {
     it("returns an empty string, rather than throwing, for a malformed URL", () => {
         expect(deriveSnackEmbedUrl("not a url")).toBe("");
     });
+
+    it("doesn't double the /embedded prefix if the input is already the embedded URL", () => {
+        expect(
+            deriveSnackEmbedUrl("https://snack.expo.dev/embedded/@joshdhenry/joshhenry-info"),
+        ).toBe(
+            "https://snack.expo.dev/embedded/@joshdhenry/joshhenry-info?preview=true&platform=web&theme=light",
+        );
+    });
 });

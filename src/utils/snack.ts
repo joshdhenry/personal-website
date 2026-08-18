@@ -23,24 +23,37 @@ export const shouldRenderSnackEmbed = (platformOS: string, isCompact: boolean): 
  * to My Device from inside the embed. A malformed value (not an absolute
  * URL) is treated the same as an unset one - falls back to the placeholder
  * card - rather than throwing during render.
+ *
+ * The new URL is built by reconstructing a string and re-parsing it, never
+ * by mutating a URL instance's properties (aside from searchParams.set,
+ * which is a real method, not a property setter): React Native's own
+ * bundled URL polyfill (Libraries/Blob/URL.js) implements every URL
+ * property as a getter only, with no setters at all, so something like
+ * `embedUrl.pathname = ...` throws on native even though it works in a real
+ * browser and in Jest's Node URL.
  */
 export const deriveSnackEmbedUrl = (snackUrl: string): string => {
     if (!snackUrl) {
         return "";
     }
 
-    let embedUrl: URL;
-
     try {
-        embedUrl = new URL(snackUrl);
+        const parsedUrl = new URL(snackUrl);
+        // snackUrl is documented (src/constants/snack.ts) to be the bare
+        // Snack page, never the already-embedded one - but if it's ever set
+        // to the embedded URL by mistake, strip the existing prefix first
+        // rather than doubling it into "/embedded/embedded/...", which
+        // Expo's embed host won't resolve.
+        const pathname = parsedUrl.pathname.startsWith("/embedded/")
+            ? parsedUrl.pathname.slice("/embedded".length)
+            : parsedUrl.pathname;
+        const embedUrl = new URL(`${parsedUrl.origin}/embedded${pathname}`);
+        embedUrl.searchParams.set("preview", "true");
+        embedUrl.searchParams.set("platform", "web");
+        embedUrl.searchParams.set("theme", "light");
+
+        return embedUrl.toString();
     } catch {
         return "";
     }
-
-    embedUrl.pathname = `/embedded${embedUrl.pathname}`;
-    embedUrl.searchParams.set("preview", "true");
-    embedUrl.searchParams.set("platform", "web");
-    embedUrl.searchParams.set("theme", "light");
-
-    return embedUrl.toString();
 };

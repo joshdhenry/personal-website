@@ -23,7 +23,7 @@ import { NavLink } from "./NavLink";
 // designs/README.md's own RN note; native gets the same tint without blur.
 const navBackground = Platform.select({
     web: {
-        backdropFilter: "blur(12px)",
+        backdropFilter: `blur(${navSpace.backdropBlurRadius}px)`,
         backgroundColor: colors.navBackground,
     },
     default: {

@@ -78,4 +78,20 @@ describe("usePressHoverFocus", () => {
         act(() => result.current.handleHoverOut());
         expect(onActiveChange).toHaveBeenLastCalledWith(false);
     });
+
+    it("doesn't drop the reset call when press-in and press-out land in the same update batch", () => {
+        // A keyboard Enter/Space activation on web commonly fires
+        // onPressIn then onPressOut synchronously with no render in
+        // between - simulated here by calling both inside one act().
+        const onActiveChange = jest.fn();
+        const { result } = renderHook(() => usePressHoverFocus(onActiveChange));
+
+        act(() => {
+            result.current.handlePressIn();
+            result.current.handlePressOut();
+        });
+
+        expect(result.current.isActive).toBe(false);
+        expect(onActiveChange).not.toHaveBeenCalled();
+    });
 });

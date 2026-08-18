@@ -388,6 +388,8 @@ export const navSpace = {
      * enough to read as "slides fully offscreen."
      */
     hiddenTranslateY: -64,
+    /** Web-only backdrop blur radius behind the translucent nav background. */
+    backdropBlurRadius: 12,
 };
 
 /**
