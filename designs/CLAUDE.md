@@ -209,9 +209,9 @@ Rules:
 
 ## Content
 
-Section order: Hero, Projects, Skills, Experience, About, Contact. Full anatomy
-and measurements for each are in designs/README.md; what follows is the intent
-and the decisions that are already final.
+Section order: Hero, Projects, Skills, Experience, About, Run this site as an
+app, Contact. Full anatomy and measurements for each are in designs/README.md;
+what follows is the intent and the decisions that are already final.
 
 ### Hero
 
@@ -275,6 +275,53 @@ Remote and hybrid status is part of the company line and must be shown.
 One professional paragraph and one personal one, headshot beside them at desktop
 and above them at narrow widths. The degree is folded into the prose, not shown
 as a chip. Copy is verbatim.
+
+### Run this site as an app
+
+Section id `app`, nav label "Demo". Two-column intro row above a full-width
+Snack card.
+
+- Left column: heading "Run this site as an app", the "iOS + ANDROID" monospace
+  tag, the intro paragraph, and a three-step numbered list (it builds and starts
+  on its own, tap through it or edit the code, switch the platform picker to My
+  Device for Expo Go). On iOS and Android, where the embed never renders (see
+  the native-reader swap below), this heading/paragraph pair swaps to "Run
+  this site on the web" and a shorter paragraph, and the numbered steps are
+  dropped entirely - they describe interacting with the embed, which native
+  readers never see.
+- Right column: the "I CAN DO THIS FOR YOU" card. This is the pitch: one React
+  Native codebase across iOS, Android, and web, native modules where the platform
+  calls for them, over-the-air updates, stakeholders testing real builds on their
+  own phones. It ends in a link to Contact. Keep this card on every platform,
+  including native.
+- Snack card below, spanning the full content width: chrome bar reading
+  "expo snack" with a green "live editor" pill, then the embed at 560px tall.
+- Show the standard embed in full, code pane and simulator side by side. Do not
+  try to crop to the preview: Expo has no parameter for it, the embed's split is
+  responsive, and the visible source is part of the point on this section.
+- Web only. The embedded Snack iframe renders on web at `breakpoint.compact`
+  and wider. On compact-width web, replace it with the "NEEDS A WIDER WINDOW"
+  card: short explanation plus an "Open the Snack" button that opens the Snack
+  URL via `Linking.openURL` - a new tab on web, the system browser on native,
+  no popup sizing. On iOS and Android, where the app is already running
+  natively, replace it instead with a "SEE IT ON THE WEB" card pointing at the
+  live joshhenry.info site - telling a native reader to "run this as an app"
+  makes no sense when the embed, the whole point of that framing, is exactly
+  what's hidden from them. Do not attempt a WebView embed on native.
+- The Snack URL is a single config value. Until Josh publishes it the web build
+  shows a striped placeholder reading "Snack embed loads here"; never ship an
+  invented snack.expo.dev or exp:// address.
+- Implementation: keep the Snack URL in `src/constants/snack.ts` as one
+  exported string, empty until Josh supplies it. Derive the embed URL from it
+  rather than storing two URLs: insert `/embedded/` after the host and append
+  `preview=true&platform=web&theme=light`. `platform=web` matters, it opens on
+  the running web player; `mydevice` would open on the QR tab instead. Leave
+  `supportedPlatforms` at its default so visitors can still switch to My Device.
+  The same bare URL is what the mobile "Open the Snack" button opens with
+  `Linking.openURL`.
+- The embed is an `<iframe>`, which only exists on web. Gate it with
+  `Platform.OS === 'web' && !isCompact`, and keep the fallback card as the
+  default branch so a new platform never renders an empty box.
 
 ### Contact
 

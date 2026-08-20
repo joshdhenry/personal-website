@@ -393,6 +393,77 @@ export const navSpace = {
 };
 
 /**
+ * Escape hatch for the "Run this site as an app" (Demo) section measurements,
+ * same rationale as contactSpace above: exact designs/joshhenry.info.dc.html
+ * `#app` pixel values, named and commented rather than snapped to the
+ * space.* grid.
+ */
+export const demoSpace = {
+    /** Section top/bottom padding at desktop widths (standard 80px). */
+    sectionPaddingVerticalWide: 80,
+    /** Section top/bottom padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingVerticalNarrow: 56,
+    /** Section horizontal padding at desktop widths. */
+    sectionPaddingHorizontalWide: 40,
+    /** Section horizontal padding at widths <= layoutBreakpoint.narrow. */
+    sectionPaddingHorizontalNarrow: 24,
+    /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
+    sectionPaddingHorizontalCompact: 18,
+    /** Section container max-width, matches contactSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Outer column gap between the intro row and the Snack card. */
+    outerColumnGap: 36,
+    /** Two-column intro row grid gap, above layoutBreakpoint.narrow. */
+    introRowGap: 56,
+    /** Left column's internal vertical gap (heading row / paragraph / steps). */
+    introTextColumnGap: 20,
+    /** Gap between the heading and the "iOS + ANDROID" tag in their baseline row. */
+    headingRowGap: 16,
+    /**
+     * Approximates the intro paragraph's 56ch max-width (RN has no ch unit)
+     * at heroSpace.introMaxWidth's ch->px ratio (520/46 ~= 11.3px/ch), same
+     * conversion method aboutSpace.paragraphMaxWidth uses.
+     */
+    introParagraphMaxWidth: 632,
+    /** Numbered steps list: top margin above it, gap between steps. */
+    stepsListTopMargin: 4,
+    stepsGap: 12,
+    /** Gap between a step's mono number and its description text. */
+    stepItemGap: 14,
+    /** Pitch card ("I CAN DO THIS FOR YOU") padding and internal gap. */
+    pitchCardPaddingVertical: 22,
+    pitchCardPaddingHorizontal: 24,
+    pitchCardGap: 12,
+    /**
+     * Snack card chrome bar padding: reuses
+     * heroSpace.terminalChromePaddingVertical/Horizontal directly rather
+     * than duplicating the same 13/18 values under a demo-specific name.
+     */
+    /** "live editor" status dot diameter and its gap from the label text. */
+    liveEditorDotSize: 6,
+    liveEditorGap: 7,
+    /** Snack iframe / placeholder fixed height. */
+    embedHeight: 560,
+    /** "NEEDS A WIDER WINDOW" fallback card padding and internal gap. */
+    fallbackCardPadding: 26,
+    fallbackCardGap: 14,
+    /**
+     * External-link badge (Open the Snack / Open joshhenry.info) padding
+     * reuses contactSpace.badgePaddingVertical/Horizontal directly; only
+     * its gap is demo-specific.
+     */
+    externalLinkBadgeGap: 8,
+    /** No-snack-url placeholder padding and internal gap. */
+    placeholderPadding: 32,
+    placeholderGap: 10,
+    /**
+     * Approximates the placeholder hint line's 34ch max-width, same
+     * conversion method as introParagraphMaxWidth above.
+     */
+    placeholderHintMaxWidth: 384,
+};
+
+/**
  * Escape hatch for Footer section measurements, same rationale as
  * contactSpace above: exact designs/README.md / designs/joshhenry.info.dc.html
  * pixel values, named and commented rather than snapped to the space.* grid.

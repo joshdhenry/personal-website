@@ -35,6 +35,7 @@ a:hover{color:#3730A3;text-decoration:underline}
 <a href="#skills" style="color:#5B6472" style-hover="color:#4338CA;text-decoration:none">Skills</a>
 <a href="#experience" style="color:#5B6472" style-hover="color:#4338CA;text-decoration:none">Experience</a>
 <a href="#about" style="color:#5B6472" style-hover="color:#4338CA;text-decoration:none">About</a>
+<a href="#app" style="color:#5B6472" style-hover="color:#4338CA;text-decoration:none">Demo</a>
 <a href="#contact" style="color:#5B6472" style-hover="color:#4338CA;text-decoration:none">Contact</a>
 </div>
 </div>
@@ -421,6 +422,62 @@ a:hover{color:#3730A3;text-decoration:underline}
 </div>
 </section>
 
+<section id="app" data-r="sect" data-screen-label="Run as an app" style="max-width:1180px;margin:0 auto;padding:80px 40px;box-sizing:border-box;border-top:1px solid #E2E5EA">
+<div data-reveal="1" style="display:flex;flex-direction:column;gap:36px;animation:rise .7s cubic-bezier(.2,.9,.3,1) both">
+
+<div data-r="grid2" style="display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:start">
+<div style="display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:baseline;gap:16px">
+<h2 style="margin:0;font-family:'Space Grotesk',sans-serif;font-size:2rem;font-weight:600;letter-spacing:-.015em">Run this site as an app</h2>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.09em;color:#98A1B0">iOS + ANDROID</span>
+</div>
+<p style="margin:0;font-size:1.0625rem;line-height:1.7;color:#3A424F;max-width:56ch">This page is a React Native and Expo app. The same codebase renders here in the browser and runs natively on iOS and Android, with native navigation, gestures, and scrolling. The Snack below is the running source and a live simulator beside it. Read the code, tap through the app, or run the same build on your own phone in Expo Go.</p>
+
+<ol style="margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px">
+<li style="display:flex;gap:14px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;color:#4338CA;flex:none">01</span><span style="font-size:.9375rem;line-height:1.6;color:#3A424F">The app builds and starts in the simulator on its own. Give it a moment on first load.</span></li>
+<li style="display:flex;gap:14px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;color:#4338CA;flex:none">02</span><span style="font-size:.9375rem;line-height:1.6;color:#3A424F">Scroll and tap inside it the way you would on a phone, or edit the code and watch it reload. Nothing you do here affects the live site.</span></li>
+<li style="display:flex;gap:14px;align-items:baseline"><span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;font-weight:600;color:#4338CA;flex:none">03</span><span style="font-size:.9375rem;line-height:1.6;color:#3A424F">Switch the platform picker to My Device to run the same build natively in Expo Go.</span></li>
+</ol>
+</div>
+
+<div style="background:#fff;border:1px solid #E2E5EA;border-radius:10px;padding:22px 24px;display:flex;flex-direction:column;gap:12px">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.06em;color:#5B6472">I CAN DO THIS FOR YOU</span>
+<p style="margin:0;font-size:.9375rem;line-height:1.7;color:#3A424F">If your product needs to be on iOS, Android, and the web, this is how I build it: one React Native codebase, native modules in Swift, Objective-C, Java, or Kotlin wherever the platform actually calls for them, and over-the-air updates so a fix can ship the same day it lands. Stakeholders test a real build on their own phone from a link, before anything goes near an app store review.</p>
+<a href="#contact" style="font-family:'IBM Plex Mono',monospace;font-size:.8125rem;font-weight:500;align-self:flex-start">Talk to me about your app →</a>
+</div>
+</div>
+
+<div data-r="snack" style="background:#fff;border:1px solid #E2E5EA;border-radius:10px;box-shadow:0 1px 2px rgba(20,24,31,.04),0 18px 44px -18px rgba(20,24,31,.16);overflow:hidden">
+<div style="display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid #E2E5EA;background:#F5F6F8">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#5B6472">expo snack</span>
+<span style="display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#16A34A"><span style="width:6px;height:6px;border-radius:999px;background:#16A34A"></span>live editor</span>
+</div>
+<div data-r="snack-embed">
+<sc-if value="{{ hasSnack }}" hint-placeholder-val="{{ false }}">
+<iframe src="{{ snackSrc }}" title="Expo Snack: joshhenry.info" allow="accelerometer; camera; encrypted-media; geolocation; gyroscope; microphone" style="display:block;width:100%;height:560px;border:0;background:#fff"></iframe>
+</sc-if>
+</div>
+<div data-r="snack-link" style="display:none;padding:26px;flex-direction:column;gap:14px;align-items:flex-start">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;letter-spacing:.06em;color:#5B6472">ON A COMPUTER</span>
+<p style="margin:0;font-size:.9375rem;line-height:1.7;color:#3A424F">The editor and simulator need a desktop browser. You are already on a phone, so open the Snack there instead and run it in Expo Go.</p>
+<sc-if value="{{ hasSnack }}" hint-placeholder-val="{{ false }}">
+<a href="{{ snackWebUrl }}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;padding:11px 16px;background:#fff;border:1px solid #E2E5EA;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:.8125rem;font-weight:500;color:#14181F" style-hover="border-color:#4338CA;color:#4338CA;text-decoration:none">Open the Snack →</a>
+</sc-if>
+<sc-if value="{{ noSnack }}" hint-placeholder-val="{{ true }}">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.75rem;color:#B6BDC7">Snack link goes here once published</span>
+</sc-if>
+</div>
+<sc-if value="{{ noSnack }}" hint-placeholder-val="{{ true }}">
+<div data-r="snack-embed" style="height:560px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:32px;box-sizing:border-box;text-align:center;background:repeating-linear-gradient(135deg,#FAFBFC 0 10px,#F5F6F8 10px 20px)">
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.8125rem;color:#5B6472">Snack embed loads here</span>
+<span style="font-family:'IBM Plex Mono',monospace;font-size:.6875rem;line-height:1.7;color:#98A1B0;max-width:34ch">Set the Snack URL in Tweaks, for example snack.expo.dev/@joshdhenry/joshhenry-info</span>
+</div>
+</sc-if>
+</div>
+
+</div>
+</section>
+
 <section id="contact" data-r="sect" style="max-width:1180px;margin:0 auto;padding:80px 40px 96px;box-sizing:border-box;border-top:1px solid #E2E5EA">
 <div data-reveal="1" data-r="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;animation:rise .7s cubic-bezier(.2,.9,.3,1) both">
 <div style="display:flex;flex-direction:column;gap:18px;align-items:center;text-align:center">
@@ -453,7 +510,7 @@ a:hover{color:#3730A3;text-decoration:underline}
 
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;snackUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Expo Snack&quot;}}">
 class Component extends DCLogic {
   state = { typed: '', open: {} };
 
@@ -474,6 +531,8 @@ class Component extends DCLogic {
   [data-r="about"] img { max-width: 200px !important; }
   [data-r="skillrow"] { grid-template-columns: 1fr !important; gap: 8px !important; }
   [data-r="log"] { height: auto !important; }
+  [data-r="snack-embed"] { display: none !important; }
+  [data-r="snack-link"] { display: flex !important; }
   [data-r="navrow"] { padding-left: 20px !important; padding-right: 20px !important; }
   [data-r="navlinks"] { gap: 16px !important; font-size: 0.8125rem !important; }
   [data-r="exp"] { padding-left: 26px !important; }
@@ -614,8 +673,13 @@ class Component extends DCLogic {
 
   renderVals() {
     const o = this.state.open;
+    const snack = (this.props.snackUrl || '').trim();
     const v = {
       typed: this.state.typed,
+      snackSrc: snack ? snack.replace('snack.expo.dev/', 'snack.expo.dev/embedded/').replace('/embedded/embedded/', '/embedded/') + (snack.indexOf('?') === -1 ? '?preview=true&platform=web&theme=light' : '&preview=true&platform=web&theme=light') : '',
+      snackWebUrl: snack,
+      hasSnack: !!snack,
+      noSnack: !snack,
       logs: [
         { mark: '·', name: 'JavaScript / TypeScript', target: '8 yrs', delay: '1.5s' },
         { mark: '·', name: 'React Native', target: '6.25 yrs', delay: '1.9s' },

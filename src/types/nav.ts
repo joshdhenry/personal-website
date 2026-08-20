@@ -2,7 +2,7 @@ import type { MutableRefObject } from "react";
 import type { ScrollView, TextStyle } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 
-export type SectionId = "top" | "projects" | "skills" | "experience" | "about" | "contact";
+export type SectionId = "top" | "projects" | "skills" | "experience" | "about" | "demo" | "contact";
 
 /**
  * A section's last-measured scroll offset, or null until its onLayout has

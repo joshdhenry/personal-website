@@ -5,12 +5,13 @@ describe("nav content", () => {
         expect(navWordmarkLabel).toBe("JOSH HENRY");
     });
 
-    it("has exactly 5 links, in Projects/Skills/Experience/About/Contact order", () => {
+    it("has exactly 6 links, in Projects/Skills/Experience/About/Demo/Contact order", () => {
         expect(navLinks.map((link) => link.label)).toEqual([
             "Projects",
             "Skills",
             "Experience",
             "About",
+            "Demo",
             "Contact",
         ]);
     });
