@@ -4,6 +4,8 @@ import { StyleSheet, View } from "react-native";
 import {
     demoChromeLabel,
     demoLiveEditorLabel,
+    demoNestedSnackHint,
+    demoNestedSnackLabel,
     demoPlaceholderHint,
     demoPlaceholderLabel,
 } from "@/data/demo";
@@ -31,6 +33,7 @@ const iframeStyle: CSSProperties = {
 };
 
 export const DemoSnackCard = ({
+    isInsideSnack,
     isNativeApp,
     shouldRenderIframe,
     snackUrl,
@@ -40,7 +43,15 @@ export const DemoSnackCard = ({
 
     return (
         <View style={[styles.card, shadow.terminalCard]}>
-            {shouldRenderIframe ? (
+            {isInsideSnack ? (
+                <>
+                    <DemoSnackChromeBar
+                        label={demoChromeLabel}
+                        liveEditorLabel={demoLiveEditorLabel}
+                    />
+                    <DemoSnackPlaceholder hint={demoNestedSnackHint} label={demoNestedSnackLabel} />
+                </>
+            ) : shouldRenderIframe ? (
                 <>
                     <DemoSnackChromeBar
                         label={demoChromeLabel}

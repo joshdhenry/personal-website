@@ -24,9 +24,7 @@ export const contactAvailabilityParagraph =
 export const contactFormspreeEndpoint = "https://formspree.io/f/xljrgjpe";
 
 // Metro asset require, not a JS module import.
-const resumeAsset = Asset.fromModule(
-    require("../../assets/documents/Josh Henry - Portfolio Resume.pdf"),
-);
+const resumeAsset = Asset.fromModule(require("../../assets/documents/josh-henry-resume.pdf"));
 
 export const contactBadges: readonly ContactBadgeDescriptor[] = [
     {

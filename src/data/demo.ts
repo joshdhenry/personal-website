@@ -22,7 +22,10 @@
  * copy, reframed per Josh's request so mobile readers (who can't run the
  * embed at all) are told to go see this on the web, rather than being told
  * to "run this site as an app" when the embed, the whole point of that
- * framing, is exactly what's hidden from them.
+ * framing, is exactly what's hidden from them; and demoNestedSnackLabel/
+ * demoNestedSnackHint, new copy for a case the design doesn't cover at all -
+ * this app running as the Snack embed itself, where showing the normal
+ * iframe would try to nest the page inside itself.
  */
 
 import type { DemoStep } from "@/types/demo";
@@ -81,6 +84,11 @@ export const demoPlaceholderLabel = "Snack embed loads here";
 
 export const demoPlaceholderHint =
     "Set the Snack URL in src/constants/snack.ts, for example snack.expo.dev/@joshdhenry/joshhenry-info";
+
+export const demoNestedSnackLabel = "THIS IS THAT SNACK";
+
+export const demoNestedSnackHint =
+    "You're already inside the embed, so it can't nest inside itself here. Open joshhenry.info directly to see this section in place.";
 
 export const demoNativeAppLabel = "SEE IT ON THE WEB";
 

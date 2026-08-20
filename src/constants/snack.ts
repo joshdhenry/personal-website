@@ -1,7 +1,6 @@
 /**
  * The published Expo Snack URL for the "Run this site as an app" demo
- * section (e.g. "https://snack.expo.dev/@joshdhenry/joshhenry-info"). Empty
- * until Josh publishes the Snack; the Demo section renders its placeholder
- * state while this is empty. Never fill this with an invented address.
+ * section. The Demo section renders its placeholder state if this is ever
+ * emptied out.
  */
-export const snackUrl = "";
+export const snackUrl = "https://snack.expo.dev/@joshdhenry/joshhenry.info";
