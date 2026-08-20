@@ -144,7 +144,7 @@ export default () => {
                         name="description"
                     />
                 </Head>
-                <Hero />
+                <Hero scrollY={scrollY} />
                 <View onLayout={onProjectsLayout}>
                     <ProjectsSection />
                 </View>

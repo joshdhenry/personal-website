@@ -5,6 +5,14 @@ import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
 /**
+ * The page's scroll-driven effects (designs/README.md's "Scroll-driven
+ * effects"): the sticky nav's reveal threshold, its section highlight, and
+ * the hero terminal card's parallax drift. All are pure functions of the
+ * shared scrollY value, so all are worklets, callable directly from a
+ * UI-thread animation.
+ */
+
+/**
  * Whether the sticky nav should be visible at the given scroll position.
  * Worklet so StickyNav's useAnimatedReaction can call it on the UI thread.
  * @param scrollY - Current vertical scroll offset in px.
@@ -114,4 +122,22 @@ export const resolveCurrentSectionId = (
     }
 
     return currentSectionId;
+};
+
+/**
+ * Hero terminal card scroll parallax: translateY = clamp((scrollY -
+ * scrollOffset) * multiplier, -maxOffset, maxOffset). Marked as a worklet so
+ * TerminalCard's useAnimatedStyle can call it directly on the UI thread.
+ */
+export const clampParallaxOffset = (
+    scrollY: number,
+    scrollOffset: number,
+    multiplier: number,
+    maxOffset: number,
+): number => {
+    "worklet";
+
+    const rawOffset = (scrollY - scrollOffset) * multiplier;
+
+    return Math.min(maxOffset, Math.max(-maxOffset, rawOffset));
 };

@@ -3,6 +3,7 @@ import type { ScrollView } from "react-native";
 import type { SectionOffsets } from "@/types/nav";
 
 import {
+    clampParallaxOffset,
     hasSectionOrderReachedTarget,
     isAtScrollBottom,
     readInitialScrollState,
@@ -159,5 +160,23 @@ describe("resolveCurrentSectionId", () => {
         expect(
             resolveCurrentSectionId(3000 - navHeight - 0.5, sectionOffsets, navHeight, false),
         ).toBe("experience");
+    });
+});
+
+describe("clampParallaxOffset", () => {
+    it("returns 0 at the scroll offset", () => {
+        expect(clampParallaxOffset(120, 120, -0.055, 28)).toBeCloseTo(0);
+    });
+
+    it("scales linearly within the clamp range", () => {
+        expect(clampParallaxOffset(220, 120, -0.055, 28)).toBeCloseTo(-5.5);
+    });
+
+    it("clamps to the positive max", () => {
+        expect(clampParallaxOffset(-1000, 120, -0.055, 28)).toBe(28);
+    });
+
+    it("clamps to the negative max", () => {
+        expect(clampParallaxOffset(2000, 120, -0.055, 28)).toBe(-28);
     });
 });

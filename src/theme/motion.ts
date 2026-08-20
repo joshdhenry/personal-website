@@ -15,6 +15,12 @@ export const motion = {
     navRevealScrollY: 560,
     /** ScrollView's onScroll sampling interval (ms), ~60fps - how often scrollY.value (and so the sticky nav's reveal check) updates while scrolling. */
     scrollEventThrottleMs: 16,
+    /** Hero terminal card scroll parallax: translateY = clamp((scrollY - scrollOffset) * multiplier, -maxOffset, maxOffset). */
+    parallax: {
+        maxOffset: 28,
+        multiplier: -0.055,
+        scrollOffset: 120,
+    },
     // Rise and cardIn entrances are spring-driven (motion.spring.gentle), per
     // CLAUDE.md's "Reanimated springs, not linear tweens, everywhere" — so
     // they have delay tokens (below) but no duration token; a spring's settle
