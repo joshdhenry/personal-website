@@ -43,9 +43,9 @@ export default () => {
     // A plain JS onScroll, not Animated.ScrollView + useAnimatedScrollHandler:
     // Animated.ScrollView's web ref doesn't support imperative .scrollTo(),
     // which scrollToSection below needs. Writing to a shared value from JS is
-    // standard, documented Reanimated usage - the UI-thread worklet reading
-    // scrollY.value (StickyNav's reveal) doesn't care whether the write came
-    // from JS or UI thread.
+    // standard, documented Reanimated usage - the UI-thread worklets reading
+    // scrollY.value (StickyNav's reveal, TerminalCard's parallax) don't care
+    // whether the write came from JS or UI thread.
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         scrollY.value = event.nativeEvent.contentOffset.y;
     };
