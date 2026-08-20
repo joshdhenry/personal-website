@@ -312,6 +312,35 @@ export const typeScale = {
         fontWeight: "400",
     } satisfies TextStyleToken,
 
+    // Sticky nav specific entries, values taken directly from
+    // designs/joshhenry.info.dc.html's literal nav styles and
+    // designs/README.md's narrow/compact responsive notes.
+    navWordmark: {
+        fontFamily: fontFamily.plexMonoSemiBold,
+        fontSize: 13, // .8125rem
+        lineHeight: 16,
+        fontWeight: "600",
+        letterSpacing: 0.78, // .06em * 13
+    } satisfies TextStyleToken,
+    navLink: {
+        fontFamily: fontFamily.interMedium,
+        fontSize: 14, // .875rem
+        lineHeight: 21,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    navLinkNarrow: {
+        fontFamily: fontFamily.interMedium,
+        fontSize: 13, // .8125rem, <= layoutBreakpoint.narrow
+        lineHeight: 19.5,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+    navLinkCompact: {
+        fontFamily: fontFamily.interMedium,
+        fontSize: 12, // .75rem, <= layoutBreakpoint.compact
+        lineHeight: 18,
+        fontWeight: "500",
+    } satisfies TextStyleToken,
+
     // Footer-specific entry, shared by the note, "Source" link, and
     // copyright line. Value taken directly from designs/joshhenry.info.dc.html's
     // literal <footer> styles - none of the three set a font-weight, so

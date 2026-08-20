@@ -15,6 +15,16 @@ export const space = {
 };
 
 /**
+ * The visible keyboard focus ring's outline offset/width, shared by every
+ * interactive element that renders one (nav links, badges, links) - one
+ * pair of values rather than the same two literals repeated per component.
+ */
+export const focusRingSpace = {
+    outlineOffset: 2,
+    outlineWidth: 2,
+};
+
+/**
  * Escape hatch for measurements that come directly from the high-fidelity
  * designs/README.md spec and do not land cleanly on the 4px grid above.
  * Rounding these to the nearest space.* token would be a visible regression
@@ -346,6 +356,40 @@ export const contactSpace = {
     submitButtonPaddingHorizontal: 22,
     /** Gap between the submit button and the inline status text below it. */
     statusMessageMarginTop: 10,
+};
+
+/**
+ * Escape hatch for the sticky nav's measurements, same rationale as
+ * heroSpace above: exact designs/README.md pixel values, named and commented
+ * rather than snapped to the space.* grid.
+ */
+export const navSpace = {
+    /** Inner row container max-width, matches heroSpace.containerMaxWidth. */
+    containerMaxWidth: 1180,
+    /** Row padding at desktop widths. */
+    rowPaddingVertical: 14,
+    rowPaddingHorizontal: 40,
+    /** Row padding at widths <= layoutBreakpoint.narrow. */
+    rowPaddingHorizontalNarrow: 20,
+    /** Gap between the wordmark and the links group. */
+    rowGap: 24,
+    /** Gap between links at desktop widths. */
+    linkGap: 26,
+    /** Gap between links at widths <= layoutBreakpoint.narrow. */
+    linkGapNarrow: 16,
+    /** Gap between links at widths <= layoutBreakpoint.compact. */
+    linkGapCompact: 12,
+    /** Stack order above page content, matches the prototype's z-index: 50. */
+    stackOrder: 50,
+    /**
+     * Hidden-state translateY. The prototype uses translateY(-100%), a
+     * percentage of the nav's own height; RN transforms are absolute px, so
+     * this approximates that height (row padding + line height) closely
+     * enough to read as "slides fully offscreen."
+     */
+    hiddenTranslateY: -64,
+    /** Web-only backdrop blur radius behind the translucent nav background. */
+    backdropBlurRadius: 12,
 };
 
 /**
