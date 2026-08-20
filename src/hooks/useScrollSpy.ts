@@ -44,6 +44,8 @@ export const useScrollSpy = ({
             // Single writer for scrollY, so it can never desync from
             // latestScrollRef below - every sync path (onScroll, bfcache
             // restore, layout resync) reads the same real position here.
+            // Consumed by both StickyNav's reveal reaction and TerminalCard's
+            // scroll parallax worklet.
             scrollY.value = scrollOffset;
             latestScrollRef.current = { isAtBottom, scrollOffset };
             const nextSectionId = resolveCurrentSectionId(
