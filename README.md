@@ -19,18 +19,21 @@ yarn install
 ## Run
 
 ```
-yarn expo start --localhost
+yarn start
 ```
 
 Then press `w` for web, `i` for iOS (Expo Go), or `a` for Android (Expo Go).
 Or jump straight to one platform: `yarn web`, `yarn ios`, `yarn android`.
 
+Android needs an emulator or physical device already reachable via `adb`; if
+a physical device is connected, Expo targets that over booting an emulator.
+
 ## Test, lint, format
 
 ```
-yarn test          # Jest — verbose output, HTML coverage report at coverage/
-yarn lint          # ESLint (expo lint)
-yarn format         # Prettier, writes in place
+yarn test    # Jest — verbose output, HTML coverage report at coverage/
+yarn lint    # ESLint (expo lint)
+yarn format  # Prettier, writes in place
 ```
 
 ## Build
@@ -46,7 +49,7 @@ server, no SSR.
 
 See [CLAUDE.md](./CLAUDE.md)'s "Project structure" section for a full
 breakdown of src/app, src/components, src/theme, src/data, src/types,
-src/utils, and src/hooks.
+src/utils, src/constants, and src/hooks.
 
 ## License
 

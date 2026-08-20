@@ -15,6 +15,20 @@ export const shouldRenderSnackEmbed = (platformOS: string, isCompact: boolean): 
     platformOS === "web" && !isCompact;
 
 /**
+ * Detects whether this build is currently running as the embedded Snack
+ * itself (loaded inside Expo Snack's own web-preview host), not just any
+ * arbitrary iframe - joshhenry.info could theoretically be embedded
+ * elsewhere too, but that's a one-level embed, not the runaway case this
+ * guards against. Rendering the Demo section's own Snack iframe while
+ * already running as that Snack would embed the page inside itself,
+ * repeating indefinitely. Snack's web-preview host consistently serves
+ * projects from snack-runtime.eascdn.net (confirmed via direct inspection
+ * of a running embed's iframe src), so an exact hostname match is enough.
+ */
+export const isRunningInsideSnack = (hostname: string): boolean =>
+    hostname === "snack-runtime.eascdn.net";
+
+/**
  * Derives the embeddable Snack URL from the bare Snack URL in
  * src/constants/snack.ts. Inserts "/embedded" after the host and forces
  * platform=web so the embed opens on the running web player rather than the
