@@ -12,11 +12,11 @@ import type { SectionId, UseScrollToSectionParams } from "@/types/nav";
  *
  * StickyNav is a position: absolute overlay, not part of scroll flow, so a
  * raw section offset lands that section's top edge (and so its heading)
- * directly under the nav once it's revealed. navHeightRef (StickyNav's own
- * measured height) is subtracted so the target clears the nav instead.
+ * directly under the nav once it's revealed. navHeightEstimate is subtracted
+ * so the target clears the nav instead.
  */
 export const useScrollToSection = ({
-    navHeightRef,
+    navHeightEstimate,
     scrollViewRef,
     sectionOffsets,
 }: UseScrollToSectionParams) =>
@@ -30,8 +30,8 @@ export const useScrollToSection = ({
 
             scrollViewRef.current?.scrollTo({
                 animated: true,
-                y: Math.max(0, offset - navHeightRef.current),
+                y: Math.max(0, offset - navHeightEstimate),
             });
         },
-        [navHeightRef, scrollViewRef, sectionOffsets],
+        [navHeightEstimate, scrollViewRef, sectionOffsets],
     );

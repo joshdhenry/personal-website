@@ -17,18 +17,10 @@ import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
+import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 import { readScrollableNodeScrollTop } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
-
-const createSectionOffsets = (): SectionOffsets => ({
-    about: null,
-    contact: null,
-    experience: null,
-    projects: null,
-    skills: null,
-    top: 0,
-});
 
 export default () => {
     const fontsLoaded = useFontsLoaded();
@@ -36,12 +28,25 @@ export default () => {
 
     const scrollY = useSharedValue(0);
     const scrollViewRef = useRef<ScrollView>(null);
-    const sectionOffsets = useRef<SectionOffsets>(createSectionOffsets());
-    const navHeightRef = useRef(0);
-    const scrollToSection = useScrollToSection({ navHeightRef, scrollViewRef, sectionOffsets });
-    const handleNavHeightChange = (height: number) => {
-        navHeightRef.current = height;
-    };
+    const sectionOffsets = useRef<SectionOffsets>({
+        about: null,
+        contact: null,
+        experience: null,
+        projects: null,
+        skills: null,
+        top: 0,
+    });
+    // navSpace.hiddenTranslateY already approximates the nav's rendered
+    // height (row padding + line height) for the reveal animation's
+    // slide-offscreen distance - reused here rather than measuring the nav's
+    // actual layout, since a section's scroll target needs the same "how
+    // tall is the nav" answer to land below it instead of underneath it.
+    const navHeightEstimate = Math.abs(navSpace.hiddenTranslateY) + insets.top;
+    const scrollToSection = useScrollToSection({
+        navHeightEstimate,
+        scrollViewRef,
+        sectionOffsets,
+    });
 
     // scrollY starts at 0, but the browser (e.g. bfcache back/forward
     // navigation) can leave the ScrollView's underlying DOM node already
@@ -118,11 +123,7 @@ export default () => {
                 <Footer />
             </ScrollView>
 
-            <StickyNav
-                onHeightChange={handleNavHeightChange}
-                onLinkPress={scrollToSection}
-                scrollY={scrollY}
-            />
+            <StickyNav onLinkPress={scrollToSection} scrollY={scrollY} />
         </View>
     );
 };

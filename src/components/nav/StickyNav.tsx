@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import type { LayoutChangeEvent } from "react-native";
+import { useEffect, useRef } from "react";
 import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
@@ -33,7 +32,7 @@ const navBackground = Platform.select({
     },
 });
 
-export const StickyNav = ({ onHeightChange, onLinkPress, scrollY }: StickyNavProps) => {
+export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
@@ -44,6 +43,7 @@ export const StickyNav = ({ onHeightChange, onLinkPress, scrollY }: StickyNavPro
     const isReducedMotionPreferred = useIsReducedMotionPreferred();
     const opacity = useSharedValue(0);
     const translateY = useSharedValue(hiddenTranslateY);
+    const hasMountedRef = useRef(false);
 
     // A withTiming animation targets hiddenTranslateY/opacity as they were
     // when the animation started; a device rotation mid-transition (which
@@ -52,8 +52,16 @@ export const StickyNav = ({ onHeightChange, onLinkPress, scrollY }: StickyNavPro
     // on its own, visibly desyncing the two. Recomputing both directly
     // whenever hiddenTranslateY changes cancels any in-flight animation and
     // snaps both to the position/opacity matching the current insets and
-    // reveal state, whether the nav is resting or mid-transition.
+    // reveal state, whether the nav is resting or mid-transition. The
+    // reaction below already seeds the correct initial state on its own
+    // first evaluation, so this effect skips its own mount-time run - its
+    // job starts at the first hiddenTranslateY change after that.
     useEffect(() => {
+        if (!hasMountedRef.current) {
+            hasMountedRef.current = true;
+            return;
+        }
+
         const shouldReveal = shouldRevealNav(scrollY.value, motion.navRevealScrollY);
         translateY.value = shouldReveal ? 0 : hiddenTranslateY;
         opacity.value = shouldReveal ? 1 : 0;
@@ -118,14 +126,9 @@ export const StickyNav = ({ onHeightChange, onLinkPress, scrollY }: StickyNavPro
     ];
     const linksRowStyle = [styles.linksRow, { gap: linkGap }];
     const navAnimatedStyle = [styles.nav, navBackground, revealStyle];
-    // The nav's rendered height (independent of its opacity/translateY reveal
-    // state, which are transforms and don't affect layout) - reported up so
-    // scrollToSection can land a section below the nav instead of under it.
-    const handleLayout = (event: LayoutChangeEvent) =>
-        onHeightChange(event.nativeEvent.layout.height);
 
     return (
-        <Animated.View onLayout={handleLayout} style={navAnimatedStyle}>
+        <Animated.View style={navAnimatedStyle}>
             <View style={rowStyle}>
                 <NavLink
                     accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
@@ -140,7 +143,7 @@ export const StickyNav = ({ onHeightChange, onLinkPress, scrollY }: StickyNavPro
                         <NavLink
                             accessibilityLabel={link.label}
                             defaultColor={colors.inkMuted}
-                            key={link.id}
+                            key={link.sectionId}
                             label={link.label}
                             labelStyle={linkLabelStyle}
                             onLinkPress={onLinkPress}

@@ -7,11 +7,10 @@ describe("useScrollToSection", () => {
         const scrollTo = jest.fn();
         const scrollViewRef = { current: { scrollTo } };
         const sectionOffsets = { current: { about: 1200, contact: 3000, top: 0 } };
-        const navHeightRef = { current: 64 };
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightRef,
+                navHeightEstimate: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),
@@ -26,11 +25,10 @@ describe("useScrollToSection", () => {
         const scrollTo = jest.fn();
         const scrollViewRef = { current: { scrollTo } };
         const sectionOffsets = { current: { top: 0 } };
-        const navHeightRef = { current: 64 };
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightRef,
+                navHeightEstimate: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),
@@ -44,11 +42,10 @@ describe("useScrollToSection", () => {
     it("does nothing when the ScrollView ref isn't attached yet", () => {
         const scrollViewRef = { current: null };
         const sectionOffsets = { current: { top: 0 } };
-        const navHeightRef = { current: 64 };
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightRef,
+                navHeightEstimate: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),
@@ -61,11 +58,10 @@ describe("useScrollToSection", () => {
         const scrollTo = jest.fn();
         const scrollViewRef = { current: { scrollTo } };
         const sectionOffsets = { current: { contact: null, top: 0 } };
-        const navHeightRef = { current: 64 };
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightRef,
+                navHeightEstimate: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),

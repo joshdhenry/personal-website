@@ -13,7 +13,6 @@ export type SectionId = "top" | "projects" | "skills" | "experience" | "about" |
 export type SectionOffsets = Record<SectionId, number | null>;
 
 export type NavLinkDescriptor = {
-    id: string;
     label: string;
     sectionId: SectionId;
 };
@@ -28,13 +27,12 @@ export type NavLinkProps = {
 };
 
 export type StickyNavProps = {
-    onHeightChange: (height: number) => void;
     onLinkPress: (sectionId: SectionId) => void;
     scrollY: SharedValue<number>;
 };
 
 export type UseScrollToSectionParams = {
-    navHeightRef: MutableRefObject<number>;
+    navHeightEstimate: number;
     scrollViewRef: MutableRefObject<ScrollView | null>;
     sectionOffsets: MutableRefObject<SectionOffsets>;
 };

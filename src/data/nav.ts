@@ -8,9 +8,9 @@ import type { NavLinkDescriptor } from "@/types/nav";
 export const navWordmarkLabel = "JOSH HENRY";
 
 export const navLinks: readonly NavLinkDescriptor[] = [
-    { id: "projects", label: "Projects", sectionId: "projects" },
-    { id: "skills", label: "Skills", sectionId: "skills" },
-    { id: "experience", label: "Experience", sectionId: "experience" },
-    { id: "about", label: "About", sectionId: "about" },
-    { id: "contact", label: "Contact", sectionId: "contact" },
+    { label: "Projects", sectionId: "projects" },
+    { label: "Skills", sectionId: "skills" },
+    { label: "Experience", sectionId: "experience" },
+    { label: "About", sectionId: "about" },
+    { label: "Contact", sectionId: "contact" },
 ];
