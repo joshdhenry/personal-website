@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
     useAnimatedStyle,
@@ -107,9 +107,12 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
         : isNarrow
           ? typeScale.navLinkNarrow
           : typeScale.navLink;
-    const rowPaddingHorizontal = isNarrow
-        ? navSpace.rowPaddingHorizontalNarrow
-        : navSpace.rowPaddingHorizontal;
+    const rowPaddingHorizontal = isCompact
+        ? navSpace.rowPaddingHorizontalCompact
+        : isNarrow
+          ? navSpace.rowPaddingHorizontalNarrow
+          : navSpace.rowPaddingHorizontal;
+    const rowGap = isCompact ? navSpace.rowGapCompact : navSpace.rowGap;
     const linkGap = isCompact
         ? navSpace.linkGapCompact
         : isNarrow
@@ -119,12 +122,24 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
     const rowStyle = [
         styles.row,
         {
-            gap: navSpace.rowGap,
+            gap: rowGap,
             paddingHorizontal: rowPaddingHorizontal,
             paddingTop: navSpace.rowPaddingVertical + insets.top,
         },
     ];
-    const linksRowStyle = [styles.linksRow, { gap: linkGap }];
+    // Even with the tighter *Compact tokens above, the 5 links + wordmark
+    // are right at the edge of fitting a real phone width - comfortable on
+    // iPhone-class widths, tight-but-fitting down to ~380px, and still short
+    // on the smallest/oldest Android widths or with large accessibility text
+    // scaling. flexShrink: 1 lets this ScrollView give up space to the
+    // wordmark instead of forcing an overflow; when it's squeezed narrower
+    // than its content, the excess becomes horizontally scrollable rather
+    // than clipped. Everywhere content already fits, it sizes to content and
+    // never scrolls - visually identical to a plain row.
+    const linksContentStyle = [
+        styles.linksRow,
+        { gap: linkGap, paddingRight: rowPaddingHorizontal },
+    ];
     const navAnimatedStyle = [styles.nav, navBackground, revealStyle];
 
     return (
@@ -138,7 +153,12 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
                     onLinkPress={onLinkPress}
                     sectionId="top"
                 />
-                <View style={linksRowStyle}>
+                <ScrollView
+                    contentContainerStyle={linksContentStyle}
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    style={styles.linksScroll}
+                >
                     {navLinks.map((link) => (
                         <NavLink
                             accessibilityLabel={link.label}
@@ -150,7 +170,7 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
                             sectionId={link.sectionId}
                         />
                     ))}
-                </View>
+                </ScrollView>
             </View>
         </Animated.View>
     );
@@ -160,6 +180,9 @@ const styles = StyleSheet.create({
     linksRow: {
         alignItems: "center",
         flexDirection: "row",
+    },
+    linksScroll: {
+        flexShrink: 1,
     },
     nav: {
         borderBottomColor: colors.border,

@@ -385,14 +385,26 @@ export const navSpace = {
     rowPaddingHorizontal: 40,
     /** Row padding at widths <= layoutBreakpoint.narrow. */
     rowPaddingHorizontalNarrow: 20,
+    /**
+     * Row padding at widths <= layoutBreakpoint.compact. The wordmark + 5
+     * links' combined content (~379px) barely fits real phone widths at
+     * all - this and the other *Compact tokens below are deliberately
+     * tighter than rowPaddingHorizontalNarrow to claw back the ~30px
+     * needed. StickyNav's links row is still a horizontal ScrollView as a
+     * fallback for anything narrower still (e.g. large accessibility text
+     * scaling), so under-fitting here degrades to scrollable, not clipped.
+     */
+    rowPaddingHorizontalCompact: 16,
     /** Gap between the wordmark and the links group. */
     rowGap: 24,
+    /** Gap between the wordmark and the links group at widths <= layoutBreakpoint.compact. */
+    rowGapCompact: 12,
     /** Gap between links at desktop widths. */
     linkGap: 26,
     /** Gap between links at widths <= layoutBreakpoint.narrow. */
     linkGapNarrow: 16,
     /** Gap between links at widths <= layoutBreakpoint.compact. */
-    linkGapCompact: 12,
+    linkGapCompact: 8,
     /** Stack order above page content, matches the prototype's z-index: 50. */
     stackOrder: 50,
     /**
