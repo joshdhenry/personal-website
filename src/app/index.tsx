@@ -66,6 +66,21 @@ export default () => {
             setCurrentSectionId(nextSectionId);
         }
     };
+    // An animated scrollTo() doesn't reliably fire a final onScroll event
+    // exactly at its settled position (the easing curve's last sampled
+    // frame can land a fraction of a pixel short of the target) - left to
+    // resolveCurrentSectionId's strict >= threshold alone, clicking About
+    // could settle the scroll there while the nav kept showing Experience
+    // until the next manual scroll nudged a fresh, accurate onScroll event
+    // through. Since a click already tells us exactly which section the
+    // user means, set it immediately rather than waiting on scroll position
+    // to catch up - onScroll continues to take over normally from here for
+    // any further manual scrolling.
+    const handleLinkPress = (sectionId: SectionId) => {
+        currentSectionIdRef.current = sectionId;
+        setCurrentSectionId(sectionId);
+        scrollToSection(sectionId);
+    };
 
     // scrollY starts at 0, but the browser (e.g. bfcache back/forward
     // navigation) can leave the ScrollView's underlying DOM node already
@@ -159,7 +174,7 @@ export default () => {
 
             <StickyNav
                 currentSectionId={currentSectionId}
-                onLinkPress={scrollToSection}
+                onLinkPress={handleLinkPress}
                 scrollY={scrollY}
             />
         </View>
