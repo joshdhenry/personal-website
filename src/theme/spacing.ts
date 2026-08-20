@@ -402,6 +402,18 @@ export const navSpace = {
      * enough to read as "slides fully offscreen."
      */
     hiddenTranslateY: -64,
+    /**
+     * Nav row height estimate excluding insets.top (rowPaddingVertical * 2 +
+     * typeScale.navLink's 21px line-height, the tallest of navWordmark/
+     * navLink/navLinkNarrow/navLinkCompact - the desktop breakpoint's row is
+     * the tallest one, so this is a safe over-estimate at narrow/compact
+     * widths too, never an under-estimate). Used by useScrollToSection to
+     * land a target below the nav rather than underneath it - kept as its
+     * own precisely-derived value rather than reusing hiddenTranslateY,
+     * which is deliberately more generous for its own "fully offscreen"
+     * purpose.
+     */
+    navHeightEstimate: 49,
     /** Web-only backdrop blur radius behind the translucent nav background. */
     backdropBlurRadius: 12,
 };

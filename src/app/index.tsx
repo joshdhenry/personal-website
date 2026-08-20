@@ -36,12 +36,7 @@ export default () => {
         skills: null,
         top: 0,
     });
-    // navSpace.hiddenTranslateY already approximates the nav's rendered
-    // height (row padding + line height) for the reveal animation's
-    // slide-offscreen distance - reused here rather than measuring the nav's
-    // actual layout, since a section's scroll target needs the same "how
-    // tall is the nav" answer to land below it instead of underneath it.
-    const navHeightEstimate = Math.abs(navSpace.hiddenTranslateY) + insets.top;
+    const navHeightEstimate = navSpace.navHeightEstimate + insets.top;
     const scrollToSection = useScrollToSection({
         navHeightEstimate,
         scrollViewRef,
