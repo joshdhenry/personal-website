@@ -117,14 +117,15 @@ extra}` return — no clean way to interleave a spread). Array element order
   never declared inline in the component/hook/theme file that uses it; see
   "No barrel imports" below
 - src/utils/ pure helper/utility functions, aliased via `@/utils/*`; grouped
-  and named by the domain they deal with (e.g. `scroll.ts` for the page's
-  scroll-driven effects), never by an individual function's own name; every
-  util file has a colocated `*.test.ts`. Exports functions only.
+  and named by the domain they deal with (e.g. `snack.ts` for everything Snack
+  embed-related, `scroll.ts` for the page's scroll-driven effects), never by
+  an individual function's own name; every util file has a colocated
+  `*.test.ts`. Exports functions only.
 - src/constants/ every named, non-visual behavioral/technical constant
-  (thresholds, timeouts, integration endpoints — see src/data/ above for the
-  data-vs-constant distinction), one file per domain — regardless of whether
-  it's exported or module-local to a hook/component/util. Visual design
-  values still belong in theme/, not here.
+  (thresholds, timeouts, integration endpoints — e.g. `snack.ts`'s published
+  Snack URL — see src/data/ above for the data-vs-constant distinction), one
+  file per domain — regardless of whether it's exported or module-local to a
+  hook/component/util. Visual design values still belong in theme/, not here.
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/

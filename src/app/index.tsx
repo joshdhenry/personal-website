@@ -7,6 +7,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AboutSection } from "@/components/about/AboutSection";
 import { ContactSection } from "@/components/contact/ContactSection";
+import { DemoSection } from "@/components/demo/DemoSection";
 import { ExperienceSection } from "@/components/experience/ExperienceSection";
 import { Footer } from "@/components/footer/Footer";
 import { Hero } from "@/components/hero/Hero";
@@ -32,6 +33,7 @@ export default () => {
     const sectionOffsets = useRef<SectionOffsets>({
         about: null,
         contact: null,
+        demo: null,
         experience: null,
         projects: null,
         skills: null,
@@ -119,8 +121,10 @@ export default () => {
     const onSkillsLayout = createOnSectionLayout("skills");
     const onExperienceLayout = createOnSectionLayout("experience");
     const onAboutLayout = createOnSectionLayout("about");
+    const onDemoLayout = createOnSectionLayout("demo");
     const onContactLayout = createOnSectionLayout("contact");
 
+    const onTalkToMePress = () => scrollToSection("contact");
     const contentContainerStyle = [styles.content, { paddingBottom: insets.bottom }];
 
     if (shouldGateOnFontsLoaded(Platform.OS, fontsLoaded)) {
@@ -156,6 +160,9 @@ export default () => {
                 </View>
                 <View onLayout={onAboutLayout}>
                     <AboutSection />
+                </View>
+                <View onLayout={onDemoLayout}>
+                    <DemoSection onTalkToMePress={onTalkToMePress} />
                 </View>
                 <View onLayout={onContactLayout}>
                     <ContactSection />

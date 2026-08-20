@@ -103,6 +103,7 @@ describe("resolveCurrentSectionId", () => {
     const sectionOffsets: SectionOffsets = {
         about: 4000,
         contact: 5000,
+        demo: 4500,
         experience: 3000,
         projects: 1000,
         skills: 2000,
@@ -125,7 +126,7 @@ describe("resolveCurrentSectionId", () => {
     it("skips sections that haven't measured an offset yet", () => {
         const partialOffsets: SectionOffsets = { ...sectionOffsets, contact: null };
 
-        expect(resolveCurrentSectionId(9000, partialOffsets, navHeight, false)).toBe("about");
+        expect(resolveCurrentSectionId(9000, partialOffsets, navHeight, false)).toBe("demo");
     });
 
     it("forces the last measured section once scrolled to the bottom, even short of its offset", () => {
@@ -136,7 +137,7 @@ describe("resolveCurrentSectionId", () => {
 
         expect(
             resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeight, false),
-        ).toBe("about");
+        ).toBe("demo");
         expect(resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeight, true)).toBe(
             "contact",
         );
@@ -145,7 +146,7 @@ describe("resolveCurrentSectionId", () => {
     it("at the bottom, skips a trailing section that hasn't measured an offset yet", () => {
         const partialOffsets: SectionOffsets = { ...sectionOffsets, contact: null };
 
-        expect(resolveCurrentSectionId(4900, partialOffsets, navHeight, true)).toBe("about");
+        expect(resolveCurrentSectionId(4900, partialOffsets, navHeight, true)).toBe("demo");
     });
 
     it("resolves to top, not the last section, when isAtBottom is trivially true at scrollY 0", () => {

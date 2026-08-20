@@ -10,6 +10,7 @@ describe("useScrollSpy", () => {
         current: {
             about: 4000,
             contact: 5000,
+            demo: 4500,
             experience: 3000,
             projects: 1000,
             skills: 2000,

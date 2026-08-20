@@ -341,6 +341,63 @@ export const typeScale = {
         fontWeight: "500",
     } satisfies TextStyleToken,
 
+    // Demo ("Run this site as an app") specific entries, values taken
+    // directly from designs/joshhenry.info.dc.html's literal #app styles.
+    // The intro paragraph reuses aboutParagraph below (both are the
+    // prototype's literal 1.0625rem/1.7/400 values) rather than a
+    // demo-specific duplicate.
+    demoPlatformTag: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, "iOS + ANDROID"
+        lineHeight: 15,
+        fontWeight: "400",
+        letterSpacing: 1.08, // .09em * 12
+    } satisfies TextStyleToken,
+    // Shared by the pitch card's paragraph and the fallback card's
+    // explanatory paragraph - both are .9375rem/1.7/400 in the prototype.
+    demoBody: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 25.5, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // Shared by the numbered step number ("01"/"02"/"03") - no other mono
+    // 12/600 token exists yet.
+    demoStepNumber: {
+        fontFamily: fontFamily.plexMonoSemiBold,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    // Numbered step description text, matches projectSubtitleAndBody's
+    // literal values (.9375rem/1.6/400).
+    demoStepText: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 24, // 1.6
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // The pitch card's "I CAN DO THIS FOR YOU" label, the fallback card's
+    // "NEEDS A WIDER WINDOW" label, the pitch card's "Talk to me about your
+    // app ->" CTA, and the "Open the Snack ->" badge label all reuse
+    // skillGroupLabel and badgeLabel above - same .75rem/.06em/400 and
+    // .8125rem/500 values, no need for section-specific duplicates.
+
+    // No-snack-url placeholder's "Snack embed loads here" line.
+    demoPlaceholderLabel: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 13, // .8125rem
+        lineHeight: 18.2, // 1.4
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // No-snack-url placeholder's hint line below the label.
+    demoPlaceholderHint: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem
+        lineHeight: 18.7, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+
     // Footer-specific entry, shared by the note, "Source" link, and
     // copyright line. Value taken directly from designs/joshhenry.info.dc.html's
     // literal <footer> styles - none of the three set a font-weight, so
