@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import type { LayoutChangeEvent } from "react-native";
 import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
@@ -131,11 +132,31 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
     // are right at the edge of fitting a real phone width - comfortable on
     // iPhone-class widths, tight-but-fitting down to ~380px, and still short
     // on the smallest/oldest Android widths or with large accessibility text
-    // scaling. flexShrink: 1 lets this ScrollView give up space to the
-    // wordmark instead of forcing an overflow; when it's squeezed narrower
-    // than its content, the excess becomes horizontally scrollable rather
-    // than clipped. Everywhere content already fits, it sizes to content and
-    // never scrolls - visually identical to a plain row.
+    // scaling. The links row is a horizontal ScrollView so that shortfall
+    // degrades to scrollable rather than clipped.
+    //
+    // That alone relies on flexShrink squeezing the ScrollView smaller than
+    // its content - correct in principle, but ScrollView isn't a plain flex
+    // box the way View is, and its shrink behavior isn't guaranteed to be
+    // pixel-identical across web/iOS/Android the way a plain row's would be.
+    // So the ScrollView's width is also computed explicitly, from values
+    // already on hand (window width, the wordmark's actual measured
+    // rendered width) rather than left entirely to the layout engine to
+    // shrink correctly - deterministic on every platform once the wordmark
+    // has measured once, with flexShrink left in place underneath as a
+    // fallback for the single frame before that first measurement lands.
+    const [wordmarkWidth, setWordmarkWidth] = useState(0);
+    const handleWordmarkLayout = (event: LayoutChangeEvent) => {
+        setWordmarkWidth(event.nativeEvent.layout.width);
+    };
+    const containerWidth = Math.min(width, navSpace.containerMaxWidth);
+    const rowContentWidth = containerWidth - rowPaddingHorizontal * 2;
+    const availableLinksWidth =
+        wordmarkWidth > 0 ? Math.max(0, rowContentWidth - wordmarkWidth - rowGap) : undefined;
+    const linksScrollStyle = [
+        styles.linksScroll,
+        availableLinksWidth !== undefined && { maxWidth: availableLinksWidth },
+    ];
     const linksContentStyle = [
         styles.linksRow,
         { gap: linkGap, paddingRight: rowPaddingHorizontal },
@@ -145,20 +166,22 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
     return (
         <Animated.View style={navAnimatedStyle}>
             <View style={rowStyle}>
-                <NavLink
-                    accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
-                    defaultColor={colors.ink}
-                    isSelected={currentSectionId === "top"}
-                    label={navWordmarkLabel}
-                    labelStyle={typeScale.navWordmark}
-                    onLinkPress={onLinkPress}
-                    sectionId="top"
-                />
+                <View onLayout={handleWordmarkLayout}>
+                    <NavLink
+                        accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
+                        defaultColor={colors.ink}
+                        isSelected={currentSectionId === "top"}
+                        label={navWordmarkLabel}
+                        labelStyle={typeScale.navWordmark}
+                        onLinkPress={onLinkPress}
+                        sectionId="top"
+                    />
+                </View>
                 <ScrollView
                     contentContainerStyle={linksContentStyle}
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={styles.linksScroll}
+                    style={linksScrollStyle}
                 >
                     {navLinks.map((link) => (
                         <NavLink
