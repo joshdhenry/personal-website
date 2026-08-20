@@ -11,6 +11,12 @@ export const motion = {
     },
     /** Scroll distance (px) past which the sticky nav reveals. Unrelated to breakpoint.compact, which shares the number 560 but is a window width. */
     navRevealScrollY: 560,
+    /** Hero terminal card scroll parallax: translateY = clamp((scrollY - scrollOffset) * multiplier, -maxOffset, maxOffset). */
+    parallax: {
+        maxOffset: 28,
+        multiplier: -0.055,
+        scrollOffset: 120,
+    },
     // Rise and cardIn entrances are spring-driven (motion.spring.gentle), per
     // CLAUDE.md's "Reanimated springs, not linear tweens, everywhere" — so
     // they have delay tokens (below) but no duration token; a spring's settle

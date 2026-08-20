@@ -14,6 +14,7 @@ import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { heroSpace } from "@/theme/spacing";
 import type { TerminalCardProps } from "@/types/hero";
+import { clampParallaxOffset } from "@/utils/scroll";
 
 import { TerminalChromeBar } from "./TerminalChromeBar";
 import { TerminalCommandLine } from "./TerminalCommandLine";
@@ -25,6 +26,7 @@ export const TerminalCard = ({
     commandText,
     isNarrow,
     pathLabel,
+    scrollY,
     shellLabel,
     stats,
     techLogRows,
@@ -53,10 +55,21 @@ export const TerminalCard = ({
         scale.value = withDelay(motion.delay.cardInEntrance, withSpring(1, motion.spring.gentle));
     }, [isReducedMotionPreferred, opacity, translateY, scale]);
 
-    const cardInStyle = useAnimatedStyle(() => ({
-        opacity: opacity.value,
-        transform: [{ translateY: translateY.value }, { scale: scale.value }],
-    }));
+    const cardInStyle = useAnimatedStyle(() => {
+        const parallaxY = isReducedMotionPreferred
+            ? 0
+            : clampParallaxOffset(
+                  scrollY.value,
+                  motion.parallax.scrollOffset,
+                  motion.parallax.multiplier,
+                  motion.parallax.maxOffset,
+              );
+
+        return {
+            opacity: opacity.value,
+            transform: [{ translateY: translateY.value + parallaxY }, { scale: scale.value }],
+        };
+    });
     const cardAnimatedStyle = [styles.card, shadow.terminalCard, cardInStyle];
     const logStyle = [styles.log, !isNarrow && styles.logFixedHeight];
 

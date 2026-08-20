@@ -1,5 +1,6 @@
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
     heroActionBadges,
@@ -18,13 +19,15 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
+import type { HeroProps } from "@/types/hero";
 import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 
 import { ActionBadgeRow } from "./ActionBadgeRow";
 import { StatusEyebrow } from "./StatusEyebrow";
 import { TerminalCard } from "./TerminalCard";
 
-export const Hero = () => {
+export const Hero = ({ scrollY }: HeroProps) => {
+    const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
@@ -41,9 +44,15 @@ export const Hero = () => {
         : isNarrow
           ? heroSpace.sectionPaddingHorizontalNarrow
           : heroSpace.sectionPaddingHorizontalWide;
-    const paddingTop = isNarrow
-        ? heroSpace.sectionPaddingTopNarrow
-        : heroSpace.sectionPaddingTopWide;
+    // The Hero is the first thing on screen, above the sticky nav's own
+    // safe-area handling (which only applies once the nav reveals past
+    // 560px of scroll) - Math.max so a device's status bar/notch inset only
+    // adds space when it genuinely exceeds the design's own top padding,
+    // never stacking on top of it.
+    const paddingTop = Math.max(
+        insets.top,
+        isNarrow ? heroSpace.sectionPaddingTopNarrow : heroSpace.sectionPaddingTopWide,
+    );
     const paddingBottom = isNarrow
         ? heroSpace.sectionPaddingBottomNarrow
         : heroSpace.sectionPaddingBottomWide;
@@ -80,6 +89,7 @@ export const Hero = () => {
                         commandText={heroTerminalCommandText}
                         isNarrow={isNarrow}
                         pathLabel={heroTerminalPathLabel}
+                        scrollY={scrollY}
                         shellLabel={heroTerminalShellLabel}
                         stats={heroStats}
                         techLogRows={heroTechLogRows}
