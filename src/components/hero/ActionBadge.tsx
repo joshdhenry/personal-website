@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { Linking, Platform, Pressable, StyleSheet, Text } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
+import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { colors } from "@/theme/colors";
+import { focusRing } from "@/theme/focusRing";
 import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
@@ -19,35 +20,39 @@ import type { ActionBadgeProps } from "@/types/hero";
 const isHoverShadowSupported = Platform.OS === "web";
 
 export const ActionBadge = ({ badge }: ActionBadgeProps) => {
-    const [isActive, setIsActive] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
     const scale = useSharedValue(1);
     const liftY = useSharedValue(0);
+    const {
+        handleBlur,
+        handleFocus,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
+        isActive,
+        isFocused,
+    } = usePressHoverFocus((active) => {
+        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
+        liftY.value = withSpring(active ? -2 : 0, motion.spring.snappy);
+    });
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }, { translateY: liftY.value }],
     }));
 
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-        liftY.value = withSpring(active ? -2 : 0, motion.spring.snappy);
+    // The OS may not have a handler for this URL; there's no status UI on a
+    // badge to surface that to, so the rejection is swallowed rather than
+    // left unhandled.
+    const handlePress = () => {
+        Linking.openURL(badge.href).catch(() => {});
     };
-
-    const handlePress = () => Linking.openURL(badge.href);
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
         styles.badge,
         isActive && styles.badgeActive,
         isActive && isHoverShadowSupported && shadow.badgeHover,
-        showFocusRing && styles.focusRing,
+        showFocusRing && focusRing,
         animatedStyle,
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
@@ -83,13 +88,6 @@ const styles = StyleSheet.create({
     badgeActive: {
         borderColor: colors.primary,
     },
-    focusRing: {
-        // react-native-web-only style props for a visible keyboard focus ring.
-        outlineColor: colors.focusRing,
-        outlineOffset: 2,
-        outlineStyle: "solid",
-        outlineWidth: 2,
-    } as Record<string, unknown>,
     label: {
         ...typeScale.badgeLabel,
         color: colors.ink,
