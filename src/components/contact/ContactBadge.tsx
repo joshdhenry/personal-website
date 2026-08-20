@@ -3,6 +3,7 @@ import Animated from "react-native-reanimated";
 
 import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
+import { focusRing } from "@/theme/focusRing";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { contactSpace } from "@/theme/spacing";
@@ -34,7 +35,7 @@ export const ContactBadge = ({ badge }: ContactBadgeProps) => {
         styles.badge,
         isActive && styles.badgeActive,
         isActive && isHoverShadowSupported && shadow.badgeHover,
-        showFocusRing && styles.focusRing,
+        showFocusRing && focusRing,
         animatedStyle,
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
@@ -75,13 +76,6 @@ const styles = StyleSheet.create({
     badgeActive: {
         borderColor: colors.primary,
     },
-    focusRing: {
-        // react-native-web-only style props for a visible keyboard focus ring.
-        outlineColor: colors.focusRing,
-        outlineOffset: 2,
-        outlineStyle: "solid",
-        outlineWidth: 2,
-    } as Record<string, unknown>,
     label: {
         ...typeScale.contactBadgeLabel,
         color: colors.ink,

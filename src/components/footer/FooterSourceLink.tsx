@@ -3,6 +3,7 @@ import Animated from "react-native-reanimated";
 
 import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
+import { focusRing } from "@/theme/focusRing";
 import { typeScale } from "@/theme/typography";
 import type { FooterSourceLinkProps } from "@/types/footer";
 import { openUrl } from "@/utils/openUrl";
@@ -23,11 +24,7 @@ export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSour
     const handlePress = () => openUrl(href);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
-    const labelStyle = [
-        styles.label,
-        isActive && styles.labelActive,
-        showFocusRing && styles.focusRing,
-    ];
+    const labelStyle = [styles.label, isActive && styles.labelActive, showFocusRing && focusRing];
 
     // "button" over the more semantically precise "link": this doesn't
     // render a real <a href>, and react-native-web's Pressable silently
@@ -53,13 +50,6 @@ export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSour
 };
 
 const styles = StyleSheet.create({
-    focusRing: {
-        // react-native-web-only style props for a visible keyboard focus ring.
-        outlineColor: colors.focusRing,
-        outlineOffset: 2,
-        outlineStyle: "solid",
-        outlineWidth: 2,
-    } as Record<string, unknown>,
     label: {
         ...typeScale.footerText,
         color: colors.primary,

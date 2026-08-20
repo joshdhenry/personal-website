@@ -37,7 +37,11 @@ export default () => {
     const scrollY = useSharedValue(0);
     const scrollViewRef = useRef<ScrollView>(null);
     const sectionOffsets = useRef<SectionOffsets>(createSectionOffsets());
-    const scrollToSection = useScrollToSection({ scrollViewRef, sectionOffsets });
+    const navHeightRef = useRef(0);
+    const scrollToSection = useScrollToSection({ navHeightRef, scrollViewRef, sectionOffsets });
+    const handleNavHeightChange = (height: number) => {
+        navHeightRef.current = height;
+    };
 
     // scrollY starts at 0, but the browser (e.g. bfcache back/forward
     // navigation) can leave the ScrollView's underlying DOM node already
@@ -114,7 +118,11 @@ export default () => {
                 <Footer />
             </ScrollView>
 
-            <StickyNav onLinkPress={scrollToSection} scrollY={scrollY} />
+            <StickyNav
+                onHeightChange={handleNavHeightChange}
+                onLinkPress={scrollToSection}
+                scrollY={scrollY}
+            />
         </View>
     );
 };

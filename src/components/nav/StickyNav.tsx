@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import type { LayoutChangeEvent } from "react-native";
 import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
@@ -32,7 +33,7 @@ const navBackground = Platform.select({
     },
 });
 
-export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
+export const StickyNav = ({ onHeightChange, onLinkPress, scrollY }: StickyNavProps) => {
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
@@ -117,9 +118,14 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
     ];
     const linksRowStyle = [styles.linksRow, { gap: linkGap }];
     const navAnimatedStyle = [styles.nav, navBackground, revealStyle];
+    // The nav's rendered height (independent of its opacity/translateY reveal
+    // state, which are transforms and don't affect layout) - reported up so
+    // scrollToSection can land a section below the nav instead of under it.
+    const handleLayout = (event: LayoutChangeEvent) =>
+        onHeightChange(event.nativeEvent.layout.height);
 
     return (
-        <Animated.View style={navAnimatedStyle}>
+        <Animated.View onLayout={handleLayout} style={navAnimatedStyle}>
             <View style={rowStyle}>
                 <NavLink
                     accessibilityLabel={`${navWordmarkLabel}, scroll to top`}

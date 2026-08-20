@@ -28,11 +28,13 @@ export type NavLinkProps = {
 };
 
 export type StickyNavProps = {
+    onHeightChange: (height: number) => void;
     onLinkPress: (sectionId: SectionId) => void;
     scrollY: SharedValue<number>;
 };
 
 export type UseScrollToSectionParams = {
+    navHeightRef: MutableRefObject<number>;
     scrollViewRef: MutableRefObject<ScrollView | null>;
     sectionOffsets: MutableRefObject<SectionOffsets>;
 };
