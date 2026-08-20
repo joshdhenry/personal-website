@@ -29,6 +29,7 @@ const suppressNativeFocusOutline = {
 export const NavLink = ({
     accessibilityLabel,
     defaultColor,
+    isSelected,
     label,
     labelStyle,
     onLinkPress,
@@ -49,16 +50,16 @@ export const NavLink = ({
     const handlePress = () => onLinkPress(sectionId);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
-    // isFocused (not just isActive) drives the color too: isActive alone is
-    // hover/press only, which for a keyboard Enter/Space activation is a
-    // single-frame flash (usePressHoverFocus's deferred release clears it on
-    // the next tick) - imperceptible, so a keyboard user tabbing through
-    // links saw no stable indication of which one they'd just activated.
-    // Focus persists exactly as long as it's actually focused, correctly
-    // moving (and un-highlighting the previous link) as Tab moves it.
+    // isSelected (not isFocused) drives the persistent color: isFocused is
+    // "you're currently tabbed onto this," which fires for every link you
+    // pass through, not just the one you activate - using it for color made
+    // merely tabbing over a link look identical to having selected it.
+    // isSelected instead reflects StickyNav's own "last link actually
+    // activated" state (click or Enter/Space), so the ring shows where
+    // keyboard focus currently is while the color shows what's selected.
     const textStyle = [
         labelStyle,
-        { color: isActive || isFocused ? colors.primary : defaultColor },
+        { color: isActive || isSelected ? colors.primary : defaultColor },
         showFocusRing && navLinkFocusRing,
     ];
 

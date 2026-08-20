@@ -20,6 +20,7 @@ export type NavLinkDescriptor = {
 export type NavLinkProps = {
     accessibilityLabel: string;
     defaultColor: string;
+    isSelected: boolean;
     label: string;
     labelStyle: TextStyle;
     onLinkPress: (sectionId: SectionId) => void;
