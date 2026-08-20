@@ -25,6 +25,21 @@ export const focusRingSpace = {
 };
 
 /**
+ * Shared container max-width every section's row/content wrapper clamps to,
+ * per designs/README.md. One token, referenced by shorthand from each
+ * section's space object below, instead of the same literal repeated in each.
+ */
+export const containerMaxWidth = 1180;
+
+/**
+ * Shared translateY lift a "badge" Pressable (hero action badges, contact
+ * badges) springs to on press/hover, via usePressScale. One token,
+ * referenced by shorthand from heroSpace and contactSpace below, instead of
+ * the same literal repeated in each.
+ */
+export const badgeLiftDistance = -2;
+
+/**
  * Escape hatch for measurements that come directly from the high-fidelity
  * designs/README.md spec and do not land cleanly on the 4px grid above.
  * Rounding these to the nearest space.* token would be a visible regression
@@ -72,6 +87,7 @@ export const heroSpace = {
     /** Action badge internal padding. */
     badgePaddingVertical: 12,
     badgePaddingHorizontal: 18,
+    badgeLiftDistance,
     /** Gap between the badge row and the elements around it. */
     actionsRowGap: 26,
     /**
@@ -79,8 +95,7 @@ export const heroSpace = {
      * at Inter 1.0625rem's average glyph width.
      */
     introMaxWidth: 520,
-    /** Hero section container max-width. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
 };
 
 /**
@@ -99,8 +114,7 @@ export const projectsSpace = {
     sectionPaddingHorizontalNarrow: 24,
     /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
     sectionPaddingHorizontalCompact: 18,
-    /** Section container max-width, matches heroSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Gap between the "Projects" heading and the "click a card to expand" caption. */
     headingRowGap: 16,
     /** Margin below the heading row, before the featured grid. */
@@ -155,6 +169,8 @@ export const projectsSpace = {
     compactDetailMarginTop: 12,
     compactDetailPaddingTop: 12,
     compactDetailGap: 8,
+    /** Featured/compact card's translateY lift on press/hover, shared by both card variants. */
+    cardLiftDistance: -4,
 };
 
 /**
@@ -178,8 +194,7 @@ export const skillsSpace = {
     sectionPaddingHorizontalNarrow: 24,
     /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
     sectionPaddingHorizontalCompact: 18,
-    /** Section container max-width, matches projectsSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Margin below the heading, before the group grid. */
     headingBottomMargin: 28,
     /** Group grid: row gap and column gap between the two columns of groups. */
@@ -216,8 +231,7 @@ export const aboutSpace = {
     sectionPaddingHorizontalNarrow: 24,
     /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
     sectionPaddingHorizontalCompact: 18,
-    /** Section container max-width, matches projectsSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Gap between the heading and the two paragraphs in the text column. */
     textColumnGap: 20,
     /** Two-column grid gap between the text column and the portrait, above layoutBreakpoint.narrow. */
@@ -253,8 +267,7 @@ export const experienceSpace = {
     sectionPaddingHorizontalNarrow: 24,
     /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
     sectionPaddingHorizontalCompact: 18,
-    /** Section container max-width, matches skillsSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Gap between the "Experience" heading and its "2016 to 2026" mono span. */
     headingRowGap: 16,
     /** Margin below the heading row, before the timeline. */
@@ -302,6 +315,8 @@ export const experienceSpace = {
     connectorLeftNarrow: -19,
     connectorTopNarrow: 24,
     connectorWidthNarrow: 19,
+    /** Row card's translateY lift on press/hover. */
+    rowLiftDistance: -4,
 };
 
 /**
@@ -321,8 +336,7 @@ export const contactSpace = {
     sectionPaddingHorizontalNarrow: 24,
     /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
     sectionPaddingHorizontalCompact: 18,
-    /** Section container max-width, matches aboutSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Two-column grid gap between the intro column and the form card, above layoutBreakpoint.narrow. */
     gridGap: 56,
     /** Grid gap at widths <= layoutBreakpoint.narrow, where the form stacks below the badges. */
@@ -341,6 +355,7 @@ export const contactSpace = {
     badgeIconGap: 10,
     /** Contact badge inline SVG icon size (square). */
     badgeIconSize: 18,
+    badgeLiftDistance,
     /** Form card padding and internal vertical gap between fields. */
     formCardPadding: 26,
     formCardGap: 16,
@@ -364,8 +379,7 @@ export const contactSpace = {
  * rather than snapped to the space.* grid.
  */
 export const navSpace = {
-    /** Inner row container max-width, matches heroSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Row padding at desktop widths. */
     rowPaddingVertical: 14,
     rowPaddingHorizontal: 40,
@@ -406,8 +420,7 @@ export const footerSpace = {
      */
     sectionPaddingVertical: 28,
     sectionPaddingHorizontal: 40,
-    /** Inner row's container max-width, matches contactSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Gap between the note and the links group when the row wraps/stacks at layoutBreakpoint.narrow. */
     rowGap: 24,
     /** Gap between the "Source" link and the copyright line. */

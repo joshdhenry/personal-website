@@ -1,7 +1,7 @@
 import Head from "expo-router/head";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -16,8 +16,9 @@ import { SkillsSection } from "@/components/skills/SkillsSection";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { colors } from "@/theme/colors";
+import { motion } from "@/theme/motion";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
+import { readScrollableNodeScrollTop } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
 const createSectionOffsets = (): SectionOffsets => ({
@@ -32,13 +33,26 @@ const createSectionOffsets = (): SectionOffsets => ({
 export default () => {
     const fontsLoaded = useFontsLoaded();
     const insets = useSafeAreaInsets();
-    const { width } = useWindowDimensions();
-    const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
     const scrollY = useSharedValue(0);
     const scrollViewRef = useRef<ScrollView>(null);
     const sectionOffsets = useRef<SectionOffsets>(createSectionOffsets());
     const scrollToSection = useScrollToSection({ scrollViewRef, sectionOffsets });
+
+    // scrollY starts at 0, but the browser (e.g. bfcache back/forward
+    // navigation) can leave the ScrollView's underlying DOM node already
+    // scrolled before any onScroll event reaches React - StickyNav would
+    // then wrongly judge the nav should stay hidden. This reads the real
+    // starting offset once on mount without moving the page, so it's a sync,
+    // never a reset. Web-only: readScrollableNodeScrollTop reads DOM state
+    // that has no equivalent on iOS/Android.
+    useEffect(() => {
+        if (Platform.OS !== "web") {
+            return;
+        }
+
+        scrollY.value = readScrollableNodeScrollTop(scrollViewRef.current);
+    }, [scrollY]);
 
     // A plain JS onScroll, not Animated.ScrollView + useAnimatedScrollHandler:
     // Animated.ScrollView's web ref doesn't support imperative .scrollTo(),
@@ -53,6 +67,11 @@ export default () => {
     const handleSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
     };
+    const handleProjectsLayout = handleSectionLayout("projects");
+    const handleSkillsLayout = handleSectionLayout("skills");
+    const handleExperienceLayout = handleSectionLayout("experience");
+    const handleAboutLayout = handleSectionLayout("about");
+    const handleContactLayout = handleSectionLayout("contact");
 
     const contentContainerStyle = [styles.content, { paddingBottom: insets.bottom }];
 
@@ -66,7 +85,7 @@ export default () => {
                 contentContainerStyle={contentContainerStyle}
                 onScroll={handleScroll}
                 ref={scrollViewRef}
-                scrollEventThrottle={16}
+                scrollEventThrottle={motion.scrollEventThrottleMs}
                 style={styles.scrollView}
             >
                 <Head>
@@ -77,30 +96,25 @@ export default () => {
                     />
                 </Head>
                 <Hero />
-                <View onLayout={handleSectionLayout("projects")}>
+                <View onLayout={handleProjectsLayout}>
                     <ProjectsSection />
                 </View>
-                <View onLayout={handleSectionLayout("skills")}>
+                <View onLayout={handleSkillsLayout}>
                     <SkillsSection />
                 </View>
-                <View onLayout={handleSectionLayout("experience")}>
+                <View onLayout={handleExperienceLayout}>
                     <ExperienceSection />
                 </View>
-                <View onLayout={handleSectionLayout("about")}>
+                <View onLayout={handleAboutLayout}>
                     <AboutSection />
                 </View>
-                <View onLayout={handleSectionLayout("contact")}>
+                <View onLayout={handleContactLayout}>
                     <ContactSection />
                 </View>
                 <Footer />
             </ScrollView>
 
-            <StickyNav
-                isCompact={isCompact}
-                isNarrow={isNarrow}
-                onLinkPress={scrollToSection}
-                scrollY={scrollY}
-            />
+            <StickyNav onLinkPress={scrollToSection} scrollY={scrollY} />
         </View>
     );
 };

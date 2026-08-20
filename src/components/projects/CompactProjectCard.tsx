@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { projectsSpace } from "@/theme/spacing";
@@ -19,30 +19,18 @@ import { ProjectImageBand } from "./ProjectImageBand";
 // ActionBadge.tsx for the same guard and full rationale.
 const isHoverShadowSupported = Platform.OS === "web";
 
-const PRESS_SCALE = 0.97;
-const LIFT_DISTANCE = 4;
-
 export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isActive, setIsActive] = useState(false);
-    const scale = useSharedValue(1);
-    const liftY = useSharedValue(0);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateY: liftY.value }],
-    }));
-
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? PRESS_SCALE : 1, motion.spring.snappy);
-        liftY.value = withSpring(active ? -LIFT_DISTANCE : 0, motion.spring.snappy);
-    };
+    const {
+        animatedStyle,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
+        isActive,
+    } = usePressScale(projectsSpace.cardLiftDistance);
 
     const handlePress = () => setIsOpen((previousIsOpen) => !previousIsOpen);
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
 
     const cardStyle = [
         styles.card,

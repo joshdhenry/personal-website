@@ -1,33 +1,26 @@
-import { useState } from "react";
-import { Linking, Platform, Pressable, StyleSheet, Text } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import Animated from "react-native-reanimated";
 
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
-import { motion } from "@/theme/motion";
 import { typeScale } from "@/theme/typography";
 import type { FooterSourceLinkProps } from "@/types/footer";
+import { openUrl } from "@/utils/openUrl";
 
 export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSourceLinkProps) => {
-    const [isActive, setIsActive] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    const scale = useSharedValue(1);
+    const {
+        animatedStyle,
+        handleBlur,
+        handleFocus,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
+        isActive,
+        isFocused,
+    } = usePressScale();
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
-
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-    };
-
-    const handlePress = () => Linking.openURL(href);
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
+    const handlePress = () => openUrl(href);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const labelStyle = [
@@ -36,11 +29,15 @@ export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSour
         showFocusRing && styles.focusRing,
     ];
 
+    // "button" over the more semantically precise "link": this doesn't
+    // render a real <a href>, and react-native-web's Pressable silently
+    // drops keyboard Enter/Space activation for role="link" without one -
+    // see NavLink.tsx for the full explanation.
     return (
         <Animated.View style={animatedStyle}>
             <Pressable
                 accessibilityLabel={accessibilityLabel}
-                accessibilityRole="link"
+                accessibilityRole="button"
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 onHoverIn={handleHoverIn}

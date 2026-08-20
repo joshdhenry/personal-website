@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export type PressHoverFocusState = {
     handleBlur: () => void;
@@ -36,6 +36,15 @@ export const usePressHoverFocus = (
     const [isFocused, setIsFocused] = useState(false);
     const isActive = isHovering || isPressing;
     const hasMountedRef = useRef(false);
+    const pendingPressOutTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (pendingPressOutTimeoutRef.current !== null) {
+                clearTimeout(pendingPressOutTimeoutRef.current);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (hasMountedRef.current) {
@@ -50,13 +59,39 @@ export const usePressHoverFocus = (
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive]);
 
+    const handleBlur = useCallback(() => setIsFocused(false), []);
+    const handleFocus = useCallback(() => setIsFocused(true), []);
+    const handleHoverIn = useCallback(() => setIsHovering(true), []);
+    const handleHoverOut = useCallback(() => setIsHovering(false), []);
+    // A pending deferred release (see handlePressOut) belongs to the press it
+    // was scheduled for; a fresh press-in must not let that stale timeout
+    // clear isPressing out from under it later.
+    const handlePressIn = useCallback(() => {
+        if (pendingPressOutTimeoutRef.current !== null) {
+            clearTimeout(pendingPressOutTimeoutRef.current);
+            pendingPressOutTimeoutRef.current = null;
+        }
+        setIsPressing(true);
+    }, []);
+    // RN Web fires onPressIn then onPressOut in the same tick for a keyboard
+    // Enter/Space activation (no hover involved), so clearing isPressing
+    // synchronously here would batch away the isActive(true) render entirely
+    // before the press-feedback spring above ever sees it. Deferring the
+    // clear to the next tick guarantees that render commits first.
+    const handlePressOut = useCallback(() => {
+        pendingPressOutTimeoutRef.current = setTimeout(() => {
+            pendingPressOutTimeoutRef.current = null;
+            setIsPressing(false);
+        }, 0);
+    }, []);
+
     return {
-        handleBlur: () => setIsFocused(false),
-        handleFocus: () => setIsFocused(true),
-        handleHoverIn: () => setIsHovering(true),
-        handleHoverOut: () => setIsHovering(false),
-        handlePressIn: () => setIsPressing(true),
-        handlePressOut: () => setIsPressing(false),
+        handleBlur,
+        handleFocus,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
         isActive,
         isFocused,
     };

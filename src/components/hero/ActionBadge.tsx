@@ -1,15 +1,15 @@
-import { Linking, Platform, Pressable, StyleSheet, Text } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import Animated from "react-native-reanimated";
 
-import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
 import { focusRing } from "@/theme/focusRing";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ActionBadgeProps } from "@/types/hero";
+import { openUrl } from "@/utils/openUrl";
 
 // Android clips a View's children to its background's rounded-corner outline
 // once `elevation` is applied (the outline provider used to cast the
@@ -20,9 +20,8 @@ import type { ActionBadgeProps } from "@/types/hero";
 const isHoverShadowSupported = Platform.OS === "web";
 
 export const ActionBadge = ({ badge }: ActionBadgeProps) => {
-    const scale = useSharedValue(1);
-    const liftY = useSharedValue(0);
     const {
+        animatedStyle,
         handleBlur,
         handleFocus,
         handleHoverIn,
@@ -31,21 +30,9 @@ export const ActionBadge = ({ badge }: ActionBadgeProps) => {
         handlePressOut,
         isActive,
         isFocused,
-    } = usePressHoverFocus((active) => {
-        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-        liftY.value = withSpring(active ? -2 : 0, motion.spring.snappy);
-    });
+    } = usePressScale(heroSpace.badgeLiftDistance);
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateY: liftY.value }],
-    }));
-
-    // The OS may not have a handler for this URL; there's no status UI on a
-    // badge to surface that to, so the rejection is swallowed rather than
-    // left unhandled.
-    const handlePress = () => {
-        Linking.openURL(badge.href).catch(() => {});
-    };
+    const handlePress = () => openUrl(badge.href);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
@@ -57,11 +44,15 @@ export const ActionBadge = ({ badge }: ActionBadgeProps) => {
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
 
+    // "button" over the more semantically precise "link": this doesn't
+    // render a real <a href>, and react-native-web's Pressable silently
+    // drops keyboard Enter/Space activation for role="link" without one -
+    // see NavLink.tsx for the full explanation.
     return (
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={badge.accessibilityLabel}
-                accessibilityRole="link"
+                accessibilityRole="button"
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 onHoverIn={handleHoverIn}

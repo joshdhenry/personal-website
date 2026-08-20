@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
     useAnimatedStyle,
@@ -14,7 +14,8 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
-import type { SectionId, StickyNavProps } from "@/types/nav";
+import type { StickyNavProps } from "@/types/nav";
+import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldRevealNav } from "@/utils/scroll";
 
 import { NavLink } from "./NavLink";
@@ -31,8 +32,10 @@ const navBackground = Platform.select({
     },
 });
 
-export const StickyNav = ({ isCompact, isNarrow, onLinkPress, scrollY }: StickyNavProps) => {
+export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
     const insets = useSafeAreaInsets();
+    const { width } = useWindowDimensions();
+    const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
     // The nav grows taller by insets.top (see rowStyle below), so the
     // hidden-state offset has to grow with it or the nav peeks out from
     // under the status bar while "hidden".
@@ -41,17 +44,19 @@ export const StickyNav = ({ isCompact, isNarrow, onLinkPress, scrollY }: StickyN
     const opacity = useSharedValue(0);
     const translateY = useSharedValue(hiddenTranslateY);
 
-    // hiddenTranslateY is only otherwise applied when the reveal state
-    // itself flips (see the reaction below), so a device rotation that
-    // changes insets.top while the nav is currently hidden would leave
-    // translateY stale until the next scroll-triggered reveal. Not
-    // visible on its own (opacity is 0 while hidden), but it'd make the
-    // next reveal animation slide in from the wrong distance.
+    // A withTiming animation targets hiddenTranslateY/opacity as they were
+    // when the animation started; a device rotation mid-transition (which
+    // changes insets.top, and so hiddenTranslateY) would otherwise let that
+    // animation finish at a stale translateY while opacity keeps animating
+    // on its own, visibly desyncing the two. Recomputing both directly
+    // whenever hiddenTranslateY changes cancels any in-flight animation and
+    // snaps both to the position/opacity matching the current insets and
+    // reveal state, whether the nav is resting or mid-transition.
     useEffect(() => {
-        if (!shouldRevealNav(scrollY.value, motion.navRevealScrollY)) {
-            translateY.value = hiddenTranslateY;
-        }
-    }, [hiddenTranslateY, scrollY, translateY]);
+        const shouldReveal = shouldRevealNav(scrollY.value, motion.navRevealScrollY);
+        translateY.value = shouldReveal ? 0 : hiddenTranslateY;
+        opacity.value = shouldReveal ? 1 : 0;
+    }, [hiddenTranslateY, scrollY, translateY, opacity]);
 
     useAnimatedReaction(
         () => shouldRevealNav(scrollY.value, motion.navRevealScrollY),
@@ -62,8 +67,15 @@ export const StickyNav = ({ isCompact, isNarrow, onLinkPress, scrollY }: StickyN
 
             const nextOpacity = shouldReveal ? 1 : 0;
             const nextTranslateY = shouldReveal ? 0 : hiddenTranslateY;
+            // previouslyRevealed is null only on this reaction's very first
+            // evaluation ever (Reanimated seeds it once per component
+            // instance and never resets it on a deps change) - e.g. a
+            // bfcache-restored page already past the reveal threshold. That
+            // first evaluation should apply instantly, not animate a pop-in
+            // for a state the nav should simply start in.
+            const shouldAnimate = !isReducedMotionPreferred && previouslyRevealed !== null;
 
-            if (isReducedMotionPreferred) {
+            if (!shouldAnimate) {
                 opacity.value = nextOpacity;
                 translateY.value = nextTranslateY;
                 return;
@@ -104,18 +116,18 @@ export const StickyNav = ({ isCompact, isNarrow, onLinkPress, scrollY }: StickyN
         },
     ];
     const linksRowStyle = [styles.linksRow, { gap: linkGap }];
-    const handleWordmarkPress = () => onLinkPress("top");
-    const handleLinkPress = (sectionId: SectionId) => () => onLinkPress(sectionId);
+    const navAnimatedStyle = [styles.nav, navBackground, revealStyle];
 
     return (
-        <Animated.View style={[styles.nav, navBackground, revealStyle]}>
+        <Animated.View style={navAnimatedStyle}>
             <View style={rowStyle}>
                 <NavLink
                     accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
                     defaultColor={colors.ink}
                     label={navWordmarkLabel}
                     labelStyle={typeScale.navWordmark}
-                    onPress={handleWordmarkPress}
+                    onLinkPress={onLinkPress}
+                    sectionId="top"
                 />
                 <View style={linksRowStyle}>
                     {navLinks.map((link) => (
@@ -125,7 +137,8 @@ export const StickyNav = ({ isCompact, isNarrow, onLinkPress, scrollY }: StickyN
                             key={link.id}
                             label={link.label}
                             labelStyle={linkLabelStyle}
-                            onPress={handleLinkPress(link.sectionId)}
+                            onLinkPress={onLinkPress}
+                            sectionId={link.sectionId}
                         />
                     ))}
                 </View>

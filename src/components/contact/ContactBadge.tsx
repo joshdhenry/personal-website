@@ -1,42 +1,33 @@
-import { useState } from "react";
-import { Linking, Platform, Pressable, StyleSheet, Text } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import Animated from "react-native-reanimated";
 
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { contactSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ContactBadgeProps } from "@/types/contact";
+import { openUrl } from "@/utils/openUrl";
 
 // Same Android elevation-clips-rounded-children issue documented in
 // hero/ActionBadge.tsx - the hover/press shadow is web-only.
 const isHoverShadowSupported = Platform.OS === "web";
 
 export const ContactBadge = ({ badge }: ContactBadgeProps) => {
-    const [isActive, setIsActive] = useState(false);
-    const [isFocused, setIsFocused] = useState(false);
-    const scale = useSharedValue(1);
-    const liftY = useSharedValue(0);
+    const {
+        animatedStyle,
+        handleBlur,
+        handleFocus,
+        handleHoverIn,
+        handleHoverOut,
+        handlePressIn,
+        handlePressOut,
+        isActive,
+        isFocused,
+    } = usePressScale(contactSpace.badgeLiftDistance);
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateY: liftY.value }],
-    }));
-
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-        liftY.value = withSpring(active ? -2 : 0, motion.spring.snappy);
-    };
-
-    const handlePress = () => Linking.openURL(badge.href);
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
-    const handleFocus = () => setIsFocused(true);
-    const handleBlur = () => setIsFocused(false);
+    const handlePress = () => openUrl(badge.href);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
@@ -49,11 +40,15 @@ export const ContactBadge = ({ badge }: ContactBadgeProps) => {
     const labelStyle = [styles.label, isActive && styles.labelActive];
     const BadgeIcon = badge.icon;
 
+    // "button" over the more semantically precise "link": this doesn't
+    // render a real <a href>, and react-native-web's Pressable silently
+    // drops keyboard Enter/Space activation for role="link" without one -
+    // see NavLink.tsx for the full explanation.
     return (
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={badge.accessibilityLabel}
-                accessibilityRole="link"
+                accessibilityRole="button"
                 onBlur={handleBlur}
                 onFocus={handleFocus}
                 onHoverIn={handleHoverIn}

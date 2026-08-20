@@ -23,12 +23,11 @@ export type NavLinkProps = {
     defaultColor: string;
     label: string;
     labelStyle: TextStyle;
-    onPress: () => void;
+    onLinkPress: (sectionId: SectionId) => void;
+    sectionId: SectionId;
 };
 
 export type StickyNavProps = {
-    isCompact: boolean;
-    isNarrow: boolean;
     onLinkPress: (sectionId: SectionId) => void;
     scrollY: SharedValue<number>;
 };
