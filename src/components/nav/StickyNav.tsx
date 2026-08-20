@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import Animated, {
     useAnimatedReaction,
@@ -14,7 +14,7 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
-import type { SectionId, StickyNavProps } from "@/types/nav";
+import type { StickyNavProps } from "@/types/nav";
 import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldRevealNav } from "@/utils/scroll";
 
@@ -32,20 +32,10 @@ const navBackground = Platform.select({
     },
 });
 
-export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
+export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavProps) => {
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
-    // The link a user last actually activated (click or Enter/Space), not
-    // just tabbed onto - drives NavLink's persistent blue color. Keyboard
-    // focus (which link the ring is on) is tracked independently inside
-    // each NavLink via usePressHoverFocus, since it changes on every Tab
-    // regardless of activation.
-    const [selectedSectionId, setSelectedSectionId] = useState<SectionId | null>(null);
-    const handleLinkPress = (sectionId: SectionId) => {
-        setSelectedSectionId(sectionId);
-        onLinkPress(sectionId);
-    };
     // The nav grows taller by insets.top (see rowStyle below), so the
     // hidden-state offset has to grow with it or the nav peeks out from
     // under the status bar while "hidden".
@@ -158,10 +148,10 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
                 <NavLink
                     accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
                     defaultColor={colors.ink}
-                    isSelected={selectedSectionId === "top"}
+                    isSelected={currentSectionId === "top"}
                     label={navWordmarkLabel}
                     labelStyle={typeScale.navWordmark}
-                    onLinkPress={handleLinkPress}
+                    onLinkPress={onLinkPress}
                     sectionId="top"
                 />
                 <ScrollView
@@ -174,11 +164,11 @@ export const StickyNav = ({ onLinkPress, scrollY }: StickyNavProps) => {
                         <NavLink
                             accessibilityLabel={link.label}
                             defaultColor={colors.inkMuted}
-                            isSelected={selectedSectionId === link.sectionId}
+                            isSelected={currentSectionId === link.sectionId}
                             key={link.sectionId}
                             label={link.label}
                             labelStyle={linkLabelStyle}
-                            onLinkPress={handleLinkPress}
+                            onLinkPress={onLinkPress}
                             sectionId={link.sectionId}
                         />
                     ))}

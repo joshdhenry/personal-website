@@ -1,5 +1,5 @@
 import Head from "expo-router/head";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -19,7 +19,12 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import { readScrollableNodeScrollTop } from "@/utils/scroll";
+import {
+    isScrolledToBottom,
+    readScrollableNodeScrollTop,
+    resolveCurrentSectionId,
+    scrollBottomEpsilonPx,
+} from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
 export default () => {
@@ -43,6 +48,25 @@ export default () => {
         sectionOffsets,
     });
 
+    // The sticky nav's "current section" highlight (StickyNav.currentSectionId).
+    // A ref alongside the state so handleScroll can compare against the
+    // latest value without setState firing (and re-rendering StickyNav) on
+    // every scroll frame - only on the frames where it actually changes.
+    const [currentSectionId, setCurrentSectionId] = useState<SectionId>("top");
+    const currentSectionIdRef = useRef<SectionId>("top");
+    const updateCurrentSectionId = (scrollOffset: number, isAtBottom: boolean) => {
+        const nextSectionId = resolveCurrentSectionId(
+            scrollOffset,
+            sectionOffsets.current,
+            navHeightEstimate,
+            isAtBottom,
+        );
+        if (nextSectionId !== currentSectionIdRef.current) {
+            currentSectionIdRef.current = nextSectionId;
+            setCurrentSectionId(nextSectionId);
+        }
+    };
+
     // scrollY starts at 0, but the browser (e.g. bfcache back/forward
     // navigation) can leave the ScrollView's underlying DOM node already
     // scrolled before any onScroll event reaches React - StickyNav would
@@ -55,8 +79,14 @@ export default () => {
             return;
         }
 
-        scrollY.value = readScrollableNodeScrollTop(scrollViewRef.current);
-    }, [scrollY]);
+        const scrollOffset = readScrollableNodeScrollTop(scrollViewRef.current);
+        scrollY.value = scrollOffset;
+        updateCurrentSectionId(scrollOffset, isScrolledToBottom(scrollViewRef.current));
+        // Only ever needs to run once, on mount - scrollY and the update
+        // function are stable/deliberately excluded so this doesn't re-fire
+        // on every render.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // A plain JS onScroll, not Animated.ScrollView + useAnimatedScrollHandler:
     // Animated.ScrollView's web ref doesn't support imperative .scrollTo(),
@@ -65,7 +95,16 @@ export default () => {
     // scrollY.value (StickyNav's reveal) doesn't care whether the write came
     // from JS or UI thread.
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        scrollY.value = event.nativeEvent.contentOffset.y;
+        const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+        const scrollOffset = contentOffset.y;
+        scrollY.value = scrollOffset;
+        // The last section (Contact) can have less remaining page height
+        // below it than the viewport is tall, so it can never satisfy
+        // resolveCurrentSectionId's offset math on its own - see
+        // scrollBottomEpsilonPx's doc comment for why this is passed through.
+        const isAtBottom =
+            scrollOffset + layoutMeasurement.height >= contentSize.height - scrollBottomEpsilonPx;
+        updateCurrentSectionId(scrollOffset, isAtBottom);
     };
 
     const handleSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
@@ -118,7 +157,11 @@ export default () => {
                 <Footer />
             </ScrollView>
 
-            <StickyNav onLinkPress={scrollToSection} scrollY={scrollY} />
+            <StickyNav
+                currentSectionId={currentSectionId}
+                onLinkPress={scrollToSection}
+                scrollY={scrollY}
+            />
         </View>
     );
 };

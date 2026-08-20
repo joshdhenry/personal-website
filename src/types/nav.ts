@@ -28,6 +28,7 @@ export type NavLinkProps = {
 };
 
 export type StickyNavProps = {
+    currentSectionId: SectionId;
     onLinkPress: (sectionId: SectionId) => void;
     scrollY: SharedValue<number>;
 };

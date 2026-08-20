@@ -54,9 +54,11 @@ export const NavLink = ({
     // "you're currently tabbed onto this," which fires for every link you
     // pass through, not just the one you activate - using it for color made
     // merely tabbing over a link look identical to having selected it.
-    // isSelected instead reflects StickyNav's own "last link actually
-    // activated" state (click or Enter/Space), so the ring shows where
-    // keyboard focus currently is while the color shows what's selected.
+    // isSelected instead reflects which section is actually in view right
+    // now (index.tsx's scroll-spy, passed down through StickyNav), so the
+    // ring shows where keyboard focus currently is while the color tracks
+    // what you're actually looking at - including as you scroll manually,
+    // not just right after a click/Enter/Space activation.
     const textStyle = [
         labelStyle,
         { color: isActive || isSelected ? colors.primary : defaultColor },
