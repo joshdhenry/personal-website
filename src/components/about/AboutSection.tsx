@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -17,7 +18,10 @@ import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 
 import { AboutPortrait } from "./AboutPortrait";
 
-export const AboutSection = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own hooks (useWindowDimensions, useRiseEntrance) can
+// still trigger a real re-render.
+export const AboutSection = memo(() => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
     const headingRiseStyle = useRiseEntrance(motion.delay.riseAboutHeading);
@@ -61,7 +65,8 @@ export const AboutSection = () => {
             </View>
         </View>
     );
-};
+});
+AboutSection.displayName = "AboutSection";
 
 const styles = StyleSheet.create({
     heading: {

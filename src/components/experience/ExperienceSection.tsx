@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -13,7 +14,10 @@ import { ExperienceTimeline } from "./ExperienceTimeline";
 
 const EXPERIENCE_HEADING = "Experience";
 
-export const ExperienceSection = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own hooks (useWindowDimensions, useRiseEntrance) can
+// still trigger a real re-render.
+export const ExperienceSection = memo(() => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
     const headingRiseStyle = useRiseEntrance(motion.delay.riseExperienceHeading);
@@ -45,7 +49,8 @@ export const ExperienceSection = () => {
             <ExperienceTimeline isNarrow={isNarrow} roles={experienceRoles} />
         </View>
     );
-};
+});
+ExperienceSection.displayName = "ExperienceSection";
 
 const styles = StyleSheet.create({
     heading: {

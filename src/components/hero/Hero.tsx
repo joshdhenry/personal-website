@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -24,7 +25,10 @@ import { ActionBadgeRow } from "./ActionBadgeRow";
 import { StatusEyebrow } from "./StatusEyebrow";
 import { TerminalCard } from "./TerminalCard";
 
-export const Hero = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own hooks (useWindowDimensions, useRiseEntrance) can
+// still trigger a real re-render.
+export const Hero = memo(() => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
@@ -88,7 +92,8 @@ export const Hero = () => {
             </View>
         </View>
     );
-};
+});
+Hero.displayName = "Hero";
 
 const styles = StyleSheet.create({
     column: {
