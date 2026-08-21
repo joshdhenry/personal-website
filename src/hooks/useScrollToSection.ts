@@ -18,10 +18,9 @@ export const useScrollToSection = ({
                 return;
             }
 
-            scrollViewRef.current?.scrollTo({
-                animated: true,
-                y: Math.max(0, offset - navHeight),
-            });
+            const targetOffset = Math.max(0, offset - navHeight);
+
+            scrollViewRef.current?.scrollTo({ animated: true, y: targetOffset });
         },
         [navHeight, scrollViewRef, sectionOffsets],
     );

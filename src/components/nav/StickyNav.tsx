@@ -16,22 +16,13 @@ import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { StickyNavProps } from "@/types/nav";
+import { getNavBackground } from "@/utils/nav";
 import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldRevealNav } from "@/utils/scroll";
 
 import { NavLink } from "./NavLink";
 
-// position: fixed has no RN equivalent, so this is web-only; native gets
-// the same tint without blur.
-const navBackground = Platform.select({
-    web: {
-        backdropFilter: `blur(${navSpace.backdropBlurRadius}px)`,
-        backgroundColor: colors.bgTranslucent,
-    },
-    default: {
-        backgroundColor: colors.bgTranslucent,
-    },
-});
+const navBackground = getNavBackground(Platform.OS);
 
 export const StickyNav = ({
     currentSectionId,
@@ -113,13 +104,10 @@ export const StickyNav = ({
           ? navSpace.linkGapNarrow
           : navSpace.linkGap;
 
+    const rowPaddingTop = navSpace.rowPaddingVertical + insets.top;
     const rowStyle = [
         styles.row,
-        {
-            gap: rowGap,
-            paddingHorizontal: rowPaddingHorizontal,
-            paddingTop: navSpace.rowPaddingVertical + insets.top,
-        },
+        { gap: rowGap, paddingHorizontal: rowPaddingHorizontal, paddingTop: rowPaddingTop },
     ];
     // flexShrink isn't cross-platform reliable on ScrollView, so width is
     // computed explicitly once the name label renders; flexShrink is the

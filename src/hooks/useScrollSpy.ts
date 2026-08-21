@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { pendingTargetTimeoutMs } from "@/constants/nav";
 import type { SectionId, UseScrollSpyParams } from "@/types/nav";
 import { hasSectionOrderReachedTarget, resolveCurrentSectionId } from "@/utils/scroll";
-
-// Upper bound on how long a click's pending target is trusted to resolve on
-// its own before the safety-net timeout clears it.
-const pendingTargetTimeoutMs = 1500;
 
 // Sticky nav's "current section" scroll-spy. A click sets the section
 // immediately (onLinkPress); pendingTargetRef holds that choice until

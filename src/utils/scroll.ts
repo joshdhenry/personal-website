@@ -7,7 +7,6 @@ import type { SectionId, SectionOffsets } from "@/types/nav";
 /**
  * Whether the sticky nav should be visible at the given scroll position.
  * Worklet so StickyNav's useAnimatedReaction can call it on the UI thread.
- *
  * @param scrollY - Current vertical scroll offset in px.
  * @param navRevealScrollY - Threshold past which the nav reveals.
  * @returns True once scrollY has passed the reveal threshold.
@@ -20,7 +19,6 @@ export const shouldRevealNav = (scrollY: number, navRevealScrollY: number): bool
 
 /**
  * Whether scroll has reached the maximum extent of its container.
- *
  * @param currentOffset - Current scroll offset in px.
  * @param viewportSize - Height of the visible scrolling viewport in px.
  * @param contentSize - Total scrollable content height in px.
@@ -34,9 +32,8 @@ export const isAtScrollBottom = (
 
 /**
  * Reads a ScrollView's real current scroll position directly from its DOM
- * node, for syncing state to a starting position no onScroll event fired for
- * (e.g. a bfcache-restored page). Web-only - callers gate on Platform.OS.
- *
+ * node, for syncing state to a starting position no onScroll event fired
+ * for (e.g. a bfcache-restored page). Web-only - callers gate on Platform.OS.
  * @param scrollView - The ScrollView ref to read, or null if not attached yet.
  * @returns The current scrollTop and whether it's at the max scroll extent.
  */
@@ -48,14 +45,13 @@ export const readInitialScrollState = (
         return { isAtBottom: false, scrollTop: 0 };
     }
 
-    return {
-        isAtBottom: isAtScrollBottom(
-            scrollableNode.scrollTop,
-            scrollableNode.clientHeight,
-            scrollableNode.scrollHeight,
-        ),
-        scrollTop: scrollableNode.scrollTop,
-    };
+    const isAtBottom = isAtScrollBottom(
+        scrollableNode.scrollTop,
+        scrollableNode.clientHeight,
+        scrollableNode.scrollHeight,
+    );
+
+    return { isAtBottom, scrollTop: scrollableNode.scrollTop };
 };
 
 // Top-to-bottom page order, derived from navLinks (pinned by data/nav.test.ts)
@@ -66,7 +62,6 @@ const sectionOrder: readonly SectionId[] = ["top", ...navLinks.map((navLink) => 
  * Whether scrolling has carried a click's target section into view, for the
  * sticky nav's pending-target guard against an animated scrollTo()'s
  * imprecise intermediate onScroll events.
- *
  * @param candidateSectionId - The section scroll position currently resolves to.
  * @param targetSectionId - The section a click is waiting to arrive at.
  * @param direction - 1 if scrolling down to reach the target, -1 if scrolling up.
@@ -84,13 +79,10 @@ export const hasSectionOrderReachedTarget = (
 };
 
 /**
- * Which section is currently in view, for the sticky nav's highlight. A
- * section counts as reached once scroll has carried it up past the nav.
- * isAtBottom forces the last measured section to win even short of that
- * math, since a short final section can never satisfy it by scrolling alone
- * - guarded by scrollY > 0 so a page short enough to need no scrolling at
- * all doesn't start pre-highlighted on its last section.
- *
+ * Which section is currently in view, for the sticky nav's highlight - a
+ * section counts as reached once scroll clears the nav past it. isAtBottom
+ * forces the last measured section to win even short of that (guarded by
+ * scrollY > 0, so an unscrolled short page doesn't start pre-highlighted on it).
  * @param scrollY - Current vertical scroll offset in px.
  * @param sectionOffsets - Each section's last-measured top offset, or null if unmeasured.
  * @param navHeight - Nav height to clear before a section counts as reached.
