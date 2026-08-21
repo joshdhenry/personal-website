@@ -41,6 +41,10 @@ export const useScrollSpy = ({
 
     const updateFromScroll = useCallback(
         (scrollOffset: number, isAtBottom: boolean) => {
+            // Single writer for scrollY, so it can never desync from
+            // latestScrollRef below - every sync path (onScroll, bfcache
+            // restore, layout resync) reads the same real position here.
+            scrollY.value = scrollOffset;
             latestScrollRef.current = { isAtBottom, scrollOffset };
             const nextSectionId = resolveCurrentSectionId(
                 scrollOffset,
@@ -73,7 +77,7 @@ export const useScrollSpy = ({
 
             setCurrentSectionId(nextSectionId);
         },
-        [clearPendingTarget, navHeight, sectionOffsets],
+        [clearPendingTarget, navHeight, scrollY, sectionOffsets],
     );
 
     const onLinkPress = useCallback(

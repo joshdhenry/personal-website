@@ -63,8 +63,8 @@ export default () => {
             return;
         }
 
-        const { scrollTop } = readInitialScrollState(scrollViewRef.current);
-        scrollY.value = scrollTop;
+        const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
+        updateFromScroll(scrollTop, isAtBottom);
         setHasSyncedInitialScroll(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -74,7 +74,6 @@ export default () => {
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const scrollOffset = contentOffset.y;
-        scrollY.value = scrollOffset;
         const isAtBottom = isAtScrollBottom(
             scrollOffset,
             layoutMeasurement.height,
