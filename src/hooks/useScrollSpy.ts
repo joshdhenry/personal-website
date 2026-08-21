@@ -85,16 +85,22 @@ export const useScrollSpy = ({
             }
 
             const direction: 1 | -1 = targetOffset < scrollY.value ? -1 : 1;
+            const scrollOffsetAtClick = scrollY.value;
             const timeoutId = setTimeout(() => {
                 pendingTargetRef.current = null;
                 const { isAtBottom, scrollOffset } = latestScrollRef.current;
+                // If no real onScroll landed, latestScrollRef is still the
+                // pre-click position - trust it only once scroll has moved,
+                // not fall back to wherever the user was before the click.
                 setCurrentSectionId(
-                    resolveCurrentSectionId(
-                        scrollOffset,
-                        sectionOffsets.current,
-                        navHeightRef.current,
-                        isAtBottom,
-                    ),
+                    scrollOffset === scrollOffsetAtClick
+                        ? sectionId
+                        : resolveCurrentSectionId(
+                              scrollOffset,
+                              sectionOffsets.current,
+                              navHeightRef.current,
+                              isAtBottom,
+                          ),
                 );
             }, pendingTargetTimeoutMs);
 
