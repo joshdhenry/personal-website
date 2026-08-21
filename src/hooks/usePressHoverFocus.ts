@@ -1,32 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type PressHoverFocusState = {
-    handleBlur: () => void;
-    handleFocus: () => void;
-    handleHoverIn: () => void;
-    handleHoverOut: () => void;
-    handlePressIn: () => void;
-    handlePressOut: () => void;
     isActive: boolean;
     isFocused: boolean;
+    onBlur: () => void;
+    onFocus: () => void;
+    onHoverIn: () => void;
+    onHoverOut: () => void;
+    onPressIn: () => void;
+    onPressOut: () => void;
 };
 
 /**
- * The press/hover/focus state machine shared by every interactive badge and
- * link in this app (nav links, action badges, external-link badges, the
- * pitch card's CTA): active while hovered or pressed, plus a separate
- * focused flag for the web keyboard focus ring. Hover and press are two
- * independent booleans rather than one shared flag, so releasing a press
- * while the cursor is still over the element (the ordinary end of a click)
- * doesn't clear active state that hover is still holding.
- *
- * onActiveChange fires from an effect watching the derived isActive value,
- * not inline inside the hover/press handlers themselves. Two handlers
- * called back to back in the same tick (e.g. a keyboard Enter/Space firing
- * onPressIn then onPressOut with no render in between) would each close
- * over the same pre-update state if compared inline, silently dropping a
- * transition; an effect always sees the settled, post-render value, so it
- * can't be fooled by same-tick call ordering.
+ * Press/hover/focus state machine shared by every interactive badge and
+ * link. isActive is hover OR press (kept as two booleans so releasing a
+ * press while still hovered doesn't clear active). onActiveChange fires
+ * from an effect on isActive, not inline, so same-tick handler pairs (a
+ * keyboard Enter's onPressIn+onPressOut) can't drop a transition.
  */
 export const usePressHoverFocus = (
     onActiveChange?: (active: boolean) => void,
@@ -52,33 +42,28 @@ export const usePressHoverFocus = (
         } else {
             hasMountedRef.current = true;
         }
-        // onActiveChange is passed as a fresh closure on every render by
-        // every caller here; including it would fire this effect (and the
-        // spring it drives) on every render instead of only on real
-        // hover/press transitions.
+        // onActiveChange is a fresh closure every render; including it would
+        // fire this effect on every render, not just real transitions.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive]);
 
-    const handleBlur = useCallback(() => setIsFocused(false), []);
-    const handleFocus = useCallback(() => setIsFocused(true), []);
-    const handleHoverIn = useCallback(() => setIsHovering(true), []);
-    const handleHoverOut = useCallback(() => setIsHovering(false), []);
-    // A pending deferred release (see handlePressOut) belongs to the press it
-    // was scheduled for; a fresh press-in must not let that stale timeout
-    // clear isPressing out from under it later.
-    const handlePressIn = useCallback(() => {
+    const onBlur = useCallback(() => setIsFocused(false), []);
+    const onFocus = useCallback(() => setIsFocused(true), []);
+    const onHoverIn = useCallback(() => setIsHovering(true), []);
+    const onHoverOut = useCallback(() => setIsHovering(false), []);
+    // A fresh press-in must not let a stale deferred release (see
+    // onPressOut) clear isPressing out from under it later.
+    const onPressIn = useCallback(() => {
         if (pendingPressOutTimeoutRef.current !== null) {
             clearTimeout(pendingPressOutTimeoutRef.current);
             pendingPressOutTimeoutRef.current = null;
         }
         setIsPressing(true);
     }, []);
-    // RN Web fires onPressIn then onPressOut in the same tick for a keyboard
-    // Enter/Space activation (no hover involved), so clearing isPressing
-    // synchronously here would batch away the isActive(true) render entirely
-    // before the press-feedback spring above ever sees it. Deferring the
-    // clear to the next tick guarantees that render commits first.
-    const handlePressOut = useCallback(() => {
+    // A keyboard Enter/Space fires onPressIn then onPressOut same-tick;
+    // clearing isPressing synchronously would batch away the active(true)
+    // render before the press-feedback spring ever sees it.
+    const onPressOut = useCallback(() => {
         pendingPressOutTimeoutRef.current = setTimeout(() => {
             pendingPressOutTimeoutRef.current = null;
             setIsPressing(false);
@@ -86,12 +71,12 @@ export const usePressHoverFocus = (
     }, []);
 
     return {
-        handleBlur,
-        handleFocus,
-        handleHoverIn,
-        handleHoverOut,
-        handlePressIn,
-        handlePressOut,
+        onBlur,
+        onFocus,
+        onHoverIn,
+        onHoverOut,
+        onPressIn,
+        onPressOut,
         isActive,
         isFocused,
     };

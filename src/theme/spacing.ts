@@ -386,13 +386,9 @@ export const navSpace = {
     /** Row padding at widths <= layoutBreakpoint.narrow. */
     rowPaddingHorizontalNarrow: 20,
     /**
-     * Row padding at widths <= layoutBreakpoint.compact. The wordmark + 5
-     * links' combined content (~379px) barely fits real phone widths at
-     * all - this and the other *Compact tokens below are deliberately
-     * tighter than rowPaddingHorizontalNarrow to claw back the ~30px
-     * needed. StickyNav's links row is still a horizontal ScrollView as a
-     * fallback for anything narrower still (e.g. large accessibility text
-     * scaling), so under-fitting here degrades to scrollable, not clipped.
+     * Row padding at widths <= layoutBreakpoint.compact, tighter than
+     * rowPaddingHorizontalNarrow - the wordmark + 5 links barely fit real
+     * phone widths; the links row is a scrollable fallback under that.
      */
     rowPaddingHorizontalCompact: 16,
     /** Gap between the wordmark and the links group. */
@@ -408,22 +404,13 @@ export const navSpace = {
     /** Stack order above page content, matches the prototype's z-index: 50. */
     stackOrder: 50,
     /**
-     * Hidden-state translateY. The prototype uses translateY(-100%), a
-     * percentage of the nav's own height; RN transforms are absolute px, so
-     * this approximates that height (row padding + line height) closely
-     * enough to read as "slides fully offscreen."
+     * Hidden-state translateY, approximating the nav's own height (RN
+     * transforms are absolute px, not the prototype's translateY(-100%)).
      */
     hiddenTranslateY: -64,
     /**
-     * Nav row height estimate excluding insets.top (rowPaddingVertical * 2 +
-     * typeScale.navLink's 21px line-height, the tallest of navWordmark/
-     * navLink/navLinkNarrow/navLinkCompact - the desktop breakpoint's row is
-     * the tallest one, so this is a safe over-estimate at narrow/compact
-     * widths too, never an under-estimate). Used by useScrollToSection to
-     * land a target below the nav rather than underneath it - kept as its
-     * own precisely-derived value rather than reusing hiddenTranslateY,
-     * which is deliberately more generous for its own "fully offscreen"
-     * purpose.
+     * Nav row height excluding insets.top, for useScrollToSection to land a
+     * target below the nav - deliberately more precise than hiddenTranslateY.
      */
     navHeightEstimate: 49,
     /** Web-only backdrop blur radius behind the translucent nav background. */

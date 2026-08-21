@@ -1,19 +1,11 @@
 import { colors } from "@/theme/colors";
 import { focusRingSpace } from "@/theme/spacing";
 
-/**
- * react-native-web supports CSS properties (outline*, boxShadow) React
- * Native's own TextStyle/ViewStyle types don't declare, so every web-only
- * style object in this theme is cast through this alias rather than
- * `Record<string, unknown>` at each call site.
- */
+// react-native-web supports CSS properties RN's own style types don't
+// declare (outline*, boxShadow); every web-only style here casts through this.
 export type WebOnlyStyle = Record<string, unknown>;
 
-/**
- * The visible keyboard focus ring shown on web, shared by every interactive
- * badge and link in this app. react-native-web-only style props, so this is
- * a plain style object rather than a StyleSheet.create() entry.
- */
+/** Visible keyboard focus ring shown on web, shared by every interactive badge/link. */
 export const focusRing: WebOnlyStyle = {
     outlineColor: colors.focusRing,
     outlineOffset: focusRingSpace.outlineOffset,
@@ -21,25 +13,16 @@ export const focusRing: WebOnlyStyle = {
     outlineWidth: focusRingSpace.outlineWidth,
 };
 
-/**
- * An inset variant of focusRing, for interactive elements that render inside
- * a clipping ancestor (e.g. a horizontally scrolling ScrollView) - an
- * outline draws outside the element's own box via outlineOffset, so an
- * ancestor's overflow:hidden clips it (typically the top/bottom edges,
- * leaving stray left/right slivers). An inset boxShadow draws within the
- * element's own box instead, so it can't be clipped regardless of context.
- */
+// Inset variant of focusRing for elements inside a clipping ancestor (e.g. a
+// horizontal ScrollView) - an outline draws outside the box via
+// outlineOffset and gets clipped; an inset boxShadow can't be.
 export const insetFocusRing: WebOnlyStyle = {
     boxShadow: `inset 0 0 0 ${focusRingSpace.outlineWidth}px ${colors.focusRing}`,
 };
 
-/**
- * boxShadow is a different CSS property than outline, so insetFocusRing
- * above doesn't occlude the browser's own default focus outline the way
- * focusRing's outline-based style does (same property, so it always fully
- * replaces it). Pairs with insetFocusRing wherever it's used, to suppress
- * that independently-rendered native outline explicitly.
- */
+// boxShadow doesn't occlude the browser's own default outline the way
+// focusRing's outline-based style does - pairs with insetFocusRing to
+// suppress that independently-rendered outline explicitly.
 export const suppressNativeFocusOutline: WebOnlyStyle = {
     outlineStyle: "none",
 };

@@ -52,7 +52,7 @@ describe("useScrollSpy", () => {
         const { result, scrollToSection } = renderScrollSpy(0);
 
         act(() => {
-            result.current.handleLinkPress("about");
+            result.current.onLinkPress("about");
         });
 
         expect(result.current.currentSectionId).toBe("about");
@@ -64,7 +64,7 @@ describe("useScrollSpy", () => {
         const { result, scrollToSection } = renderScrollSpy(0, unmeasuredOffsets);
 
         act(() => {
-            result.current.handleLinkPress("contact");
+            result.current.onLinkPress("contact");
         });
 
         expect(result.current.currentSectionId).toBe("top");
@@ -75,7 +75,7 @@ describe("useScrollSpy", () => {
         const { result } = renderScrollSpy(0);
 
         act(() => {
-            result.current.handleLinkPress("about");
+            result.current.onLinkPress("about");
         });
 
         // Simulates an animated scrollTo()'s imprecise intermediate frames,
@@ -91,7 +91,7 @@ describe("useScrollSpy", () => {
         const { result } = renderScrollSpy(0);
 
         act(() => {
-            result.current.handleLinkPress("about");
+            result.current.onLinkPress("about");
         });
         act(() => {
             result.current.updateFromScroll(4000 - navHeightEstimate, false);
@@ -110,10 +110,10 @@ describe("useScrollSpy", () => {
         const { result } = renderScrollSpy(0);
 
         act(() => {
-            result.current.handleLinkPress("about");
+            result.current.onLinkPress("about");
         });
         act(() => {
-            result.current.handleScrollBeginDrag();
+            result.current.onScrollBeginDrag();
         });
         act(() => {
             result.current.updateFromScroll(3000 - navHeightEstimate, false);
@@ -128,7 +128,7 @@ describe("useScrollSpy", () => {
         const { result } = renderScrollSpy(0);
 
         act(() => {
-            result.current.handleLinkPress("about");
+            result.current.onLinkPress("about");
         });
         act(() => {
             jest.runAllTimers();

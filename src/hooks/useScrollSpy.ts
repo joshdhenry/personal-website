@@ -3,30 +3,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { SectionId, UseScrollSpyParams } from "@/types/nav";
 import { hasSectionOrderReachedTarget, resolveCurrentSectionId } from "@/utils/scroll";
 
-// Safety-net upper bound on how long a click-triggered scroll's pending
-// target (see pendingTargetRef below) is trusted to eventually resolve on
-// its own. Comfortably longer than any real scroll animation on any
-// platform/distance, so it only ever fires for the edge case the position-
-// based clearing can't handle on its own.
+// Upper bound on how long a click's pending target is trusted to resolve on
+// its own before the safety-net timeout clears it.
 const pendingTargetTimeoutMs = 1500;
 
 /**
- * The sticky nav's "current section" scroll-spy: tracks which section is in
- * view (updateFromScroll, fed by index.tsx's onScroll and its mount-sync
- * effect) while also handling the optimistic, click-driven case
- * (handleLinkPress) - a click already tells us exactly which section the
- * user means, so it sets that immediately rather than waiting on scroll
- * position to catch up.
- *
- * pendingTargetRef records that immediate choice, alongside the scroll
- * direction needed to reach it and a safety-net timeout, and updateFromScroll
- * defers to it until scrolling has actually caught up (via
- * hasSectionOrderReachedTarget) - otherwise the animated scrollTo() a click
- * starts fires a stream of imprecise intermediate onScroll events that would
- * repeatedly resolve to whatever section is currently passing by, undoing
- * the click's own selection. handleScrollBeginDrag clears it as soon as a
- * real touch/drag gesture starts, the most direct signal that the user has
- * taken over from the click.
+ * Sticky nav's "current section" scroll-spy. A click sets the section
+ * immediately (onLinkPress) rather than waiting on scroll to catch up;
+ * pendingTargetRef holds that choice until scroll position actually
+ * reaches it, so the imprecise onScroll stream mid-animation can't undo it.
  */
 export const useScrollSpy = ({
     navHeightEstimate,
@@ -77,14 +62,11 @@ export const useScrollSpy = ({
         [clearPendingTarget, navHeightEstimate, sectionOffsets],
     );
 
-    const handleLinkPress = useCallback(
+    const onLinkPress = useCallback(
         (sectionId: SectionId) => {
             const targetOffset = sectionOffsets.current[sectionId];
-            // scrollToSection below silently no-ops for a section whose
-            // onLayout hasn't measured an offset yet, rather than falling
-            // back to the top of the page - matching that here too, so a
-            // click that doesn't actually move the page also doesn't
-            // optimistically relabel the nav to a section it never reached.
+            // Matches scrollToSection's own no-op for an unmeasured offset,
+            // so the nav doesn't relabel to a section the page never reached.
             if (targetOffset === null) {
                 return;
             }
@@ -107,8 +89,8 @@ export const useScrollSpy = ({
 
     return {
         currentSectionId,
-        handleLinkPress,
-        handleScrollBeginDrag: clearPendingTarget,
+        onLinkPress,
+        onScrollBeginDrag: clearPendingTarget,
         updateFromScroll,
     };
 };

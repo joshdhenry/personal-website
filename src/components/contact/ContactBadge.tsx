@@ -18,17 +18,17 @@ const isHoverShadowSupported = Platform.OS === "web";
 export const ContactBadge = ({ badge }: ContactBadgeProps) => {
     const {
         animatedStyle,
-        handleBlur,
-        handleFocus,
-        handleHoverIn,
-        handleHoverOut,
-        handlePressIn,
-        handlePressOut,
+        onBlur,
+        onFocus,
+        onHoverIn,
+        onHoverOut,
+        onPressIn,
+        onPressOut,
         isActive,
         isFocused,
     } = usePressScale(contactSpace.badgeLiftDistance);
 
-    const handlePress = () => openUrl(badge.href);
+    const onPress = () => openUrl(badge.href);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
@@ -41,22 +41,19 @@ export const ContactBadge = ({ badge }: ContactBadgeProps) => {
     const labelStyle = [styles.label, isActive && styles.labelActive];
     const BadgeIcon = badge.icon;
 
-    // "button" over the more semantically precise "link": this doesn't
-    // render a real <a href>, and react-native-web's Pressable silently
-    // drops keyboard Enter/Space activation for role="link" without one -
-    // see NavLink.tsx for the full explanation.
+    // "button", not "link": no real <a href> here - see NavLink.tsx.
     return (
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={badge.accessibilityLabel}
                 accessibilityRole="button"
-                onBlur={handleBlur}
-                onFocus={handleFocus}
-                onHoverIn={handleHoverIn}
-                onHoverOut={handleHoverOut}
-                onPress={handlePress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                onHoverIn={onHoverIn}
+                onHoverOut={onHoverOut}
+                onPress={onPress}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
                 style={styles.pressable}
             >
                 <BadgeIcon />

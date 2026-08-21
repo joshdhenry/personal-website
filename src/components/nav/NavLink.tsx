@@ -17,53 +17,43 @@ export const NavLink = ({
 }: NavLinkProps) => {
     const {
         animatedStyle,
-        handleBlur,
-        handleFocus,
-        handleHoverIn,
-        handleHoverOut,
-        handlePressIn,
-        handlePressOut,
+        onBlur,
+        onFocus,
+        onHoverIn,
+        onHoverOut,
+        onPressIn,
+        onPressOut,
         isActive,
         isFocused,
     } = usePressScale();
 
-    const handlePress = () => onLinkPress(sectionId);
+    const onPress = () => onLinkPress(sectionId);
 
     const showFocusRing = Platform.OS === "web" && isFocused;
-    // isSelected (not isFocused) drives the persistent color: isFocused is
-    // "you're currently tabbed onto this," which fires for every link you
-    // pass through, not just the one you activate - using it for color made
-    // merely tabbing over a link look identical to having selected it.
-    // isSelected instead reflects which section is actually in view right
-    // now (index.tsx's scroll-spy, passed down through StickyNav), so the
-    // ring shows where keyboard focus currently is while the color tracks
-    // what you're actually looking at - including as you scroll manually,
-    // not just right after a click/Enter/Space activation.
+    // isSelected (not isFocused) drives color: isFocused fires for every
+    // link tabbed through, not just the one selected. isSelected reflects
+    // the actual in-view section, so color tracks manual scrolling too.
     const textStyle = [
         labelStyle,
         { color: isActive || isSelected ? colors.primary : defaultColor },
         showFocusRing && insetFocusRing,
     ];
 
-    // accessibilityRole="link" would read more precisely (this jumps to a
-    // page section), but react-native-web's Pressable only fires onPress
-    // from a keyboard Enter for role="link" if the underlying element is a
-    // real <a href> - ours isn't (onLinkPress scrolls imperatively), so the
-    // browser never dispatches the native click RNW is waiting for and
-    // Enter/Space silently do nothing. "button" renders as a real <button>,
-    // which gets genuine native keyboard activation.
+    // accessibilityRole="button" (not "link"): react-native-web only fires
+    // a real <a>'s native keyboard Enter/Space activation for role="link",
+    // and this isn't a real <a> (onLinkPress scrolls imperatively).
     return (
         <Animated.View style={animatedStyle}>
             <Pressable
                 accessibilityLabel={accessibilityLabel}
                 accessibilityRole="button"
-                onBlur={handleBlur}
-                onFocus={handleFocus}
-                onHoverIn={handleHoverIn}
-                onHoverOut={handleHoverOut}
-                onPress={handlePress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                onHoverIn={onHoverIn}
+                onHoverOut={onHoverOut}
+                onPress={onPress}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
                 style={suppressNativeFocusOutline}
             >
                 <Text style={textStyle}>{label}</Text>

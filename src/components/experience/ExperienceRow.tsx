@@ -17,14 +17,9 @@ const isHoverShadowSupported = Platform.OS === "web";
 
 export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: ExperienceRowProps) => {
     const riseStyle = useRiseEntrance(staggerDelayMilliseconds);
-    const {
-        animatedStyle,
-        handleHoverIn,
-        handleHoverOut,
-        handlePressIn,
-        handlePressOut,
-        isActive,
-    } = usePressScale(experienceSpace.rowLiftDistance);
+    const { animatedStyle, onHoverIn, onHoverOut, onPressIn, onPressOut, isActive } = usePressScale(
+        experienceSpace.rowLiftDistance,
+    );
 
     const cardStyle = [
         styles.card,
@@ -41,21 +36,19 @@ export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: Expe
     const accessibilityLabel = `${role.role}, ${role.companyLine}, ${role.dateRangeLabel}, ${role.note}`;
 
     return (
-        // Rise-entrance (riseStyle) and hover/press lift (activeAnimatedStyle)
-        // are two independent animated `transform`s; splitting them across
-        // two nested Animated.Views keeps each in its own style, since a
-        // single element's style array would let the later one clobber the
-        // earlier one's transform entirely instead of composing them.
+        // Two nested Animated.Views: riseStyle and cardStyle each animate
+        // their own `transform`, and one style array would let the later
+        // clobber the earlier instead of composing them.
         <Animated.View style={riseStyle}>
             <Animated.View style={cardStyle}>
                 <Pressable
                     accessibilityLabel={accessibilityLabel}
                     accessibilityRole="none"
                     accessible
-                    onHoverIn={handleHoverIn}
-                    onHoverOut={handleHoverOut}
-                    onPressIn={handlePressIn}
-                    onPressOut={handlePressOut}
+                    onHoverIn={onHoverIn}
+                    onHoverOut={onHoverOut}
+                    onPressIn={onPressIn}
+                    onPressOut={onPressOut}
                     style={isNarrow ? styles.rowNarrow : styles.rowWide}
                 >
                     <View importantForAccessibility="no-hide-descendants" style={dotStyle}>

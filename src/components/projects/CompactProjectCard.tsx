@@ -21,16 +21,11 @@ const isHoverShadowSupported = Platform.OS === "web";
 
 export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const {
-        animatedStyle,
-        handleHoverIn,
-        handleHoverOut,
-        handlePressIn,
-        handlePressOut,
-        isActive,
-    } = usePressScale(projectsSpace.cardLiftDistance);
+    const { animatedStyle, onHoverIn, onHoverOut, onPressIn, onPressOut, isActive } = usePressScale(
+        projectsSpace.cardLiftDistance,
+    );
 
-    const handlePress = () => setIsOpen((previousIsOpen) => !previousIsOpen);
+    const onPress = () => setIsOpen((previousIsOpen) => !previousIsOpen);
 
     const cardStyle = [
         styles.card,
@@ -46,11 +41,11 @@ export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
                 accessibilityRole="button"
                 accessible
                 aria-expanded={isOpen}
-                onHoverIn={handleHoverIn}
-                onHoverOut={handleHoverOut}
-                onPress={handlePress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onHoverIn={onHoverIn}
+                onHoverOut={onHoverOut}
+                onPress={onPress}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
             >
                 <ProjectImageBand
                     alt={project.imageAlt}

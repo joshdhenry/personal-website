@@ -8,11 +8,9 @@ export type PressScaleState = PressHoverFocusState & {
 };
 
 /**
- * The press/hover scale-(and-optional-lift) feedback shared by every
- * Pressable badge and link in this app (motion.spring.snappy "tactile feel"
- * from CLAUDE.md's motion rules). liftDistance stays 0 for elements that
- * only scale (e.g. NavLink); ActionBadge passes a negative value to also
- * lift on press/hover.
+ * Press/hover scale (and optional lift) feedback shared by every Pressable
+ * badge and link. liftDistance stays 0 for scale-only elements; ActionBadge
+ * passes a negative value to also lift on press/hover.
  */
 export const usePressScale = (liftDistance = 0): PressScaleState => {
     const scale = useSharedValue(1);

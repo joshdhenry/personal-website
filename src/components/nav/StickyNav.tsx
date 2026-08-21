@@ -21,8 +21,8 @@ import { shouldRevealNav } from "@/utils/scroll";
 
 import { NavLink } from "./NavLink";
 
-// True position: fixed has no RN equivalent, so this stays web-only, per
-// designs/README.md's own RN note; native gets the same tint without blur.
+// position: fixed has no RN equivalent, so this is web-only; native gets
+// the same tint without blur.
 const navBackground = Platform.select({
     web: {
         backdropFilter: `blur(${navSpace.backdropBlurRadius}px)`,
@@ -37,26 +37,17 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
-    // The nav grows taller by insets.top (see rowStyle below), so the
-    // hidden-state offset has to grow with it or the nav peeks out from
-    // under the status bar while "hidden".
+    // Nav grows taller by insets.top, so the hidden offset must too, or it
+    // peeks out under the status bar while "hidden".
     const hiddenTranslateY = navSpace.hiddenTranslateY - insets.top;
     const isReducedMotionPreferred = useIsReducedMotionPreferred();
     const opacity = useSharedValue(0);
     const translateY = useSharedValue(hiddenTranslateY);
     const hasMountedRef = useRef(false);
 
-    // A withTiming animation targets hiddenTranslateY/opacity as they were
-    // when the animation started; a device rotation mid-transition (which
-    // changes insets.top, and so hiddenTranslateY) would otherwise let that
-    // animation finish at a stale translateY while opacity keeps animating
-    // on its own, visibly desyncing the two. Recomputing both directly
-    // whenever hiddenTranslateY changes cancels any in-flight animation and
-    // snaps both to the position/opacity matching the current insets and
-    // reveal state, whether the nav is resting or mid-transition. The
-    // reaction below already seeds the correct initial state on its own
-    // first evaluation, so this effect skips its own mount-time run - its
-    // job starts at the first hiddenTranslateY change after that.
+    // A rotation mid-animation changes hiddenTranslateY; recomputing snaps
+    // both values to the current insets instead of an in-flight animation
+    // finishing stale. Skips the initial mount - the reaction below seeds that.
     useEffect(() => {
         if (!hasMountedRef.current) {
             hasMountedRef.current = true;
@@ -77,12 +68,9 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
 
             const nextOpacity = shouldReveal ? 1 : 0;
             const nextTranslateY = shouldReveal ? 0 : hiddenTranslateY;
-            // previouslyRevealed is null only on this reaction's very first
-            // evaluation ever (Reanimated seeds it once per component
-            // instance and never resets it on a deps change) - e.g. a
-            // bfcache-restored page already past the reveal threshold. That
-            // first evaluation should apply instantly, not animate a pop-in
-            // for a state the nav should simply start in.
+            // previouslyRevealed is null only on the reaction's true first
+            // evaluation (e.g. a bfcache-restored page past the threshold) -
+            // that state should apply instantly, not animate a pop-in.
             const shouldAnimate = !isReducedMotionPreferred && previouslyRevealed !== null;
 
             if (!shouldAnimate) {
@@ -128,25 +116,11 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
             paddingTop: navSpace.rowPaddingVertical + insets.top,
         },
     ];
-    // Even with the tighter *Compact tokens above, the 5 links + wordmark
-    // are right at the edge of fitting a real phone width - comfortable on
-    // iPhone-class widths, tight-but-fitting down to ~380px, and still short
-    // on the smallest/oldest Android widths or with large accessibility text
-    // scaling. The links row is a horizontal ScrollView so that shortfall
-    // degrades to scrollable rather than clipped.
-    //
-    // That alone relies on flexShrink squeezing the ScrollView smaller than
-    // its content - correct in principle, but ScrollView isn't a plain flex
-    // box the way View is, and its shrink behavior isn't guaranteed to be
-    // pixel-identical across web/iOS/Android the way a plain row's would be.
-    // So the ScrollView's width is also computed explicitly, from values
-    // already on hand (window width, the wordmark's actual measured
-    // rendered width) rather than left entirely to the layout engine to
-    // shrink correctly - deterministic on every platform once the wordmark
-    // has measured once, with flexShrink left in place underneath as a
-    // fallback for the single frame before that first measurement lands.
+    // ScrollView's flexShrink isn't guaranteed pixel-identical across
+    // platforms, so width is computed explicitly from measured values once
+    // the wordmark renders; flexShrink stays as a one-frame fallback before that.
     const [wordmarkWidth, setWordmarkWidth] = useState(0);
-    const handleWordmarkLayout = (event: LayoutChangeEvent) => {
+    const onWordmarkLayout = (event: LayoutChangeEvent) => {
         setWordmarkWidth(event.nativeEvent.layout.width);
     };
     const containerWidth = Math.min(width, navSpace.containerMaxWidth);
@@ -166,7 +140,7 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
     return (
         <Animated.View style={navAnimatedStyle}>
             <View style={rowStyle}>
-                <View onLayout={handleWordmarkLayout}>
+                <View onLayout={onWordmarkLayout}>
                     <NavLink
                         accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
                         defaultColor={colors.ink}

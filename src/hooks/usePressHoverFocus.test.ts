@@ -21,17 +21,17 @@ describe("usePressHoverFocus", () => {
     it("activates on hover-in and press-in, deactivates on hover-out and press-out", () => {
         const { result } = renderHook(() => usePressHoverFocus());
 
-        act(() => result.current.handleHoverIn());
+        act(() => result.current.onHoverIn());
         expect(result.current.isActive).toBe(true);
 
-        act(() => result.current.handleHoverOut());
+        act(() => result.current.onHoverOut());
         expect(result.current.isActive).toBe(false);
 
-        act(() => result.current.handlePressIn());
+        act(() => result.current.onPressIn());
         expect(result.current.isActive).toBe(true);
 
         act(() => {
-            result.current.handlePressOut();
+            result.current.onPressOut();
             jest.runAllTimers();
         });
         expect(result.current.isActive).toBe(false);
@@ -40,30 +40,30 @@ describe("usePressHoverFocus", () => {
     it("stays active on press-out while still hovering (the ordinary end of a web click)", () => {
         const { result } = renderHook(() => usePressHoverFocus());
 
-        act(() => result.current.handleHoverIn());
-        act(() => result.current.handlePressIn());
+        act(() => result.current.onHoverIn());
+        act(() => result.current.onPressIn());
         act(() => {
-            result.current.handlePressOut();
+            result.current.onPressOut();
             jest.runAllTimers();
         });
 
         expect(result.current.isActive).toBe(true);
 
-        act(() => result.current.handleHoverOut());
+        act(() => result.current.onHoverOut());
         expect(result.current.isActive).toBe(false);
     });
 
     it("stays active on hover-out while still pressing", () => {
         const { result } = renderHook(() => usePressHoverFocus());
 
-        act(() => result.current.handlePressIn());
-        act(() => result.current.handleHoverIn());
-        act(() => result.current.handleHoverOut());
+        act(() => result.current.onPressIn());
+        act(() => result.current.onHoverIn());
+        act(() => result.current.onHoverOut());
 
         expect(result.current.isActive).toBe(true);
 
         act(() => {
-            result.current.handlePressOut();
+            result.current.onPressOut();
             jest.runAllTimers();
         });
         expect(result.current.isActive).toBe(false);
@@ -72,11 +72,11 @@ describe("usePressHoverFocus", () => {
     it("tracks focus independently of active state", () => {
         const { result } = renderHook(() => usePressHoverFocus());
 
-        act(() => result.current.handleFocus());
+        act(() => result.current.onFocus());
         expect(result.current.isFocused).toBe(true);
         expect(result.current.isActive).toBe(false);
 
-        act(() => result.current.handleBlur());
+        act(() => result.current.onBlur());
         expect(result.current.isFocused).toBe(false);
     });
 
@@ -84,33 +84,31 @@ describe("usePressHoverFocus", () => {
         const onActiveChange = jest.fn();
         const { result } = renderHook(() => usePressHoverFocus(onActiveChange));
 
-        act(() => result.current.handleHoverIn());
+        act(() => result.current.onHoverIn());
         expect(onActiveChange).toHaveBeenLastCalledWith(true);
 
         onActiveChange.mockClear();
-        act(() => result.current.handlePressIn());
+        act(() => result.current.onPressIn());
         act(() => {
-            result.current.handlePressOut();
+            result.current.onPressOut();
             jest.runAllTimers();
         });
         expect(onActiveChange).not.toHaveBeenCalled();
 
-        act(() => result.current.handleHoverOut());
+        act(() => result.current.onHoverOut());
         expect(onActiveChange).toHaveBeenLastCalledWith(false);
     });
 
     it("still fires onActiveChange for a same-tick keyboard press (Enter/Space)", () => {
-        // A keyboard Enter/Space activation on web commonly fires onPressIn
-        // then onPressOut synchronously with no render in between -
-        // simulated here by calling both inside one act(). handlePressOut
-        // defers its state clear so the pressed-true render still commits
-        // (and the press-feedback spring still fires) before release.
+        // Simulates onPressIn+onPressOut firing synchronously (a keyboard
+        // Enter/Space on web) - onPressOut defers its clear so the
+        // pressed-true render still commits first.
         const onActiveChange = jest.fn();
         const { result } = renderHook(() => usePressHoverFocus(onActiveChange));
 
         act(() => {
-            result.current.handlePressIn();
-            result.current.handlePressOut();
+            result.current.onPressIn();
+            result.current.onPressOut();
         });
 
         expect(result.current.isActive).toBe(true);
@@ -126,11 +124,11 @@ describe("usePressHoverFocus", () => {
         const onActiveChange = jest.fn();
         const { result } = renderHook(() => usePressHoverFocus(onActiveChange));
 
-        act(() => result.current.handlePressIn());
-        act(() => result.current.handlePressOut());
+        act(() => result.current.onPressIn());
+        act(() => result.current.onPressOut());
         // Re-press lands before the deferred release from the prior
-        // handlePressOut fires; that stale timeout must not clear this one.
-        act(() => result.current.handlePressIn());
+        // onPressOut fires; that stale timeout must not clear this one.
+        act(() => result.current.onPressIn());
         act(() => jest.runAllTimers());
 
         expect(result.current.isActive).toBe(true);
@@ -141,8 +139,8 @@ describe("usePressHoverFocus", () => {
         const clearTimeoutSpy = jest.spyOn(global, "clearTimeout");
         const { result, unmount } = renderHook(() => usePressHoverFocus());
 
-        act(() => result.current.handlePressIn());
-        act(() => result.current.handlePressOut());
+        act(() => result.current.onPressIn());
+        act(() => result.current.onPressOut());
         clearTimeoutSpy.mockClear();
 
         unmount();

@@ -34,7 +34,8 @@ Also serves as a Claude Code learning project.
   variable names.
 - Self documenting code is the best kind of code. Use comments in places only
   where variable naming is not explanatory enough. Comments explain why, never
-  restate what.
+  restate what. Max 3 lines, most 1 line — delete anything a reader could
+  already infer from the code and names.
 - No magic numbers. Every spacing, size, radius, duration, breakpoint, and
   color must be a named token defined in theme/ and referenced by name in
   components. If a new value is genuinely needed, add a named token with a
@@ -73,6 +74,9 @@ Also serves as a Claude Code learning project.
 - No inline styles, style array merges, or handler functions written
   directly in JSX — extract each to a named const above the `return`/JSX
   expression.
+- Name event handlers `onX`, never `handleX` (`onPress`, `onProjectsLayout`),
+  including hook-returned callbacks. A factory that builds several handlers
+  can keep its own descriptive name.
 - Alphabetize: JSX props, StyleSheet keys, and object-literal type fields.
   Array element order stays whatever is semantically meaningful (e.g. the
   order stats or nav items should display in), never alphabetized.
@@ -97,7 +101,11 @@ Also serves as a Claude Code learning project.
 - src/utils/ pure helper/utility functions, aliased via `@/utils/*`; grouped
   and named by the domain they deal with (e.g. `scroll.ts` for the page's
   scroll-driven effects), never by an individual function's own name; every
-  util file has a colocated `*.test.ts`
+  util file has a colocated `*.test.ts`. Exports functions only — a constant
+  a util needs belongs in src/constants/, imported from there instead.
+- src/constants/ named non-visual constants (thresholds, timeouts, and the
+  like) shared across utils/hooks/components, one file per domain — visual
+  design values still belong in theme/, not here.
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/

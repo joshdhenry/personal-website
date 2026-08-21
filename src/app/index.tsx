@@ -13,6 +13,7 @@ import { Hero } from "@/components/hero/Hero";
 import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
+import { scrollBottomEpsilonPx } from "@/constants/scroll";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
@@ -20,7 +21,7 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import { readInitialScrollState, scrollBottomEpsilonPx } from "@/utils/scroll";
+import { readInitialScrollState } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
 export default () => {
@@ -43,29 +44,20 @@ export default () => {
         scrollViewRef,
         sectionOffsets,
     });
-    const { currentSectionId, handleLinkPress, handleScrollBeginDrag, updateFromScroll } =
-        useScrollSpy({ navHeightEstimate, scrollToSection, scrollY, sectionOffsets });
+    const { currentSectionId, onLinkPress, onScrollBeginDrag, updateFromScroll } = useScrollSpy({
+        navHeightEstimate,
+        scrollToSection,
+        scrollY,
+        sectionOffsets,
+    });
 
-    // scrollY starts at 0, but the browser (e.g. bfcache back/forward
-    // navigation) can leave the ScrollView's underlying DOM node already
-    // scrolled before any onScroll event reaches React - StickyNav would
-    // then wrongly judge the nav should stay hidden. This reads the real
-    // starting position once on mount without moving the page, so it's a
-    // sync, never a reset. Web-only: readInitialScrollState reads DOM state
-    // that has no equivalent on iOS/Android - native starts accurate (no
-    // bfcache-style restore) so there's nothing to sync there, and
-    // hasSyncedInitialScroll starts true on native to match.
-    //
-    // StickyNav only mounts once this sync has committed (see the render
-    // below): its own reveal animation makes a one-time "was this the very
-    // first evaluation ever" decision the instant it mounts, to apply a
-    // bfcache-restored starting scroll position instantly rather than
-    // animating a pop-in for it - React flushes a child's mount effects
-    // before its parent's own, so mounting StickyNav any earlier would let
-    // that first evaluation run against scrollY's stale initial 0 instead
-    // of the real synced position, then wrongly animate the very next
-    // evaluation once this effect corrects it.
+    // StickyNav mounts only once this is true (see the render below) - its
+    // reveal reaction treats its own first evaluation as authoritative, so
+    // it must not mount before scrollY is synced to a real starting value.
     const [hasSyncedInitialScroll, setHasSyncedInitialScroll] = useState(Platform.OS !== "web");
+    // A bfcache-restored page can already be scrolled before React sees any
+    // onScroll event - read the real starting position once on mount. Web
+    // only: readInitialScrollState has no native equivalent.
     useEffect(() => {
         if (Platform.OS !== "web") {
             return;
@@ -75,39 +67,28 @@ export default () => {
         scrollY.value = scrollTop;
         updateFromScroll(scrollTop, isAtBottom);
         setHasSyncedInitialScroll(true);
-        // Only ever needs to run once, on mount - scrollY and updateFromScroll
-        // are stable/deliberately excluded so this doesn't re-fire on every
-        // render.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // A plain JS onScroll, not Animated.ScrollView + useAnimatedScrollHandler:
-    // Animated.ScrollView's web ref doesn't support imperative .scrollTo(),
-    // which scrollToSection above needs. Writing to a shared value from JS is
-    // standard, documented Reanimated usage - the UI-thread worklet reading
-    // scrollY.value (StickyNav's reveal) doesn't care whether the write came
-    // from JS or UI thread.
-    const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    // Plain JS, not Animated.ScrollView + useAnimatedScrollHandler: the web
+    // ref doesn't support the imperative .scrollTo() scrollToSection needs.
+    const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const scrollOffset = contentOffset.y;
         scrollY.value = scrollOffset;
-        // The last section (Contact) can have less remaining page height
-        // below it than the viewport is tall, so it can never satisfy
-        // resolveCurrentSectionId's offset math on its own - see
-        // scrollBottomEpsilonPx's doc comment for why this is passed through.
         const isAtBottom =
             scrollOffset + layoutMeasurement.height >= contentSize.height - scrollBottomEpsilonPx;
         updateFromScroll(scrollOffset, isAtBottom);
     };
 
-    const handleSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
+    const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
     };
-    const handleProjectsLayout = handleSectionLayout("projects");
-    const handleSkillsLayout = handleSectionLayout("skills");
-    const handleExperienceLayout = handleSectionLayout("experience");
-    const handleAboutLayout = handleSectionLayout("about");
-    const handleContactLayout = handleSectionLayout("contact");
+    const onProjectsLayout = createOnSectionLayout("projects");
+    const onSkillsLayout = createOnSectionLayout("skills");
+    const onExperienceLayout = createOnSectionLayout("experience");
+    const onAboutLayout = createOnSectionLayout("about");
+    const onContactLayout = createOnSectionLayout("contact");
 
     const contentContainerStyle = [styles.content, { paddingBottom: insets.bottom }];
 
@@ -119,8 +100,8 @@ export default () => {
         <View style={styles.root}>
             <ScrollView
                 contentContainerStyle={contentContainerStyle}
-                onScroll={handleScroll}
-                onScrollBeginDrag={handleScrollBeginDrag}
+                onScroll={onScroll}
+                onScrollBeginDrag={onScrollBeginDrag}
                 ref={scrollViewRef}
                 scrollEventThrottle={motion.scrollEventThrottleMs}
                 style={styles.scrollView}
@@ -133,19 +114,19 @@ export default () => {
                     />
                 </Head>
                 <Hero />
-                <View onLayout={handleProjectsLayout}>
+                <View onLayout={onProjectsLayout}>
                     <ProjectsSection />
                 </View>
-                <View onLayout={handleSkillsLayout}>
+                <View onLayout={onSkillsLayout}>
                     <SkillsSection />
                 </View>
-                <View onLayout={handleExperienceLayout}>
+                <View onLayout={onExperienceLayout}>
                     <ExperienceSection />
                 </View>
-                <View onLayout={handleAboutLayout}>
+                <View onLayout={onAboutLayout}>
                     <AboutSection />
                 </View>
-                <View onLayout={handleContactLayout}>
+                <View onLayout={onContactLayout}>
                     <ContactSection />
                 </View>
                 <Footer />
@@ -154,7 +135,7 @@ export default () => {
             {hasSyncedInitialScroll && (
                 <StickyNav
                     currentSectionId={currentSectionId}
-                    onLinkPress={handleLinkPress}
+                    onLinkPress={onLinkPress}
                     scrollY={scrollY}
                 />
             )}

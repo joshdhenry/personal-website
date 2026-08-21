@@ -21,7 +21,7 @@ describe("usePressScale", () => {
         expect(result.current.isActive).toBe(false);
         expect(result.current.isFocused).toBe(false);
 
-        act(() => result.current.handleFocus());
+        act(() => result.current.onFocus());
 
         expect(result.current.isFocused).toBe(true);
     });

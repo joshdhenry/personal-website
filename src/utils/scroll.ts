@@ -1,19 +1,16 @@
 import type { ScrollView } from "react-native";
 
+import { scrollBottomEpsilonPx } from "@/constants/scroll";
 import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
 /**
- * The page's scroll-driven effects (designs/README.md's "Scroll-driven
- * effects"), starting with the sticky nav's reveal threshold. Pure functions
- * of the shared scrollY value, so they're worklets, callable directly from a
- * UI-thread animation.
- */
-
-/**
  * Whether the sticky nav should be visible at the given scroll position.
- * Marked as a worklet so StickyNav's useAnimatedReaction can call it
- * directly on the UI thread.
+ * Worklet so StickyNav's useAnimatedReaction can call it on the UI thread.
+ *
+ * @param scrollY - Current vertical scroll offset in px.
+ * @param navRevealScrollY - Threshold past which the nav reveals.
+ * @returns True once scrollY has passed the reveal threshold.
  */
 export const shouldRevealNav = (scrollY: number, navRevealScrollY: number): boolean => {
     "worklet";
@@ -22,24 +19,12 @@ export const shouldRevealNav = (scrollY: number, navRevealScrollY: number): bool
 };
 
 /**
- * Subpixel/rounding tolerance for "has scrolling reached the bottom of the
- * page" checks - shared by readInitialScrollState below and index.tsx's own
- * onScroll-event equivalent, so both agree on the same threshold.
- */
-export const scrollBottomEpsilonPx = 2;
-
-/**
- * The real current scroll position of a ScrollView's underlying node, read
- * directly rather than through an onScroll event. Used once on mount to
- * sync scrollY.value (and the scroll-spy) to a starting position React never
- * dispatched a scroll event for (e.g. a bfcache-restored page already
- * scrolled past the reveal threshold). getScrollableNode() returns the DOM
- * node itself on web (react-native-web) but a native tag on iOS/Android, so
- * this is web-only - callers gate on Platform.OS themselves. isAtBottom is
- * read alongside scrollTop from the same node lookup, for the same "at the
- * bottom" check resolveCurrentSectionId needs, in the one place (the
- * mount-sync effect) that isn't already handling a real onScroll event with
- * contentSize/layoutMeasurement available on it.
+ * Reads a ScrollView's real current scroll position directly from its DOM
+ * node, for syncing state to a starting position no onScroll event fired for
+ * (e.g. a bfcache-restored page). Web-only - callers gate on Platform.OS.
+ *
+ * @param scrollView - The ScrollView ref to read, or null if not attached yet.
+ * @returns The current scrollTop and whether it's at the max scroll extent.
  */
 export const readInitialScrollState = (
     scrollView: ScrollView | null,
@@ -57,21 +42,19 @@ export const readInitialScrollState = (
     };
 };
 
-// Top-to-bottom page order - the section furthest down this list whose
-// offset has been reached wins. Derived from navLinks (the single source of
-// truth for nav order, pinned by data/nav.test.ts) rather than hand-written,
+// Top-to-bottom page order, derived from navLinks (pinned by data/nav.test.ts)
 // so the two can't drift apart.
 const sectionOrder: readonly SectionId[] = ["top", ...navLinks.map((navLink) => navLink.sectionId)];
 
 /**
- * Whether scrolling has carried a click's target section into (or past)
- * view, for the sticky nav's pending-target guard: an animated scrollTo()
- * fires a stream of imprecise intermediate onScroll events before settling,
- * and without this check those events would resolve to whatever section is
- * currently passing by, undoing the immediate, correct selection a click
- * already made. Compares sectionOrder position rather than raw offsets, so
- * it agrees with resolveCurrentSectionId's own notion of "reached" -
- * including its isAtBottom handling - instead of re-deriving it.
+ * Whether scrolling has carried a click's target section into view, for the
+ * sticky nav's pending-target guard against an animated scrollTo()'s
+ * imprecise intermediate onScroll events.
+ *
+ * @param candidateSectionId - The section scroll position currently resolves to.
+ * @param targetSectionId - The section a click is waiting to arrive at.
+ * @param direction - 1 if scrolling down to reach the target, -1 if scrolling up.
+ * @returns True once candidateSectionId has reached or passed targetSectionId.
  */
 export const hasSectionOrderReachedTarget = (
     candidateSectionId: SectionId,
@@ -85,21 +68,16 @@ export const hasSectionOrderReachedTarget = (
 };
 
 /**
- * Which section is currently in view, for the sticky nav's "current
- * section" highlight. A section counts as "reached" once scrolling has
- * carried its heading up to (or past) where it clears the nav - the same
- * navHeightEstimate useScrollToSection uses to land a target below the nav,
- * reused here so "the nav says you're in Skills" and "clicking Skills lands
- * you here" agree on the same boundary. Sections without a measured offset
- * yet (onLayout hasn't fired) are skipped rather than treated as reached.
+ * Which section is currently in view, for the sticky nav's highlight. A
+ * section counts as reached once scroll has carried it up past the nav.
+ * isAtBottom forces the last measured section to win even short of that
+ * math, since a short final section can never satisfy it by scrolling alone.
  *
- * isAtBottom forces the last measured section to win regardless of that
- * math: the last section (Contact) can have less remaining page height
- * below its own top than the viewport is tall (its own content plus the
- * footer might not fill a screen), so scrollY + navHeightEstimate can never
- * reach its offset even at the very bottom of the page - without this,
- * the nav would get stuck highlighting the second-to-last section forever
- * once there's nowhere further to scroll.
+ * @param scrollY - Current vertical scroll offset in px.
+ * @param sectionOffsets - Each section's last-measured top offset, or null if unmeasured.
+ * @param navHeightEstimate - Nav height to clear before a section counts as reached.
+ * @param isAtBottom - Whether scroll is at the page's maximum extent.
+ * @returns The section id the nav should currently highlight.
  */
 export const resolveCurrentSectionId = (
     scrollY: number,
