@@ -56,6 +56,9 @@ export default () => {
     // Gates StickyNav's mount below - its reveal reaction trusts its own
     // first evaluation, so it must not mount before scrollY is real.
     const [hasSyncedInitialScroll, setHasSyncedInitialScroll] = useState(Platform.OS !== "web");
+    // True once a real onScroll event has occurred - used to stop re-syncing
+    // the scroll-spy from section layout measurements below.
+    const hasScrolledRef = useRef(false);
     // A bfcache-restored page can start pre-scrolled with no onScroll event;
     // sync the real position once on mount. Web-only - no native equivalent.
     useEffect(() => {
@@ -63,9 +66,8 @@ export default () => {
             return;
         }
 
-        const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
+        const { scrollTop } = readInitialScrollState(scrollViewRef.current);
         scrollY.value = scrollTop;
-        updateFromScroll(scrollTop, isAtBottom);
         setHasSyncedInitialScroll(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -73,6 +75,7 @@ export default () => {
     // Plain JS onScroll: Animated.ScrollView's web ref lacks the imperative
     // .scrollTo() scrollToSection needs.
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+        hasScrolledRef.current = true;
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const scrollOffset = contentOffset.y;
         scrollY.value = scrollOffset;
@@ -84,8 +87,22 @@ export default () => {
         updateFromScroll(scrollOffset, isAtBottom);
     };
 
+    // A section's onLayout (ResizeObserver-backed on web) always fires after
+    // the mount-sync effect above, so sectionOffsets is still empty there -
+    // this re-resolves the scroll-spy as each section's real offset lands,
+    // until real scrolling takes over.
+    const syncScrollSpyFromLayout = () => {
+        if (Platform.OS !== "web" || hasScrolledRef.current) {
+            return;
+        }
+
+        const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
+        updateFromScroll(scrollTop, isAtBottom);
+    };
+
     const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
+        syncScrollSpyFromLayout();
     };
     const onProjectsLayout = createOnSectionLayout("projects");
     const onSkillsLayout = createOnSectionLayout("skills");

@@ -79,10 +79,9 @@ export const hasSectionOrderReachedTarget = (
 };
 
 /**
- * Which section is currently in view, for the sticky nav's highlight - a
- * section counts as reached once scroll clears the nav past it. isAtBottom
- * forces the last measured section to win even short of that (guarded by
- * scrollY > 0, so an unscrolled short page doesn't start pre-highlighted on it).
+ * Which section is currently in view, for the sticky nav's highlight.
+ * isAtBottom forces the last measured section to win short of the normal
+ * check (scrollY > 0 guards an unscrolled page from pre-highlighting).
  * @param scrollY - Current vertical scroll offset in px.
  * @param sectionOffsets - Each section's last-measured top offset, or null if unmeasured.
  * @param navHeight - Nav height to clear before a section counts as reached.

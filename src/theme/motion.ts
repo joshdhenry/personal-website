@@ -32,8 +32,6 @@ export const motion = {
         statCounter: 2200,
         /** Experience timeline rail's drawY fill, ms. */
         experienceRailDraw: 1600,
-        /** Sticky nav fade + slide-in on reveal, ms. */
-        navReveal: 350,
     },
     delay: {
         /** Terminal progress rail fill start delay, ms. */

@@ -79,24 +79,25 @@ export const useScrollSpy = ({
             }
 
             const direction: 1 | -1 = targetOffset < scrollY.value ? -1 : 1;
+            const timeoutId = setTimeout(() => {
+                pendingTargetRef.current = null;
+                const { isAtBottom, scrollOffset } = latestScrollRef.current;
+                setCurrentSectionId(
+                    resolveCurrentSectionId(
+                        scrollOffset,
+                        sectionOffsets.current,
+                        navHeight,
+                        isAtBottom,
+                    ),
+                );
+            }, pendingTargetTimeoutMs);
 
             clearPendingTarget();
             pendingTargetRef.current = {
                 direction,
                 sectionId,
                 startSectionId: currentSectionId,
-                timeoutId: setTimeout(() => {
-                    pendingTargetRef.current = null;
-                    const { isAtBottom, scrollOffset } = latestScrollRef.current;
-                    setCurrentSectionId(
-                        resolveCurrentSectionId(
-                            scrollOffset,
-                            sectionOffsets.current,
-                            navHeight,
-                            isAtBottom,
-                        ),
-                    );
-                }, pendingTargetTimeoutMs),
+                timeoutId,
             };
             setCurrentSectionId(sectionId);
             scrollToSection(sectionId);

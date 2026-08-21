@@ -5,7 +5,7 @@ import Animated, {
     useAnimatedReaction,
     useAnimatedStyle,
     useSharedValue,
-    withTiming,
+    withSpring,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -74,8 +74,8 @@ export const StickyNav = ({
                 return;
             }
 
-            opacity.value = withTiming(nextOpacity, { duration: motion.duration.navReveal });
-            translateY.value = withTiming(nextTranslateY, { duration: motion.duration.navReveal });
+            opacity.value = withSpring(nextOpacity, motion.spring.gentle);
+            translateY.value = withSpring(nextTranslateY, motion.spring.gentle);
         },
         [isReducedMotionPreferred, hiddenTranslateY],
     );
