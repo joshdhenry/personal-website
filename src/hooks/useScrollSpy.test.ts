@@ -1,10 +1,12 @@
 import { act, renderHook } from "@testing-library/react-native";
 
+import type { SectionOffsets } from "@/types/nav";
+
 import { useScrollSpy } from "./useScrollSpy";
 
 describe("useScrollSpy", () => {
     const navHeightEstimate = 64;
-    const sectionOffsets = {
+    const sectionOffsets: { current: SectionOffsets } = {
         current: {
             about: 4000,
             contact: 5000,
@@ -15,7 +17,7 @@ describe("useScrollSpy", () => {
         },
     };
 
-    const renderScrollSpy = (scrollYValue = 0) => {
+    const renderScrollSpy = (scrollYValue = 0, offsets = sectionOffsets) => {
         const scrollToSection = jest.fn();
         const scrollY = { value: scrollYValue };
         const { result } = renderHook(() =>
@@ -23,7 +25,7 @@ describe("useScrollSpy", () => {
                 navHeightEstimate,
                 scrollToSection,
                 scrollY,
-                sectionOffsets,
+                sectionOffsets: offsets,
             } as never),
         );
 
@@ -55,6 +57,18 @@ describe("useScrollSpy", () => {
 
         expect(result.current.currentSectionId).toBe("about");
         expect(scrollToSection).toHaveBeenCalledWith("about");
+    });
+
+    it("does nothing for a click on a section whose offset hasn't measured yet", () => {
+        const unmeasuredOffsets = { current: { ...sectionOffsets.current, contact: null } };
+        const { result, scrollToSection } = renderScrollSpy(0, unmeasuredOffsets);
+
+        act(() => {
+            result.current.handleLinkPress("contact");
+        });
+
+        expect(result.current.currentSectionId).toBe("top");
+        expect(scrollToSection).not.toHaveBeenCalled();
     });
 
     it("ignores intermediate onScroll updates short of a click's target section", () => {

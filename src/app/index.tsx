@@ -1,5 +1,5 @@
 import Head from "expo-router/head";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -52,7 +52,20 @@ export default () => {
     // then wrongly judge the nav should stay hidden. This reads the real
     // starting position once on mount without moving the page, so it's a
     // sync, never a reset. Web-only: readInitialScrollState reads DOM state
-    // that has no equivalent on iOS/Android.
+    // that has no equivalent on iOS/Android - native starts accurate (no
+    // bfcache-style restore) so there's nothing to sync there, and
+    // hasSyncedInitialScroll starts true on native to match.
+    //
+    // StickyNav only mounts once this sync has committed (see the render
+    // below): its own reveal animation makes a one-time "was this the very
+    // first evaluation ever" decision the instant it mounts, to apply a
+    // bfcache-restored starting scroll position instantly rather than
+    // animating a pop-in for it - React flushes a child's mount effects
+    // before its parent's own, so mounting StickyNav any earlier would let
+    // that first evaluation run against scrollY's stale initial 0 instead
+    // of the real synced position, then wrongly animate the very next
+    // evaluation once this effect corrects it.
+    const [hasSyncedInitialScroll, setHasSyncedInitialScroll] = useState(Platform.OS !== "web");
     useEffect(() => {
         if (Platform.OS !== "web") {
             return;
@@ -61,6 +74,7 @@ export default () => {
         const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
         scrollY.value = scrollTop;
         updateFromScroll(scrollTop, isAtBottom);
+        setHasSyncedInitialScroll(true);
         // Only ever needs to run once, on mount - scrollY and updateFromScroll
         // are stable/deliberately excluded so this doesn't re-fire on every
         // render.
@@ -137,11 +151,13 @@ export default () => {
                 <Footer />
             </ScrollView>
 
-            <StickyNav
-                currentSectionId={currentSectionId}
-                onLinkPress={handleLinkPress}
-                scrollY={scrollY}
-            />
+            {hasSyncedInitialScroll && (
+                <StickyNav
+                    currentSectionId={currentSectionId}
+                    onLinkPress={handleLinkPress}
+                    scrollY={scrollY}
+                />
+            )}
         </View>
     );
 };

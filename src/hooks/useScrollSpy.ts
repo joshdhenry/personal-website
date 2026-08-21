@@ -80,8 +80,16 @@ export const useScrollSpy = ({
     const handleLinkPress = useCallback(
         (sectionId: SectionId) => {
             const targetOffset = sectionOffsets.current[sectionId];
-            const direction: 1 | -1 =
-                targetOffset !== null && targetOffset < scrollY.value ? -1 : 1;
+            // scrollToSection below silently no-ops for a section whose
+            // onLayout hasn't measured an offset yet, rather than falling
+            // back to the top of the page - matching that here too, so a
+            // click that doesn't actually move the page also doesn't
+            // optimistically relabel the nav to a section it never reached.
+            if (targetOffset === null) {
+                return;
+            }
+
+            const direction: 1 | -1 = targetOffset < scrollY.value ? -1 : 1;
 
             clearPendingTarget();
             pendingTargetRef.current = {
