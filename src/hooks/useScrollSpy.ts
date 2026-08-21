@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { pendingTargetTimeoutMs } from "@/constants/nav";
+import { scrollEpsilonPx } from "@/constants/scroll";
 import type { SectionId, UseScrollSpyParams } from "@/types/nav";
 import { hasSectionOrderReachedTarget, resolveCurrentSectionId } from "@/utils/scroll";
 
@@ -40,6 +41,10 @@ export const useScrollSpy = ({
 
     const updateFromScroll = useCallback(
         (scrollOffset: number, isAtBottom: boolean) => {
+            // Single writer for scrollY, so it can never desync from
+            // latestScrollRef below - every sync path (onScroll, bfcache
+            // restore, layout resync) reads the same real position here.
+            scrollY.value = scrollOffset;
             latestScrollRef.current = { isAtBottom, scrollOffset };
             const nextSectionId = resolveCurrentSectionId(
                 scrollOffset,
@@ -72,7 +77,7 @@ export const useScrollSpy = ({
 
             setCurrentSectionId(nextSectionId);
         },
-        [clearPendingTarget, navHeight, sectionOffsets],
+        [clearPendingTarget, navHeight, scrollY, sectionOffsets],
     );
 
     const onLinkPress = useCallback(
@@ -85,16 +90,25 @@ export const useScrollSpy = ({
             }
 
             const direction: 1 | -1 = targetOffset < scrollY.value ? -1 : 1;
+            const scrollOffsetAtClick = scrollY.value;
             const timeoutId = setTimeout(() => {
                 pendingTargetRef.current = null;
                 const { isAtBottom, scrollOffset } = latestScrollRef.current;
+                // Epsilon-tolerant: a stray/rubber-band onScroll can differ from
+                // the click-time offset by a subpixel amount with no real movement.
+                // Any larger movement resolves from where scroll actually stalled,
+                // not the clicked target - an honest highlight over an optimistic one.
+                const hasScrolledSinceClick =
+                    Math.abs(scrollOffset - scrollOffsetAtClick) > scrollEpsilonPx;
                 setCurrentSectionId(
-                    resolveCurrentSectionId(
-                        scrollOffset,
-                        sectionOffsets.current,
-                        navHeightRef.current,
-                        isAtBottom,
-                    ),
+                    hasScrolledSinceClick
+                        ? resolveCurrentSectionId(
+                              scrollOffset,
+                              sectionOffsets.current,
+                              navHeightRef.current,
+                              isAtBottom,
+                          )
+                        : sectionId,
                 );
             }, pendingTargetTimeoutMs);
 

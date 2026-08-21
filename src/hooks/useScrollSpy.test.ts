@@ -183,6 +183,77 @@ describe("useScrollSpy", () => {
         expect(result.current.currentSectionId).toBe("projects");
     });
 
+    it("keeps the clicked section highlighted when the safety-net timeout fires and no real scroll ever landed", () => {
+        // Android repro: scrollTo() can silently fail to move anything, so
+        // latestScrollRef never updates past its pre-click value.
+        jest.useFakeTimers();
+
+        const { result } = renderScrollSpy(2000);
+
+        act(() => {
+            result.current.updateFromScroll(2000, false);
+        });
+        expect(result.current.currentSectionId).toBe("skills");
+
+        act(() => {
+            result.current.onLinkPress("experience");
+        });
+        expect(result.current.currentSectionId).toBe("experience");
+
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        expect(result.current.currentSectionId).toBe("experience");
+
+        jest.useRealTimers();
+    });
+
+    it("keeps the clicked section highlighted when scrolling upward and no real scroll ever landed", () => {
+        jest.useFakeTimers();
+
+        const { result } = renderScrollSpy(3000);
+
+        act(() => {
+            result.current.updateFromScroll(3000, false);
+        });
+        expect(result.current.currentSectionId).toBe("experience");
+
+        act(() => {
+            result.current.onLinkPress("top");
+        });
+        expect(result.current.currentSectionId).toBe("top");
+
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        expect(result.current.currentSectionId).toBe("top");
+
+        jest.useRealTimers();
+    });
+
+    it("resolves to where scroll actually stalled, not the clicked target, when progress never crosses a section boundary", () => {
+        jest.useFakeTimers();
+
+        const { result } = renderScrollSpy(0);
+
+        act(() => {
+            result.current.onLinkPress("contact");
+        });
+        // Real progress, but short of even the first section's threshold.
+        act(() => {
+            result.current.updateFromScroll(500, false);
+        });
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        expect(result.current.currentSectionId).toBe("top");
+
+        jest.useRealTimers();
+    });
+
     it("releases a pending target once scroll returns to exactly the start section, after genuinely progressing past it", () => {
         const { result } = renderScrollSpy(0);
 
