@@ -14,7 +14,7 @@ export default () => (
         </Text>
         <Pressable
             accessibilityLabel="Go back home"
-            accessibilityRole="link"
+            accessibilityRole="button"
             onPress={handleGoBackHome}
             style={styles.link}
         >

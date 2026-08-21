@@ -1,30 +1,32 @@
 import { Pressable, StyleSheet, Text } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
-import { motion } from "@/theme/motion";
+import { focusRing } from "@/theme/focusRing";
 import { radius } from "@/theme/radii";
 import { contactSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ContactSubmitButtonProps } from "@/types/contact";
 
 export const ContactSubmitButton = ({ isDisabled, label, onPress }: ContactSubmitButtonProps) => {
-    const scale = useSharedValue(1);
+    const {
+        animatedStyle,
+        onBlur,
+        onFocus,
+        onHoverIn,
+        onHoverOut,
+        onPressIn,
+        onPressOut,
+        showFocusRing,
+    } = usePressScale();
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
-
-    const setActive = (active: boolean) => {
-        scale.value = withSpring(active && !isDisabled ? 0.97 : 1, motion.spring.snappy);
-    };
-
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
-
-    const buttonStyle = [styles.button, isDisabled && styles.buttonDisabled, animatedStyle];
+    const buttonStyle = [
+        styles.button,
+        isDisabled && styles.buttonDisabled,
+        showFocusRing && focusRing,
+        animatedStyle,
+    ];
 
     return (
         <Animated.View style={buttonStyle}>
@@ -32,11 +34,13 @@ export const ContactSubmitButton = ({ isDisabled, label, onPress }: ContactSubmi
                 accessibilityLabel={label}
                 accessibilityRole="button"
                 disabled={isDisabled}
-                onHoverIn={handleHoverIn}
-                onHoverOut={handleHoverOut}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                onHoverIn={onHoverIn}
+                onHoverOut={onHoverOut}
                 onPress={onPress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
                 style={styles.pressable}
             >
                 <Text style={styles.label}>{label}</Text>

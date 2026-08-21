@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { projectsSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { FeaturedProjectCardProps } from "@/types/projects";
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 import { ProjectDetailField } from "./ProjectDetailField";
 import { ProjectDetailReveal } from "./ProjectDetailReveal";
@@ -16,40 +17,18 @@ import { ProjectExpandAffordance } from "./ProjectExpandAffordance";
 import { ProjectImageBand } from "./ProjectImageBand";
 import { ProjectStackChips } from "./ProjectStackChips";
 
-// Android clips a View's children to its background's rounded-corner outline
-// once `elevation` is applied, so the hover/press shadow is web-only. See
-// ActionBadge.tsx for the same guard and full rationale.
-const isHoverShadowSupported = Platform.OS === "web";
-
-const PRESS_SCALE = 0.97;
-const LIFT_DISTANCE = 4;
-
 export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isActive, setIsActive] = useState(false);
-    const scale = useSharedValue(1);
-    const liftY = useSharedValue(0);
+    const { animatedStyle, isActive, onHoverIn, onHoverOut, onPressIn, onPressOut } = usePressScale(
+        projectsSpace.cardLiftDistance,
+    );
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateY: liftY.value }],
-    }));
-
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? PRESS_SCALE : 1, motion.spring.snappy);
-        liftY.value = withSpring(active ? -LIFT_DISTANCE : 0, motion.spring.snappy);
-    };
-
-    const handlePress = () => setIsOpen((previousIsOpen) => !previousIsOpen);
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
+    const onPress = () => setIsOpen((previousIsOpen) => !previousIsOpen);
 
     const cardStyle = [
         styles.card,
         project.spansBothColumns && styles.cardSpanning,
-        isActive && isHoverShadowSupported && shadow.projectCard,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.projectCard,
         animatedStyle,
     ];
     const accessibilityLabel = `${project.title}, ${project.subtitle}`;
@@ -61,11 +40,11 @@ export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
                 accessibilityRole="button"
                 accessible
                 aria-expanded={isOpen}
-                onHoverIn={handleHoverIn}
-                onHoverOut={handleHoverOut}
-                onPress={handlePress}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
+                onHoverIn={onHoverIn}
+                onHoverOut={onHoverOut}
+                onPress={onPress}
+                onPressIn={onPressIn}
+                onPressOut={onPressOut}
             >
                 <View style={styles.imageBandWrapper}>
                     <ProjectImageBand

@@ -34,7 +34,12 @@ Also serves as a Claude Code learning project.
   variable names.
 - Self documenting code is the best kind of code. Use comments in places only
   where variable naming is not explanatory enough. Comments explain why, never
-  restate what.
+  restate what. Max 3 lines, most 1 line, and 2 sentences is enough for most —
+  delete anything a reader could already infer from the code and names. This
+  cap is for inline rationale comments; a JSDoc block on an exported function
+  (description + @param/@returns, one util-file export per line) is exempt
+  from the line cap, but keep the description itself to 1-3 lines/2 sentences,
+  and don't put a blank `*` line between the description and the tags.
 - No magic numbers. Every spacing, size, radius, duration, breakpoint, and
   color must be a named token defined in theme/ and referenced by name in
   components. If a new value is genuinely needed, add a named token with a
@@ -73,9 +78,20 @@ Also serves as a Claude Code learning project.
 - No inline styles, style array merges, or handler functions written
   directly in JSX — extract each to a named const above the `return`/JSX
   expression.
-- Alphabetize: JSX props, StyleSheet keys, and object-literal type fields.
-  Array element order stays whatever is semantically meaningful (e.g. the
-  order stats or nav items should display in), never alphabetized.
+- No computed expressions (math, function calls) as an object-literal
+  property value — assign a named const above the object first, then
+  reference it (e.g. `const targetOffset = Math.max(0, offset - navHeight);
+...scrollTo({ y: targetOffset })`, not `scrollTo({ y: Math.max(0, offset -
+navHeight) })`).
+- Name event handlers `onX`, never `handleX` (`onPress`, `onProjectsLayout`),
+  including hook-returned callbacks. A factory that builds several handlers
+  can keep its own descriptive name.
+- Alphabetize: JSX props, StyleSheet keys, object-literal type fields, named
+  token objects (e.g. colors.ts), a hook's own returned object, and
+  destructured hook-result variables at call sites (not a `{...spread,
+extra}` return — no clean way to interleave a spread). Array element order
+  stays whatever is semantically meaningful (e.g. the order stats or nav
+  items should display in), never alphabetized.
 - Avoid `as const` where the same literal-type narrowing is achievable
   another way (an explicit type annotation, `satisfies`). Prefer it only
   when there's no equivalent alternative.
@@ -89,13 +105,26 @@ Also serves as a Claude Code learning project.
 - src/theme/ named design tokens (colors, spacing, typography, radii,
   breakpoints, motion, shadow), one file per token category — the single
   source of truth for every value
-- src/data/ typed content: heroContent.ts, and eventually projects.ts,
-  skills.ts, experience.ts (content lives here as data, never hardcoded in
-  components)
-- src/types/ shared TypeScript types, one file per domain (e.g. hero.ts,
-  theme.ts) — see "No barrel imports" below
-- src/utils/ pure helper/utility functions (e.g. layout-mode resolution),
-  aliased via `@/utils/*`; every util has a colocated `*.test.ts`
+- src/data/ typed content: heroContent.ts, projects.ts, skills.ts,
+  experience.ts, etc. (content lives here as data, never hardcoded in
+  components). Data is what a user sees or reads — copy, facts, labels,
+  the URLs a link's content points at. A value that instead configures how
+  the code behaves (a service endpoint fetch() posts to, a timeout, a
+  threshold) is a constant, in src/constants/, even if it happens to be a
+  string.
+- src/types/ every type/interface in the app, one file per domain (e.g.
+  hero.ts, theme.ts, interaction.ts for cross-cutting hook state shapes) —
+  never declared inline in the component/hook/theme file that uses it; see
+  "No barrel imports" below
+- src/utils/ pure helper/utility functions, aliased via `@/utils/*`; grouped
+  and named by the domain they deal with (e.g. `scroll.ts` for the page's
+  scroll-driven effects), never by an individual function's own name; every
+  util file has a colocated `*.test.ts`. Exports functions only.
+- src/constants/ every named, non-visual behavioral/technical constant
+  (thresholds, timeouts, integration endpoints — see src/data/ above for the
+  data-vs-constant distinction), one file per domain — regardless of whether
+  it's exported or module-local to a hook/component/util. Visual design
+  values still belong in theme/, not here.
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/
@@ -136,7 +165,11 @@ by name only — never a raw value.
 Escape hatch: a section may need a finer-grained shade this list doesn't
 cover (e.g. a second muted tier, or literal macOS traffic-light dot colors).
 Add it as its own named token in src/theme/colors.ts with a one-line comment
-explaining what it's for — never a raw hex value in a component.
+explaining what it's for — never a raw hex value in a component. Name it for
+its role or its relationship to an existing token (e.g.
+`statusPassingBorder`, a tint of `statusPassing`), never for the one
+component that happens to consume it (not `navBackground`) — a real,
+unavoidably specific referent (`trafficLightRed`, `brandLinkedIn`) is fine.
 
 ### Typography
 

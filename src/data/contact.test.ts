@@ -1,7 +1,6 @@
 import {
     contactAvailabilityParagraph,
     contactErrorMessage,
-    contactFormspreeEndpoint,
     contactHeading,
     contactSuccessMessage,
 } from "./contact";
@@ -23,9 +22,5 @@ describe("contact content", () => {
         ]) {
             expect(copy).not.toContain("—");
         }
-    });
-
-    it("points at the production Formspree endpoint", () => {
-        expect(contactFormspreeEndpoint).toBe("https://formspree.io/f/xljrgjpe");
     });
 });

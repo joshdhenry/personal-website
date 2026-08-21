@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
     },
     openToWorkPill: {
         alignItems: "center",
-        backgroundColor: colors.openToWorkBackground,
-        borderColor: colors.openToWorkBorder,
+        backgroundColor: colors.statusPassingBackground,
+        borderColor: colors.statusPassingBorder,
         borderRadius: radius.pill,
         borderWidth: 1,
         flexDirection: "row",

@@ -28,9 +28,9 @@ Or jump straight to one platform: `yarn web`, `yarn ios`, `yarn android`.
 ## Test, lint, format
 
 ```
-yarn test          # Jest — verbose output, HTML coverage report at coverage/
-yarn lint          # ESLint (expo lint)
-yarn format         # Prettier, writes in place
+yarn test    # Jest — verbose output, HTML coverage report at coverage/
+yarn lint    # ESLint (expo lint)
+yarn format  # Prettier, writes in place
 ```
 
 ## Build
@@ -46,7 +46,7 @@ server, no SSR.
 
 See [CLAUDE.md](./CLAUDE.md)'s "Project structure" section for a full
 breakdown of src/app, src/components, src/theme, src/data, src/types,
-src/utils, and src/hooks.
+src/utils, src/constants, and src/hooks.
 
 ## License
 

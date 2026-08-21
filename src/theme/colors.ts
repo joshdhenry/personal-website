@@ -1,41 +1,32 @@
-/**
- * Named color tokens. Values and use-cases per designs/README.md's "Design
- * tokens" table and CLAUDE.md's color spec (the authoritative sources for
- * this site's palette). Components must reference these by name, never a
- * raw hex/rgba literal.
- */
+// Named color tokens, per designs/README.md's "Design tokens" table.
+// Components reference these by name, never a raw hex/rgba literal.
 export const colors = {
     bg: "#F5F6F8",
-    surface: "#FFFFFF",
+    // bg at reduced opacity, for a translucent overlay over page content.
+    bgTranslucent: "rgba(245, 246, 248, 0.86)",
     border: "#E2E5EA",
+    // LinkedIn's own brand blue (Contact badge icon only).
+    brandLinkedIn: "#0A66C2",
+    focusRing: "#4338CA",
     ink: "#14181F",
+    // Lightest tint in the ink scale (Experience row note text).
+    inkFaint: "#B6BDC7",
     inkMuted: "#5B6472",
     inkMutedLight: "#98A1B0",
-    // Body copy inside Projects cards (PROBLEM/WHAT I BUILT/STACK/OUTCOME
-    // paragraphs, compact card paragraph) - darker than inkMuted so long-form
-    // reading text stays comfortable, per designs/README.md's "ink-secondary".
+    // Darker than inkMuted, for long-form reading text (Projects card body copy).
     inkSecondary: "#3A424F",
     primary: "#4338CA",
-    // Reserved for hover/press states on primary-colored elements in later
-    // sections; the hero's own press feedback uses motion (scale/lift), not
-    // a color swap, so this isn't consumed yet.
     primaryHover: "#3730A3",
-    statusPassing: "#16A34A",
-    // Reserved for in-progress/highlight status chips in later sections
-    // (Projects, Experience); the hero has no "in progress" state.
+    // Reserved for in-progress/highlight status chips; unused so far.
     statusAttention: "#F59E0B",
-    focusRing: "#4338CA",
+    // 5.98:1 contrast on bg - AA for the mono status line's small size.
+    statusError: "#B91C1C",
+    statusPassing: "#16A34A",
+    // Low-alpha tints of statusPassing, for a pill's background/border.
+    statusPassingBackground: "rgba(22, 163, 74, 0.06)",
+    statusPassingBorder: "rgba(22, 163, 74, 0.28)",
+    surface: "#FFFFFF",
+    trafficLightGreen: "#28C840",
     trafficLightRed: "#FF5F57",
     trafficLightYellow: "#FEBC2E",
-    trafficLightGreen: "#28C840",
-    openToWorkBackground: "rgba(22, 163, 74, 0.06)",
-    openToWorkBorder: "rgba(22, 163, 74, 0.28)",
-    // Experience row mono note text - lightest tint in the ink scale, per
-    // designs/README.md's Experience row spec.
-    inkFaint: "#B6BDC7",
-    // LinkedIn brand mark fill, Contact section badge icon only.
-    brandLinkedIn: "#0A66C2",
-    // Contact form submit error inline status text. 5.98:1 contrast on
-    // colors.bg, comfortably AA for the mono status line's small size.
-    statusError: "#B91C1C",
 };

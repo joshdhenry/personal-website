@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, useWindowDimensions, View } from "react-native";
 
 import { colors } from "@/theme/colors";
@@ -7,7 +8,10 @@ import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { ContactForm } from "./ContactForm";
 import { ContactIntro } from "./ContactIntro";
 
-export const ContactSection = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own useWindowDimensions can still trigger a real
+// re-render.
+export const ContactSection = memo(() => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
@@ -39,7 +43,8 @@ export const ContactSection = () => {
             </View>
         </View>
     );
-};
+});
+ContactSection.displayName = "ContactSection";
 
 const styles = StyleSheet.create({
     formColumn: {

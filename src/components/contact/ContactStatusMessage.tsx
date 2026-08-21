@@ -2,11 +2,7 @@ import { StyleSheet, Text } from "react-native";
 
 import { contactSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
-
-type ContactStatusMessageProps = {
-    color: string;
-    message: string;
-};
+import type { ContactStatusMessageProps } from "@/types/contact";
 
 export const ContactStatusMessage = ({ color, message }: ContactStatusMessageProps) => (
     <Text

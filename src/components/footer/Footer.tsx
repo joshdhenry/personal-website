@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 
 import {
@@ -14,7 +15,10 @@ import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 
 import { FooterSourceLink } from "./FooterSourceLink";
 
-export const Footer = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own useWindowDimensions can still trigger a real
+// re-render.
+export const Footer = memo(() => {
     const { width } = useWindowDimensions();
     const { isNarrow } = resolveResponsiveLayoutMode(width);
     const copyrightText = `© ${new Date().getFullYear()} ${footerCopyrightName}`;
@@ -36,7 +40,8 @@ export const Footer = () => {
             </View>
         </View>
     );
-};
+});
+Footer.displayName = "Footer";
 
 const styles = StyleSheet.create({
     container: {

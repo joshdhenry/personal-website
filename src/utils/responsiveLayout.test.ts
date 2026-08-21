@@ -1,4 +1,18 @@
-import { resolveResponsiveLayoutMode } from "./responsiveLayout";
+import { resolveByLayoutMode, resolveResponsiveLayoutMode } from "./responsiveLayout";
+
+describe("resolveByLayoutMode", () => {
+    it("picks the compact value when compact (and therefore also narrow)", () => {
+        expect(resolveByLayoutMode({ isCompact: true, isNarrow: true }, "c", "n", "w")).toBe("c");
+    });
+
+    it("picks the narrow value when narrow but not compact", () => {
+        expect(resolveByLayoutMode({ isCompact: false, isNarrow: true }, "c", "n", "w")).toBe("n");
+    });
+
+    it("picks the wide value when neither compact nor narrow", () => {
+        expect(resolveByLayoutMode({ isCompact: false, isNarrow: false }, "c", "n", "w")).toBe("w");
+    });
+});
 
 describe("resolveResponsiveLayoutMode", () => {
     it("is wide (not narrow, not compact) above 900px", () => {

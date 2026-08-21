@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -16,7 +17,10 @@ const PROJECTS_HEADING = "Projects";
 const PROJECTS_CAPTION = "click a card to expand";
 const ALSO_SHIPPED_LABEL = "ALSO SHIPPED";
 
-export const ProjectsSection = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own hooks (useWindowDimensions, useRiseEntrance) can
+// still trigger a real re-render.
+export const ProjectsSection = memo(() => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
     const headingRiseStyle = useRiseEntrance(motion.delay.riseProjectsHeading);
@@ -57,7 +61,8 @@ export const ProjectsSection = () => {
             <CompactProjectsGrid isNarrow={isNarrow} projects={compactProjects} />
         </View>
     );
-};
+});
+ProjectsSection.displayName = "ProjectsSection";
 
 const styles = StyleSheet.create({
     caption: {

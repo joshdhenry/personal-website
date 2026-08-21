@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { StyleSheet, Text, useWindowDimensions, View } from "react-native";
 import Animated from "react-native-reanimated";
 
@@ -13,7 +14,10 @@ import { SkillsGrid } from "./SkillsGrid";
 
 const SKILLS_HEADING = "Skills";
 
-export const SkillsSection = () => {
+// Zero props, so this memo always bails out on the parent's scroll-spy
+// re-renders - only its own hooks (useWindowDimensions, useRiseEntrance) can
+// still trigger a real re-render.
+export const SkillsSection = memo(() => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
     const headingRiseStyle = useRiseEntrance(motion.delay.riseSkillsHeading);
@@ -44,7 +48,8 @@ export const SkillsSection = () => {
             <SkillsGrid groups={skillGroups} isNarrow={isNarrow} />
         </View>
     );
-};
+});
+SkillsSection.displayName = "SkillsSection";
 
 const styles = StyleSheet.create({
     heading: {

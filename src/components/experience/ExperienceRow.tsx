@@ -1,49 +1,26 @@
-import { useState } from "react";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 
+import { usePressScale } from "@/hooks/usePressScale";
 import { useRiseEntrance } from "@/hooks/useRiseEntrance";
 import { colors } from "@/theme/colors";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { experienceSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ExperienceRowProps } from "@/types/experience";
-
-// Android clips a View's children to its background's rounded-corner outline
-// once `elevation` is applied, so the hover/press shadow is web-only. See
-// ActionBadge.tsx for the same guard and full rationale.
-const isHoverShadowSupported = Platform.OS === "web";
-
-const PRESS_SCALE = 0.97;
-const LIFT_DISTANCE = 4;
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: ExperienceRowProps) => {
-    const [isActive, setIsActive] = useState(false);
     const riseStyle = useRiseEntrance(staggerDelayMilliseconds);
-    const scale = useSharedValue(1);
-    const liftY = useSharedValue(0);
-
-    const activeAnimatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }, { translateY: liftY.value }],
-    }));
-
-    const setActive = (active: boolean) => {
-        setIsActive(active);
-        scale.value = withSpring(active ? PRESS_SCALE : 1, motion.spring.snappy);
-        liftY.value = withSpring(active ? -LIFT_DISTANCE : 0, motion.spring.snappy);
-    };
-
-    const handleHoverIn = () => setActive(true);
-    const handleHoverOut = () => setActive(false);
-    const handlePressIn = () => setActive(true);
-    const handlePressOut = () => setActive(false);
+    const { animatedStyle, isActive, onHoverIn, onHoverOut, onPressIn, onPressOut } = usePressScale(
+        experienceSpace.rowLiftDistance,
+    );
 
     const cardStyle = [
         styles.card,
-        isActive && isHoverShadowSupported && shadow.experienceRow,
-        activeAnimatedStyle,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.experienceRow,
+        animatedStyle,
     ];
     const dotStyle = [styles.dotRing, isNarrow ? styles.dotRingNarrow : styles.dotRingWide];
     const connectorStyle = [
@@ -55,21 +32,19 @@ export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: Expe
     const accessibilityLabel = `${role.role}, ${role.companyLine}, ${role.dateRangeLabel}, ${role.note}`;
 
     return (
-        // Rise-entrance (riseStyle) and hover/press lift (activeAnimatedStyle)
-        // are two independent animated `transform`s; splitting them across
-        // two nested Animated.Views keeps each in its own style, since a
-        // single element's style array would let the later one clobber the
-        // earlier one's transform entirely instead of composing them.
+        // Two nested Animated.Views: riseStyle and cardStyle each animate
+        // their own `transform`, and one style array would let the later
+        // clobber the earlier instead of composing them.
         <Animated.View style={riseStyle}>
             <Animated.View style={cardStyle}>
                 <Pressable
                     accessibilityLabel={accessibilityLabel}
                     accessibilityRole="none"
                     accessible
-                    onHoverIn={handleHoverIn}
-                    onHoverOut={handleHoverOut}
-                    onPressIn={handlePressIn}
-                    onPressOut={handlePressOut}
+                    onHoverIn={onHoverIn}
+                    onHoverOut={onHoverOut}
+                    onPressIn={onPressIn}
+                    onPressOut={onPressOut}
                     style={isNarrow ? styles.rowNarrow : styles.rowWide}
                 >
                     <View importantForAccessibility="no-hide-descendants" style={dotStyle}>

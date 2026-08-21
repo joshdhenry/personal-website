@@ -46,3 +46,8 @@ export type ContactSubmitButtonProps = {
     label: string;
     onPress: () => void;
 };
+
+export type ContactStatusMessageProps = {
+    color: string;
+    message: string;
+};
