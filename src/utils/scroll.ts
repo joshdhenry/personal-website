@@ -1,6 +1,6 @@
 import type { ScrollView } from "react-native";
 
-import { scrollBottomEpsilonPx } from "@/constants/scroll";
+import { scrollBottomEpsilonPx, sectionThresholdEpsilonPx } from "@/constants/scroll";
 import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
@@ -107,7 +107,7 @@ export const resolveCurrentSectionId = (
 
     for (const sectionId of sectionOrder) {
         const offset = sectionOffsets[sectionId];
-        if (offset !== null && scrollY + navHeight >= offset) {
+        if (offset !== null && scrollY + navHeight >= offset - sectionThresholdEpsilonPx) {
             currentSectionId = sectionId;
         }
     }

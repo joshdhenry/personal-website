@@ -152,4 +152,12 @@ describe("resolveCurrentSectionId", () => {
         // can satisfy the bottom check even before the user has scrolled.
         expect(resolveCurrentSectionId(0, sectionOffsets, navHeight, true)).toBe("top");
     });
+
+    it("tolerates a native scrollTo() landing a fraction of a pixel short of a section's offset", () => {
+        // Android repro: an animated scrollTo() snaps to a device-pixel-rounded
+        // value, landing just under scrollY + navHeight >= offset.
+        expect(
+            resolveCurrentSectionId(3000 - navHeight - 0.5, sectionOffsets, navHeight, false),
+        ).toBe("experience");
+    });
 });
