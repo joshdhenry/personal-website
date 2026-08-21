@@ -9,7 +9,7 @@ import { shadow } from "@/theme/shadow";
 import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ActionBadgeProps } from "@/types/hero";
-import { openUrl } from "@/utils/openUrl";
+import { getExternalLinkAccessibilityRole, openUrl } from "@/utils/openUrl";
 import { isHoverShadowSupported } from "@/utils/shadow";
 
 export const ActionBadge = ({ badge }: ActionBadgeProps) => {
@@ -36,14 +36,11 @@ export const ActionBadge = ({ badge }: ActionBadgeProps) => {
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
 
-    // A real external link on native (gets the "link" trait); react-native-web
-    // only fires a real <a>'s native keyboard Enter/Space activation for
-    // role="link", and this isn't a real <a> - see NavLink.tsx.
     return (
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={badge.accessibilityLabel}
-                accessibilityRole={Platform.OS === "web" ? "button" : "link"}
+                accessibilityRole={getExternalLinkAccessibilityRole(Platform.OS)}
                 onBlur={onBlur}
                 onFocus={onFocus}
                 onHoverIn={onHoverIn}

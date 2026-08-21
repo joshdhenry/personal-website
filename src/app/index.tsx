@@ -89,13 +89,27 @@ export default () => {
     // height) - re-resolving the scroll-spy from the live scroll position
     // each time keeps it from getting stuck on a section whose neighbor's
     // offset simply hadn't measured yet when the last real onScroll fired.
+    // Several sections can all report a fresh layout in the same frame (e.g.
+    // every section on first mount), so the actual DOM read is deferred to
+    // one rAF per frame instead of once per section.
+    const syncFrameRef = useRef<number | null>(null);
+    useEffect(() => {
+        return () => {
+            if (syncFrameRef.current !== null) {
+                cancelAnimationFrame(syncFrameRef.current);
+            }
+        };
+    }, []);
     const syncScrollSpyFromLayout = () => {
-        if (Platform.OS !== "web") {
+        if (Platform.OS !== "web" || syncFrameRef.current !== null) {
             return;
         }
 
-        const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
-        updateFromScroll(scrollTop, isAtBottom);
+        syncFrameRef.current = requestAnimationFrame(() => {
+            syncFrameRef.current = null;
+            const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
+            updateFromScroll(scrollTop, isAtBottom);
+        });
     };
 
     const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {

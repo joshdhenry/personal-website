@@ -11,3 +11,14 @@ export const openUrl = (url: string): void => {
         console.warn(`Failed to open ${url}`, error);
     });
 };
+
+/**
+ * accessibilityRole for a Pressable that calls openUrl. "link" on native
+ * (a real external destination); "button" on web, since react-native-web
+ * only fires a real <a>'s native keyboard Enter/Space activation for
+ * role="link", and these aren't real <a> elements.
+ * @param platformOS - Platform.OS, passed in so this stays testable.
+ * @returns "link" on native, "button" on web.
+ */
+export const getExternalLinkAccessibilityRole = (platformOS: string): "button" | "link" =>
+    platformOS === "web" ? "button" : "link";

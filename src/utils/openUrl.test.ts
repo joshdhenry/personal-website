@@ -1,6 +1,6 @@
 import { Linking } from "react-native";
 
-import { openUrl } from "./openUrl";
+import { getExternalLinkAccessibilityRole, openUrl } from "./openUrl";
 
 describe("openUrl", () => {
     afterEach(() => {
@@ -25,5 +25,16 @@ describe("openUrl", () => {
         await Promise.resolve();
 
         expect(warnSpy).toHaveBeenCalledWith("Failed to open bad://url", openURLError);
+    });
+});
+
+describe("getExternalLinkAccessibilityRole", () => {
+    it("is a button on web", () => {
+        expect(getExternalLinkAccessibilityRole("web")).toBe("button");
+    });
+
+    it("is a link on native", () => {
+        expect(getExternalLinkAccessibilityRole("ios")).toBe("link");
+        expect(getExternalLinkAccessibilityRole("android")).toBe("link");
     });
 });

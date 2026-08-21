@@ -6,7 +6,7 @@ import { colors } from "@/theme/colors";
 import { focusRing } from "@/theme/focusRing";
 import { typeScale } from "@/theme/typography";
 import type { FooterSourceLinkProps } from "@/types/footer";
-import { openUrl } from "@/utils/openUrl";
+import { getExternalLinkAccessibilityRole, openUrl } from "@/utils/openUrl";
 
 export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSourceLinkProps) => {
     const {
@@ -25,14 +25,11 @@ export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSour
 
     const labelStyle = [styles.label, isActive && styles.labelActive, showFocusRing && focusRing];
 
-    // A real external link on native (gets the "link" trait); react-native-web
-    // only fires a real <a>'s native keyboard Enter/Space activation for
-    // role="link", and this isn't a real <a> - see NavLink.tsx.
     return (
         <Animated.View style={animatedStyle}>
             <Pressable
                 accessibilityLabel={accessibilityLabel}
-                accessibilityRole={Platform.OS === "web" ? "button" : "link"}
+                accessibilityRole={getExternalLinkAccessibilityRole(Platform.OS)}
                 onBlur={onBlur}
                 onFocus={onFocus}
                 onHoverIn={onHoverIn}

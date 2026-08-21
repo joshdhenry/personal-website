@@ -17,7 +17,7 @@ import { navSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { StickyNavProps } from "@/types/nav";
 import { getNavBackground } from "@/utils/nav";
-import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
+import { resolveByLayoutMode, resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldRevealNav } from "@/utils/scroll";
 
 import { NavLink } from "./NavLink";
@@ -31,7 +31,7 @@ export const StickyNav = ({
     const navBackground = getNavBackground(Platform.OS);
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
-    const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
+    const layoutMode = resolveResponsiveLayoutMode(width);
     // Nav grows taller by insets.top, so the hidden offset must too, or it
     // peeks out under the status bar while "hidden".
     const hiddenTranslateY = navSpace.hiddenTranslateY - insets.top;
@@ -86,22 +86,25 @@ export const StickyNav = ({
         transform: [{ translateY: translateY.value }],
     }));
 
-    const linkLabelStyle = isCompact
-        ? typeScale.navLinkCompact
-        : isNarrow
-          ? typeScale.navLinkNarrow
-          : typeScale.navLink;
-    const rowPaddingHorizontal = isCompact
-        ? navSpace.rowPaddingHorizontalCompact
-        : isNarrow
-          ? navSpace.rowPaddingHorizontalNarrow
-          : navSpace.rowPaddingHorizontal;
-    const rowGap = isCompact ? navSpace.rowGapCompact : navSpace.rowGap;
-    const linkGap = isCompact
-        ? navSpace.linkGapCompact
-        : isNarrow
-          ? navSpace.linkGapNarrow
-          : navSpace.linkGap;
+    const linkLabelStyle = resolveByLayoutMode(
+        layoutMode,
+        typeScale.navLinkCompact,
+        typeScale.navLinkNarrow,
+        typeScale.navLink,
+    );
+    const rowPaddingHorizontal = resolveByLayoutMode(
+        layoutMode,
+        navSpace.rowPaddingHorizontalCompact,
+        navSpace.rowPaddingHorizontalNarrow,
+        navSpace.rowPaddingHorizontal,
+    );
+    const rowGap = layoutMode.isCompact ? navSpace.rowGapCompact : navSpace.rowGap;
+    const linkGap = resolveByLayoutMode(
+        layoutMode,
+        navSpace.linkGapCompact,
+        navSpace.linkGapNarrow,
+        navSpace.linkGap,
+    );
 
     const rowPaddingTop = navSpace.rowPaddingVertical + insets.top;
     const rowStyle = [
