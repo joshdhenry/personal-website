@@ -19,10 +19,6 @@ export const contactHeading = "Let's build something great";
 export const contactAvailabilityParagraph =
     "Open to senior React Native and some mobile roles. Seeking remote work anywhere in the U.S., or hybrid in Portland, OR. Send me a message and I'll get back to you.";
 
-// Public Formspree form ID, not a secret - safe to hardcode, per
-// designs/CLAUDE.md's Contact spec.
-export const contactFormspreeEndpoint = "https://formspree.io/f/xljrgjpe";
-
 // Metro asset require, not a JS module import.
 const resumeAsset = Asset.fromModule(
     require("../../assets/documents/Josh Henry - Portfolio Resume.pdf"),

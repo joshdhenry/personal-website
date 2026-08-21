@@ -22,14 +22,13 @@ import { shouldRevealNav } from "@/utils/scroll";
 
 import { NavLink } from "./NavLink";
 
-const navBackground = getNavBackground(Platform.OS);
-
 export const StickyNav = ({
     currentSectionId,
     onHeightChange,
     onLinkPress,
     scrollY,
 }: StickyNavProps) => {
+    const navBackground = getNavBackground(Platform.OS);
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);

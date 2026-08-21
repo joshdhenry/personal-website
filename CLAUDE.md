@@ -105,9 +105,13 @@ extra}` return — no clean way to interleave a spread). Array element order
 - src/theme/ named design tokens (colors, spacing, typography, radii,
   breakpoints, motion, shadow), one file per token category — the single
   source of truth for every value
-- src/data/ typed content: heroContent.ts, and eventually projects.ts,
-  skills.ts, experience.ts (content lives here as data, never hardcoded in
-  components)
+- src/data/ typed content: heroContent.ts, projects.ts, skills.ts,
+  experience.ts, etc. (content lives here as data, never hardcoded in
+  components). Data is what a user sees or reads — copy, facts, labels,
+  the URLs a link's content points at. A value that instead configures how
+  the code behaves (a service endpoint fetch() posts to, a timeout, a
+  threshold) is a constant, in src/constants/, even if it happens to be a
+  string.
 - src/types/ every type/interface in the app, one file per domain (e.g.
   hero.ts, theme.ts, interaction.ts for cross-cutting hook state shapes) —
   never declared inline in the component/hook/theme file that uses it; see
@@ -116,10 +120,11 @@ extra}` return — no clean way to interleave a spread). Array element order
   and named by the domain they deal with (e.g. `scroll.ts` for the page's
   scroll-driven effects), never by an individual function's own name; every
   util file has a colocated `*.test.ts`. Exports functions only.
-- src/constants/ every named, non-visual behavioral constant (thresholds,
-  timeouts, and the like), one file per domain — regardless of whether it's
-  exported or module-local to a hook/component/util. Visual design values
-  still belong in theme/, not here.
+- src/constants/ every named, non-visual behavioral/technical constant
+  (thresholds, timeouts, integration endpoints — see src/data/ above for the
+  data-vs-constant distinction), one file per domain — regardless of whether
+  it's exported or module-local to a hook/component/util. Visual design
+  values still belong in theme/, not here.
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/

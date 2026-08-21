@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { contactFormspreeEndpoint } from "@/data/contact";
+import { contactFormspreeEndpoint } from "@/constants/contact";
 import type {
     ContactFormFieldErrors,
     ContactFormValues,
