@@ -19,6 +19,20 @@ export const shouldRevealNav = (scrollY: number, navRevealScrollY: number): bool
 };
 
 /**
+ * Whether scroll has reached the maximum extent of its container.
+ *
+ * @param currentOffset - Current scroll offset in px.
+ * @param viewportSize - Height of the visible scrolling viewport in px.
+ * @param contentSize - Total scrollable content height in px.
+ * @returns True once currentOffset + viewportSize reaches contentSize.
+ */
+export const isAtScrollBottom = (
+    currentOffset: number,
+    viewportSize: number,
+    contentSize: number,
+): boolean => currentOffset + viewportSize >= contentSize - scrollBottomEpsilonPx;
+
+/**
  * Reads a ScrollView's real current scroll position directly from its DOM
  * node, for syncing state to a starting position no onScroll event fired for
  * (e.g. a bfcache-restored page). Web-only - callers gate on Platform.OS.
@@ -35,9 +49,11 @@ export const readInitialScrollState = (
     }
 
     return {
-        isAtBottom:
-            scrollableNode.scrollTop + scrollableNode.clientHeight >=
-            scrollableNode.scrollHeight - scrollBottomEpsilonPx,
+        isAtBottom: isAtScrollBottom(
+            scrollableNode.scrollTop,
+            scrollableNode.clientHeight,
+            scrollableNode.scrollHeight,
+        ),
         scrollTop: scrollableNode.scrollTop,
     };
 };
@@ -71,7 +87,9 @@ export const hasSectionOrderReachedTarget = (
  * Which section is currently in view, for the sticky nav's highlight. A
  * section counts as reached once scroll has carried it up past the nav.
  * isAtBottom forces the last measured section to win even short of that
- * math, since a short final section can never satisfy it by scrolling alone.
+ * math, since a short final section can never satisfy it by scrolling alone
+ * - guarded by scrollY > 0 so a page short enough to need no scrolling at
+ * all doesn't start pre-highlighted on its last section.
  *
  * @param scrollY - Current vertical scroll offset in px.
  * @param sectionOffsets - Each section's last-measured top offset, or null if unmeasured.
@@ -85,7 +103,7 @@ export const resolveCurrentSectionId = (
     navHeightEstimate: number,
     isAtBottom: boolean,
 ): SectionId => {
-    if (isAtBottom) {
+    if (isAtBottom && scrollY > 0) {
         for (let index = sectionOrder.length - 1; index >= 0; index -= 1) {
             const sectionId = sectionOrder[index];
             if (sectionOffsets[sectionId] !== null) {

@@ -141,4 +141,45 @@ describe("useScrollSpy", () => {
 
         jest.useRealTimers();
     });
+
+    it("resolves from the latest scroll position when the safety-net timeout fires, instead of leaving a stale highlight", () => {
+        jest.useFakeTimers();
+
+        const { result } = renderScrollSpy(0);
+
+        act(() => {
+            result.current.onLinkPress("about");
+        });
+        // A scroll frame arrives but never reaches "about" before the
+        // animation stalls out and no further onScroll event fires.
+        act(() => {
+            result.current.updateFromScroll(3000 - navHeightEstimate, false);
+        });
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        expect(result.current.currentSectionId).toBe("experience");
+
+        jest.useRealTimers();
+    });
+
+    it("releases a pending target once scroll reverses back past where the click started, even without a drag event", () => {
+        const { result } = renderScrollSpy(2000);
+
+        // Establishes a starting section other than the default "top",
+        // mirroring an onScrollBeginDrag-less platform (web): the only
+        // guard-release signal is derived from scroll position itself.
+        act(() => {
+            result.current.updateFromScroll(2000, false);
+        });
+        act(() => {
+            result.current.onLinkPress("about");
+        });
+        act(() => {
+            result.current.updateFromScroll(1000 - navHeightEstimate, false);
+        });
+
+        expect(result.current.currentSectionId).toBe("projects");
+    });
 });

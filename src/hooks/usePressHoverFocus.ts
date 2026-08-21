@@ -12,11 +12,9 @@ export type PressHoverFocusState = {
 };
 
 /**
- * Press/hover/focus state machine shared by every interactive badge and
- * link. isActive is hover OR press (kept as two booleans so releasing a
- * press while still hovered doesn't clear active). onActiveChange fires
- * from an effect on isActive, not inline, so same-tick handler pairs (a
- * keyboard Enter's onPressIn+onPressOut) can't drop a transition.
+ * Press/hover/focus state machine shared by every interactive badge/link.
+ * isActive is hover OR press, kept as two booleans so releasing a press
+ * while still hovered doesn't clear active.
  */
 export const usePressHoverFocus = (
     onActiveChange?: (active: boolean) => void,
@@ -36,6 +34,9 @@ export const usePressHoverFocus = (
         };
     }, []);
 
+    // Fires from an effect on isActive, not inline in the handlers below, so
+    // a same-tick keyboard Enter (onPressIn then onPressOut, no render
+    // between) can't close over stale state and drop the transition.
     useEffect(() => {
         if (hasMountedRef.current) {
             onActiveChange?.(isActive);

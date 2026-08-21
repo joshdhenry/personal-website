@@ -35,7 +35,10 @@ Also serves as a Claude Code learning project.
 - Self documenting code is the best kind of code. Use comments in places only
   where variable naming is not explanatory enough. Comments explain why, never
   restate what. Max 3 lines, most 1 line — delete anything a reader could
-  already infer from the code and names.
+  already infer from the code and names. This cap is for inline rationale
+  comments; a JSDoc block on an exported function (description + @param /
+  @returns, one util-file export per line) is exempt from it, but keep the
+  description itself to 1-3 lines.
 - No magic numbers. Every spacing, size, radius, duration, breakpoint, and
   color must be a named token defined in theme/ and referenced by name in
   components. If a new value is genuinely needed, add a named token with a

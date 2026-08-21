@@ -13,7 +13,6 @@ import { Hero } from "@/components/hero/Hero";
 import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
-import { scrollBottomEpsilonPx } from "@/constants/scroll";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
@@ -21,7 +20,7 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import { readInitialScrollState } from "@/utils/scroll";
+import { isAtScrollBottom, readInitialScrollState } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
 export default () => {
@@ -76,8 +75,11 @@ export default () => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const scrollOffset = contentOffset.y;
         scrollY.value = scrollOffset;
-        const isAtBottom =
-            scrollOffset + layoutMeasurement.height >= contentSize.height - scrollBottomEpsilonPx;
+        const isAtBottom = isAtScrollBottom(
+            scrollOffset,
+            layoutMeasurement.height,
+            contentSize.height,
+        );
         updateFromScroll(scrollOffset, isAtBottom);
     };
 

@@ -4,6 +4,7 @@ import type { SectionOffsets } from "@/types/nav";
 
 import {
     hasSectionOrderReachedTarget,
+    isAtScrollBottom,
     readInitialScrollState,
     resolveCurrentSectionId,
     shouldRevealNav,
@@ -17,6 +18,20 @@ describe("shouldRevealNav", () => {
 
     it("reveals once scroll passes the threshold", () => {
         expect(shouldRevealNav(561, 560)).toBe(true);
+    });
+});
+
+describe("isAtScrollBottom", () => {
+    it("returns false when there's still room left to scroll", () => {
+        expect(isAtScrollBottom(4000, 900, 5822)).toBe(false);
+    });
+
+    it("returns true once scrolled to the maximum extent", () => {
+        expect(isAtScrollBottom(4922, 900, 5822)).toBe(true);
+    });
+
+    it("tolerates subpixel rounding just short of the maximum extent", () => {
+        expect(isAtScrollBottom(4921.8, 900, 5822.5)).toBe(true);
     });
 });
 
@@ -143,5 +158,11 @@ describe("resolveCurrentSectionId", () => {
         expect(resolveCurrentSectionId(4900, partialOffsets, navHeightEstimate, true)).toBe(
             "about",
         );
+    });
+
+    it("resolves to top, not the last section, when isAtBottom is trivially true at scrollY 0", () => {
+        // A page short enough to fit the viewport with no scrolling at all
+        // can satisfy the bottom check even before the user has scrolled.
+        expect(resolveCurrentSectionId(0, sectionOffsets, navHeightEstimate, true)).toBe("top");
     });
 });

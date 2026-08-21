@@ -23,8 +23,12 @@ export const useScrollSpy = ({
     const pendingTargetRef = useRef<{
         direction: 1 | -1;
         sectionId: SectionId;
+        startSectionId: SectionId;
         timeoutId: ReturnType<typeof setTimeout>;
     } | null>(null);
+    // Latest onScroll data, so the safety-net timeout below can resolve a
+    // real section instead of just abandoning a stuck pending target.
+    const latestScrollRef = useRef({ isAtBottom: false, scrollOffset: 0 });
 
     const clearPendingTarget = useCallback(() => {
         if (pendingTargetRef.current !== null) {
@@ -37,6 +41,7 @@ export const useScrollSpy = ({
 
     const updateFromScroll = useCallback(
         (scrollOffset: number, isAtBottom: boolean) => {
+            latestScrollRef.current = { isAtBottom, scrollOffset };
             const nextSectionId = resolveCurrentSectionId(
                 scrollOffset,
                 sectionOffsets.current,
@@ -51,7 +56,17 @@ export const useScrollSpy = ({
                     pendingTarget.sectionId,
                     pendingTarget.direction,
                 );
-                if (!hasReachedTarget) {
+                // react-native-web's ScrollView never invokes onScrollBeginDrag
+                // (not a real DOM event), so this is web's only signal that the
+                // user has taken over manually: scroll position has moved back
+                // past where the click started, opposite the animation's own
+                // direction of travel.
+                const hasReversedPastStart = !hasSectionOrderReachedTarget(
+                    nextSectionId,
+                    pendingTarget.startSectionId,
+                    pendingTarget.direction,
+                );
+                if (!hasReachedTarget && !hasReversedPastStart) {
                     return;
                 }
                 clearPendingTarget();
@@ -77,14 +92,31 @@ export const useScrollSpy = ({
             pendingTargetRef.current = {
                 direction,
                 sectionId,
+                startSectionId: currentSectionId,
                 timeoutId: setTimeout(() => {
                     pendingTargetRef.current = null;
+                    const { isAtBottom, scrollOffset } = latestScrollRef.current;
+                    setCurrentSectionId(
+                        resolveCurrentSectionId(
+                            scrollOffset,
+                            sectionOffsets.current,
+                            navHeightEstimate,
+                            isAtBottom,
+                        ),
+                    );
                 }, pendingTargetTimeoutMs),
             };
             setCurrentSectionId(sectionId);
             scrollToSection(sectionId);
         },
-        [clearPendingTarget, scrollToSection, scrollY, sectionOffsets],
+        [
+            clearPendingTarget,
+            currentSectionId,
+            navHeightEstimate,
+            scrollToSection,
+            scrollY,
+            sectionOffsets,
+        ],
     );
 
     return {
