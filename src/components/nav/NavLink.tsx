@@ -1,4 +1,4 @@
-import { Platform, Pressable, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { usePressScale } from "@/hooks/usePressScale";
@@ -18,18 +18,17 @@ export const NavLink = ({
     const {
         animatedStyle,
         isActive,
-        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
+        showFocusRing,
     } = usePressScale();
 
     const onPress = () => onLinkPress(sectionId);
 
-    const showFocusRing = Platform.OS === "web" && isFocused;
     // isSelected (not isFocused) drives color: isFocused fires for every
     // link tabbed through, not just the one selected. isSelected reflects
     // the actual in-view section, so color tracks manual scrolling too.

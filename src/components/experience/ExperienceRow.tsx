@@ -9,11 +9,7 @@ import { shadow } from "@/theme/shadow";
 import { experienceSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ExperienceRowProps } from "@/types/experience";
-
-// Android clips a View's children to its background's rounded-corner outline
-// once `elevation` is applied, so the hover/press shadow is web-only. See
-// ActionBadge.tsx for the same guard and full rationale.
-const isHoverShadowSupported = Platform.OS === "web";
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: ExperienceRowProps) => {
     const riseStyle = useRiseEntrance(staggerDelayMilliseconds);
@@ -23,7 +19,7 @@ export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: Expe
 
     const cardStyle = [
         styles.card,
-        isActive && isHoverShadowSupported && shadow.experienceRow,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.experienceRow,
         animatedStyle,
     ];
     const dotStyle = [styles.dotRing, isNarrow ? styles.dotRingNarrow : styles.dotRingWide];

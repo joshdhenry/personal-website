@@ -10,43 +10,40 @@ import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ActionBadgeProps } from "@/types/hero";
 import { openUrl } from "@/utils/openUrl";
-
-// Android clips a View's children to its rounded-corner outline once
-// `elevation` is applied, clipping this badge's label text on press. The
-// hover/press shadow is decorative polish, so it's web-only.
-const isHoverShadowSupported = Platform.OS === "web";
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 export const ActionBadge = ({ badge }: ActionBadgeProps) => {
     const {
         animatedStyle,
         isActive,
-        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
+        showFocusRing,
     } = usePressScale(heroSpace.badgeLiftDistance);
 
     const onPress = () => openUrl(badge.href);
 
-    const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
         styles.badge,
         isActive && styles.badgeActive,
-        isActive && isHoverShadowSupported && shadow.badgeHover,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.badgeHover,
         showFocusRing && focusRing,
         animatedStyle,
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
 
-    // "button", not "link": no real <a href> here - see NavLink.tsx.
+    // A real external link on native (gets the "link" trait); react-native-web
+    // only fires a real <a>'s native keyboard Enter/Space activation for
+    // role="link", and this isn't a real <a> - see NavLink.tsx.
     return (
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={badge.accessibilityLabel}
-                accessibilityRole="button"
+                accessibilityRole={Platform.OS === "web" ? "button" : "link"}
                 onBlur={onBlur}
                 onFocus={onFocus}
                 onHoverIn={onHoverIn}

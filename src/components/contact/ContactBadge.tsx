@@ -10,43 +10,41 @@ import { contactSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ContactBadgeProps } from "@/types/contact";
 import { openUrl } from "@/utils/openUrl";
-
-// Same Android elevation-clips-rounded-children issue documented in
-// hero/ActionBadge.tsx - the hover/press shadow is web-only.
-const isHoverShadowSupported = Platform.OS === "web";
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 export const ContactBadge = ({ badge }: ContactBadgeProps) => {
     const {
         animatedStyle,
         isActive,
-        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
+        showFocusRing,
     } = usePressScale(contactSpace.badgeLiftDistance);
 
     const onPress = () => openUrl(badge.href);
 
-    const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
         styles.badge,
         isActive && styles.badgeActive,
-        isActive && isHoverShadowSupported && shadow.badgeHover,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.badgeHover,
         showFocusRing && focusRing,
         animatedStyle,
     ];
     const labelStyle = [styles.label, isActive && styles.labelActive];
     const BadgeIcon = badge.icon;
 
-    // "button", not "link": no real <a href> here - see NavLink.tsx.
+    // A real external link on native (gets the "link" trait); react-native-web
+    // only fires a real <a>'s native keyboard Enter/Space activation for
+    // role="link", and this isn't a real <a> - see NavLink.tsx.
     return (
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={badge.accessibilityLabel}
-                accessibilityRole="button"
+                accessibilityRole={Platform.OS === "web" ? "button" : "link"}
                 onBlur={onBlur}
                 onFocus={onFocus}
                 onHoverIn={onHoverIn}

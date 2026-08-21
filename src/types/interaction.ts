@@ -9,6 +9,7 @@ export type PressHoverFocusState = {
     onHoverOut: () => void;
     onPressIn: () => void;
     onPressOut: () => void;
+    showFocusRing: boolean;
 };
 
 export type PressScaleState = PressHoverFocusState & {

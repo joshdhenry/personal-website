@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 
 import type { PressHoverFocusState } from "@/types/interaction";
 
@@ -69,5 +70,6 @@ export const usePressHoverFocus = (
         onHoverOut,
         onPressIn,
         onPressOut,
+        showFocusRing: Platform.OS === "web" && isFocused,
     };
 };

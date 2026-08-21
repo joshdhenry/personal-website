@@ -16,13 +16,18 @@ export const useScrollSpy = ({
     const [currentSectionId, setCurrentSectionId] = useState<SectionId>("top");
     const pendingTargetRef = useRef<{
         direction: 1 | -1;
+        furthestSectionId: SectionId;
         sectionId: SectionId;
-        startSectionId: SectionId;
         timeoutId: ReturnType<typeof setTimeout>;
     } | null>(null);
     // Latest onScroll data, so the safety-net timeout below can resolve a
     // real section instead of just abandoning a stuck pending target.
     const latestScrollRef = useRef({ isAtBottom: false, scrollOffset: 0 });
+    // navHeight can change (a resize, StickyNav re-measuring) while a
+    // pending-target timeout is already scheduled; read the latest value at
+    // fire time instead of the one closed over when it was scheduled.
+    const navHeightRef = useRef(navHeight);
+    navHeightRef.current = navHeight;
 
     const clearPendingTarget = useCallback(() => {
         if (pendingTargetRef.current !== null) {
@@ -52,13 +57,14 @@ export const useScrollSpy = ({
                 );
                 // react-native-web never fires onScrollBeginDrag (not a real
                 // DOM event) - this is web's only "user took over" signal:
-                // scroll moved back past where the click started.
-                const hasReversedPastStart = !hasSectionOrderReachedTarget(
+                // scroll fell back behind the furthest point reached so far.
+                const hasReversedPastFurthest = !hasSectionOrderReachedTarget(
                     nextSectionId,
-                    pendingTarget.startSectionId,
+                    pendingTarget.furthestSectionId,
                     pendingTarget.direction,
                 );
-                if (!hasReachedTarget && !hasReversedPastStart) {
+                if (!hasReachedTarget && !hasReversedPastFurthest) {
+                    pendingTarget.furthestSectionId = nextSectionId;
                     return;
                 }
                 clearPendingTarget();
@@ -86,7 +92,7 @@ export const useScrollSpy = ({
                     resolveCurrentSectionId(
                         scrollOffset,
                         sectionOffsets.current,
-                        navHeight,
+                        navHeightRef.current,
                         isAtBottom,
                     ),
                 );
@@ -95,14 +101,14 @@ export const useScrollSpy = ({
             clearPendingTarget();
             pendingTargetRef.current = {
                 direction,
+                furthestSectionId: currentSectionId,
                 sectionId,
-                startSectionId: currentSectionId,
                 timeoutId,
             };
             setCurrentSectionId(sectionId);
             scrollToSection(sectionId);
         },
-        [clearPendingTarget, currentSectionId, navHeight, scrollToSection, scrollY, sectionOffsets],
+        [clearPendingTarget, currentSectionId, scrollToSection, scrollY, sectionOffsets],
     );
 
     return {

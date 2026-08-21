@@ -182,4 +182,25 @@ describe("useScrollSpy", () => {
 
         expect(result.current.currentSectionId).toBe("projects");
     });
+
+    it("releases a pending target once scroll returns to exactly the start section, after genuinely progressing past it", () => {
+        const { result } = renderScrollSpy(0);
+
+        act(() => {
+            result.current.onLinkPress("experience");
+        });
+        // Genuine forward progress into "skills", short of the target.
+        act(() => {
+            result.current.updateFromScroll(2500 - navHeight, false);
+        });
+        // Reverses all the way back to exactly the click's starting section -
+        // comparing only against the original start (not the furthest point
+        // reached) would miss this, since "top" trivially satisfies "at or
+        // past top".
+        act(() => {
+            result.current.updateFromScroll(0, false);
+        });
+
+        expect(result.current.currentSectionId).toBe("top");
+    });
 });

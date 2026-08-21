@@ -9,17 +9,13 @@ import { shadow } from "@/theme/shadow";
 import { projectsSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { FeaturedProjectCardProps } from "@/types/projects";
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 import { ProjectDetailField } from "./ProjectDetailField";
 import { ProjectDetailReveal } from "./ProjectDetailReveal";
 import { ProjectExpandAffordance } from "./ProjectExpandAffordance";
 import { ProjectImageBand } from "./ProjectImageBand";
 import { ProjectStackChips } from "./ProjectStackChips";
-
-// Android clips a View's children to its background's rounded-corner outline
-// once `elevation` is applied, so the hover/press shadow is web-only. See
-// ActionBadge.tsx for the same guard and full rationale.
-const isHoverShadowSupported = Platform.OS === "web";
 
 export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +28,7 @@ export const FeaturedProjectCard = ({ project }: FeaturedProjectCardProps) => {
     const cardStyle = [
         styles.card,
         project.spansBothColumns && styles.cardSpanning,
-        isActive && isHoverShadowSupported && shadow.projectCard,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.projectCard,
         animatedStyle,
     ];
     const accessibilityLabel = `${project.title}, ${project.subtitle}`;

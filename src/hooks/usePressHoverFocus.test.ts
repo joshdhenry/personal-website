@@ -80,6 +80,12 @@ describe("usePressHoverFocus", () => {
         expect(result.current.isFocused).toBe(false);
     });
 
+    it("never shows a focus ring while unfocused", () => {
+        const { result } = renderHook(() => usePressHoverFocus());
+
+        expect(result.current.showFocusRing).toBe(false);
+    });
+
     it("calls onActiveChange only when the combined active state actually changes", () => {
         const onActiveChange = jest.fn();
         const { result } = renderHook(() => usePressHoverFocus(onActiveChange));
