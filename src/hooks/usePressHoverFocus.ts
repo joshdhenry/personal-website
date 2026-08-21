@@ -1,21 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-export type PressHoverFocusState = {
-    isActive: boolean;
-    isFocused: boolean;
-    onBlur: () => void;
-    onFocus: () => void;
-    onHoverIn: () => void;
-    onHoverOut: () => void;
-    onPressIn: () => void;
-    onPressOut: () => void;
-};
+import type { PressHoverFocusState } from "@/types/interaction";
 
-/**
- * Press/hover/focus state machine shared by every interactive badge/link.
- * isActive is hover OR press, kept as two booleans so releasing a press
- * while still hovered doesn't clear active.
- */
+// Press/hover/focus state machine shared by every interactive badge/link.
+// isActive is hover OR press (two booleans, so releasing a press while
+// still hovered doesn't clear active).
 export const usePressHoverFocus = (
     onActiveChange?: (active: boolean) => void,
 ): PressHoverFocusState => {
@@ -72,13 +61,13 @@ export const usePressHoverFocus = (
     }, []);
 
     return {
+        isActive,
+        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
-        isActive,
-        isFocused,
     };
 };

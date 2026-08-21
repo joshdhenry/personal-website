@@ -17,14 +17,14 @@ export const NavLink = ({
 }: NavLinkProps) => {
     const {
         animatedStyle,
+        isActive,
+        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
-        isActive,
-        isFocused,
     } = usePressScale();
 
     const onPress = () => onLinkPress(sectionId);

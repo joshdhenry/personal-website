@@ -93,14 +93,14 @@ export const hasSectionOrderReachedTarget = (
  *
  * @param scrollY - Current vertical scroll offset in px.
  * @param sectionOffsets - Each section's last-measured top offset, or null if unmeasured.
- * @param navHeightEstimate - Nav height to clear before a section counts as reached.
+ * @param navHeight - Nav height to clear before a section counts as reached.
  * @param isAtBottom - Whether scroll is at the page's maximum extent.
  * @returns The section id the nav should currently highlight.
  */
 export const resolveCurrentSectionId = (
     scrollY: number,
     sectionOffsets: SectionOffsets,
-    navHeightEstimate: number,
+    navHeight: number,
     isAtBottom: boolean,
 ): SectionId => {
     if (isAtBottom && scrollY > 0) {
@@ -116,7 +116,7 @@ export const resolveCurrentSectionId = (
 
     for (const sectionId of sectionOrder) {
         const offset = sectionOffsets[sectionId];
-        if (offset !== null && scrollY + navHeightEstimate >= offset) {
+        if (offset !== null && scrollY + navHeight >= offset) {
             currentSectionId = sectionId;
         }
     }

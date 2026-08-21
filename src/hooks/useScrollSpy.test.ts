@@ -5,7 +5,7 @@ import type { SectionOffsets } from "@/types/nav";
 import { useScrollSpy } from "./useScrollSpy";
 
 describe("useScrollSpy", () => {
-    const navHeightEstimate = 64;
+    const navHeight = 64;
     const sectionOffsets: { current: SectionOffsets } = {
         current: {
             about: 4000,
@@ -22,7 +22,7 @@ describe("useScrollSpy", () => {
         const scrollY = { value: scrollYValue };
         const { result } = renderHook(() =>
             useScrollSpy({
-                navHeightEstimate,
+                navHeight,
                 scrollToSection,
                 scrollY,
                 sectionOffsets: offsets,
@@ -42,7 +42,7 @@ describe("useScrollSpy", () => {
         const { result } = renderScrollSpy();
 
         act(() => {
-            result.current.updateFromScroll(2500 - navHeightEstimate, false);
+            result.current.updateFromScroll(2500 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("skills");
@@ -81,7 +81,7 @@ describe("useScrollSpy", () => {
         // Simulates an animated scrollTo()'s imprecise intermediate frames,
         // still resolving to a section before the clicked target.
         act(() => {
-            result.current.updateFromScroll(3000 - navHeightEstimate, false);
+            result.current.updateFromScroll(3000 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("about");
@@ -94,13 +94,13 @@ describe("useScrollSpy", () => {
             result.current.onLinkPress("about");
         });
         act(() => {
-            result.current.updateFromScroll(4000 - navHeightEstimate, false);
+            result.current.updateFromScroll(4000 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("about");
 
         act(() => {
-            result.current.updateFromScroll(5000 - navHeightEstimate, false);
+            result.current.updateFromScroll(5000 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("contact");
@@ -116,7 +116,7 @@ describe("useScrollSpy", () => {
             result.current.onScrollBeginDrag();
         });
         act(() => {
-            result.current.updateFromScroll(3000 - navHeightEstimate, false);
+            result.current.updateFromScroll(3000 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("experience");
@@ -134,7 +134,7 @@ describe("useScrollSpy", () => {
             jest.runAllTimers();
         });
         act(() => {
-            result.current.updateFromScroll(3000 - navHeightEstimate, false);
+            result.current.updateFromScroll(3000 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("experience");
@@ -153,7 +153,7 @@ describe("useScrollSpy", () => {
         // A scroll frame arrives but never reaches "about" before the
         // animation stalls out and no further onScroll event fires.
         act(() => {
-            result.current.updateFromScroll(3000 - navHeightEstimate, false);
+            result.current.updateFromScroll(3000 - navHeight, false);
         });
         act(() => {
             jest.runAllTimers();
@@ -177,7 +177,7 @@ describe("useScrollSpy", () => {
             result.current.onLinkPress("about");
         });
         act(() => {
-            result.current.updateFromScroll(1000 - navHeightEstimate, false);
+            result.current.updateFromScroll(1000 - navHeight, false);
         });
 
         expect(result.current.currentSectionId).toBe("projects");

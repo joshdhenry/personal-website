@@ -4,9 +4,9 @@ import type { SectionId, UseScrollToSectionParams } from "@/types/nav";
 
 // Stable scrollToSection(id) callback, shared by every nav link. Skips a
 // section whose offset hasn't measured yet rather than landing at the top,
-// and subtracts navHeightEstimate so the target clears the overlaid nav.
+// and subtracts navHeight so the target clears the overlaid nav.
 export const useScrollToSection = ({
-    navHeightEstimate,
+    navHeight,
     scrollViewRef,
     sectionOffsets,
 }: UseScrollToSectionParams) =>
@@ -20,8 +20,8 @@ export const useScrollToSection = ({
 
             scrollViewRef.current?.scrollTo({
                 animated: true,
-                y: Math.max(0, offset - navHeightEstimate),
+                y: Math.max(0, offset - navHeight),
             });
         },
-        [navHeightEstimate, scrollViewRef, sectionOffsets],
+        [navHeight, scrollViewRef, sectionOffsets],
     );

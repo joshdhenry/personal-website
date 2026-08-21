@@ -1,17 +1,11 @@
 import { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 
-import { usePressHoverFocus, type PressHoverFocusState } from "@/hooks/usePressHoverFocus";
+import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
 import { motion } from "@/theme/motion";
+import type { PressScaleState } from "@/types/interaction";
 
-export type PressScaleState = PressHoverFocusState & {
-    animatedStyle: ReturnType<typeof useAnimatedStyle>;
-};
-
-/**
- * Press/hover scale (and optional lift) feedback shared by every Pressable
- * badge and link. liftDistance stays 0 for scale-only elements; ActionBadge
- * passes a negative value to also lift on press/hover.
- */
+// Press/hover scale (+ optional lift) feedback for every Pressable badge/link.
+// liftDistance stays 0 for scale-only; ActionBadge passes a negative value.
 export const usePressScale = (liftDistance = 0): PressScaleState => {
     const scale = useSharedValue(1);
     const liftY = useSharedValue(0);

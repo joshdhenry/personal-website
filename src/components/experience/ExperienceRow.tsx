@@ -17,7 +17,7 @@ const isHoverShadowSupported = Platform.OS === "web";
 
 export const ExperienceRow = ({ isNarrow, role, staggerDelayMilliseconds }: ExperienceRowProps) => {
     const riseStyle = useRiseEntrance(staggerDelayMilliseconds);
-    const { animatedStyle, onHoverIn, onHoverOut, onPressIn, onPressOut, isActive } = usePressScale(
+    const { animatedStyle, isActive, onHoverIn, onHoverOut, onPressIn, onPressOut } = usePressScale(
         experienceSpace.rowLiftDistance,
     );
 

@@ -37,26 +37,27 @@ export default () => {
         skills: null,
         top: 0,
     });
-    const navHeightEstimate = navSpace.navHeightEstimate + insets.top;
+    // Real height, reported by StickyNav's onLayout once mounted;
+    // navHeightFallback covers the gap before that first measurement.
+    const [measuredNavHeight, setMeasuredNavHeight] = useState<number | null>(null);
+    const navHeight = measuredNavHeight ?? navSpace.navHeightFallback + insets.top;
     const scrollToSection = useScrollToSection({
-        navHeightEstimate,
+        navHeight,
         scrollViewRef,
         sectionOffsets,
     });
     const { currentSectionId, onLinkPress, onScrollBeginDrag, updateFromScroll } = useScrollSpy({
-        navHeightEstimate,
+        navHeight,
         scrollToSection,
         scrollY,
         sectionOffsets,
     });
 
-    // StickyNav mounts only once this is true (see the render below) - its
-    // reveal reaction treats its own first evaluation as authoritative, so
-    // it must not mount before scrollY is synced to a real starting value.
+    // Gates StickyNav's mount below - its reveal reaction trusts its own
+    // first evaluation, so it must not mount before scrollY is real.
     const [hasSyncedInitialScroll, setHasSyncedInitialScroll] = useState(Platform.OS !== "web");
-    // A bfcache-restored page can already be scrolled before React sees any
-    // onScroll event - read the real starting position once on mount. Web
-    // only: readInitialScrollState has no native equivalent.
+    // A bfcache-restored page can start pre-scrolled with no onScroll event;
+    // sync the real position once on mount. Web-only - no native equivalent.
     useEffect(() => {
         if (Platform.OS !== "web") {
             return;
@@ -69,8 +70,8 @@ export default () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Plain JS, not Animated.ScrollView + useAnimatedScrollHandler: the web
-    // ref doesn't support the imperative .scrollTo() scrollToSection needs.
+    // Plain JS onScroll: Animated.ScrollView's web ref lacks the imperative
+    // .scrollTo() scrollToSection needs.
     const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
         const scrollOffset = contentOffset.y;
@@ -137,6 +138,7 @@ export default () => {
             {hasSyncedInitialScroll && (
                 <StickyNav
                     currentSectionId={currentSectionId}
+                    onHeightChange={setMeasuredNavHeight}
                     onLinkPress={onLinkPress}
                     scrollY={scrollY}
                 />

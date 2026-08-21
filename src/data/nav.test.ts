@@ -1,8 +1,8 @@
-import { navLinks, navWordmarkLabel } from "./nav";
+import { navLinks, navNameLabel } from "./nav";
 
 describe("nav content", () => {
-    it("has the exact wordmark copy", () => {
-        expect(navWordmarkLabel).toBe("JOSH HENRY");
+    it("has the exact name label copy", () => {
+        expect(navNameLabel).toBe("JOSH HENRY");
     });
 
     it("has exactly 5 links, in Projects/Skills/Experience/About/Contact order", () => {

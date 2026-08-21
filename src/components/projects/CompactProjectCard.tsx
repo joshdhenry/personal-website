@@ -21,7 +21,7 @@ const isHoverShadowSupported = Platform.OS === "web";
 
 export const CompactProjectCard = ({ project }: CompactProjectCardProps) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { animatedStyle, onHoverIn, onHoverOut, onPressIn, onPressOut, isActive } = usePressScale(
+    const { animatedStyle, isActive, onHoverIn, onHoverOut, onPressIn, onPressOut } = usePressScale(
         projectsSpace.cardLiftDistance,
     );
 

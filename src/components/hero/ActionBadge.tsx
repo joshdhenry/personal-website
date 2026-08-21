@@ -19,14 +19,14 @@ const isHoverShadowSupported = Platform.OS === "web";
 export const ActionBadge = ({ badge }: ActionBadgeProps) => {
     const {
         animatedStyle,
+        isActive,
+        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
-        isActive,
-        isFocused,
     } = usePressScale(heroSpace.badgeLiftDistance);
 
     const onPress = () => openUrl(badge.href);

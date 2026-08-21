@@ -7,14 +7,11 @@ import { hasSectionOrderReachedTarget, resolveCurrentSectionId } from "@/utils/s
 // its own before the safety-net timeout clears it.
 const pendingTargetTimeoutMs = 1500;
 
-/**
- * Sticky nav's "current section" scroll-spy. A click sets the section
- * immediately (onLinkPress) rather than waiting on scroll to catch up;
- * pendingTargetRef holds that choice until scroll position actually
- * reaches it, so the imprecise onScroll stream mid-animation can't undo it.
- */
+// Sticky nav's "current section" scroll-spy. A click sets the section
+// immediately (onLinkPress); pendingTargetRef holds that choice until
+// scroll actually reaches it, so mid-animation onScroll noise can't undo it.
 export const useScrollSpy = ({
-    navHeightEstimate,
+    navHeight,
     scrollToSection,
     scrollY,
     sectionOffsets,
@@ -45,7 +42,7 @@ export const useScrollSpy = ({
             const nextSectionId = resolveCurrentSectionId(
                 scrollOffset,
                 sectionOffsets.current,
-                navHeightEstimate,
+                navHeight,
                 isAtBottom,
             );
 
@@ -56,11 +53,9 @@ export const useScrollSpy = ({
                     pendingTarget.sectionId,
                     pendingTarget.direction,
                 );
-                // react-native-web's ScrollView never invokes onScrollBeginDrag
-                // (not a real DOM event), so this is web's only signal that the
-                // user has taken over manually: scroll position has moved back
-                // past where the click started, opposite the animation's own
-                // direction of travel.
+                // react-native-web never fires onScrollBeginDrag (not a real
+                // DOM event) - this is web's only "user took over" signal:
+                // scroll moved back past where the click started.
                 const hasReversedPastStart = !hasSectionOrderReachedTarget(
                     nextSectionId,
                     pendingTarget.startSectionId,
@@ -74,7 +69,7 @@ export const useScrollSpy = ({
 
             setCurrentSectionId(nextSectionId);
         },
-        [clearPendingTarget, navHeightEstimate, sectionOffsets],
+        [clearPendingTarget, navHeight, sectionOffsets],
     );
 
     const onLinkPress = useCallback(
@@ -100,7 +95,7 @@ export const useScrollSpy = ({
                         resolveCurrentSectionId(
                             scrollOffset,
                             sectionOffsets.current,
-                            navHeightEstimate,
+                            navHeight,
                             isAtBottom,
                         ),
                     );
@@ -109,14 +104,7 @@ export const useScrollSpy = ({
             setCurrentSectionId(sectionId);
             scrollToSection(sectionId);
         },
-        [
-            clearPendingTarget,
-            currentSectionId,
-            navHeightEstimate,
-            scrollToSection,
-            scrollY,
-            sectionOffsets,
-        ],
+        [clearPendingTarget, currentSectionId, navHeight, scrollToSection, scrollY, sectionOffsets],
     );
 
     return {

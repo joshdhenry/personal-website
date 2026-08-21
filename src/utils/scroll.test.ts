@@ -98,7 +98,7 @@ describe("hasSectionOrderReachedTarget", () => {
 });
 
 describe("resolveCurrentSectionId", () => {
-    const navHeightEstimate = 64;
+    const navHeight = 64;
     const sectionOffsets: SectionOffsets = {
         about: 4000,
         contact: 5000,
@@ -109,60 +109,47 @@ describe("resolveCurrentSectionId", () => {
     };
 
     it("resolves to top before any section has been reached", () => {
-        expect(resolveCurrentSectionId(0, sectionOffsets, navHeightEstimate, false)).toBe("top");
-        expect(resolveCurrentSectionId(900, sectionOffsets, navHeightEstimate, false)).toBe("top");
+        expect(resolveCurrentSectionId(0, sectionOffsets, navHeight, false)).toBe("top");
+        expect(resolveCurrentSectionId(900, sectionOffsets, navHeight, false)).toBe("top");
     });
 
     it("resolves to the last section whose offset has been reached", () => {
-        expect(
-            resolveCurrentSectionId(
-                1000 - navHeightEstimate,
-                sectionOffsets,
-                navHeightEstimate,
-                false,
-            ),
-        ).toBe("projects");
-        expect(resolveCurrentSectionId(2500, sectionOffsets, navHeightEstimate, false)).toBe(
-            "skills",
+        expect(resolveCurrentSectionId(1000 - navHeight, sectionOffsets, navHeight, false)).toBe(
+            "projects",
         );
-        expect(resolveCurrentSectionId(5000, sectionOffsets, navHeightEstimate, false)).toBe(
-            "contact",
-        );
+        expect(resolveCurrentSectionId(2500, sectionOffsets, navHeight, false)).toBe("skills");
+        expect(resolveCurrentSectionId(5000, sectionOffsets, navHeight, false)).toBe("contact");
     });
 
     it("skips sections that haven't measured an offset yet", () => {
         const partialOffsets: SectionOffsets = { ...sectionOffsets, contact: null };
 
-        expect(resolveCurrentSectionId(9000, partialOffsets, navHeightEstimate, false)).toBe(
-            "about",
-        );
+        expect(resolveCurrentSectionId(9000, partialOffsets, navHeight, false)).toBe("about");
     });
 
     it("forces the last measured section once scrolled to the bottom, even short of its offset", () => {
         // Contact's own content + footer can be shorter than the viewport,
-        // so scrollY + navHeightEstimate may never reach contact's offset
+        // so scrollY + navHeight may never reach contact's offset
         // even at the maximum possible scroll position.
         const shortOfContactOffset = 4900;
 
         expect(
-            resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeightEstimate, false),
+            resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeight, false),
         ).toBe("about");
-        expect(
-            resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeightEstimate, true),
-        ).toBe("contact");
+        expect(resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeight, true)).toBe(
+            "contact",
+        );
     });
 
     it("at the bottom, skips a trailing section that hasn't measured an offset yet", () => {
         const partialOffsets: SectionOffsets = { ...sectionOffsets, contact: null };
 
-        expect(resolveCurrentSectionId(4900, partialOffsets, navHeightEstimate, true)).toBe(
-            "about",
-        );
+        expect(resolveCurrentSectionId(4900, partialOffsets, navHeight, true)).toBe("about");
     });
 
     it("resolves to top, not the last section, when isAtBottom is trivially true at scrollY 0", () => {
         // A page short enough to fit the viewport with no scrolling at all
         // can satisfy the bottom check even before the user has scrolled.
-        expect(resolveCurrentSectionId(0, sectionOffsets, navHeightEstimate, true)).toBe("top");
+        expect(resolveCurrentSectionId(0, sectionOffsets, navHeight, true)).toBe("top");
     });
 });

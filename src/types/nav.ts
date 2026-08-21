@@ -4,12 +4,8 @@ import type { SharedValue } from "react-native-reanimated";
 
 export type SectionId = "top" | "projects" | "skills" | "experience" | "about" | "contact";
 
-/**
- * A section's last-measured scroll offset, or null until its onLayout has
- * fired at least once. useScrollToSection skips scrolling to a null offset
- * rather than falling back to 0 (the top of the page) for a section that
- * simply hasn't measured yet.
- */
+// A section's last-measured scroll offset, or null until its onLayout has
+// fired - useScrollToSection skips a null offset rather than falling back to 0.
 export type SectionOffsets = Record<SectionId, number | null>;
 
 export type NavLinkDescriptor = {
@@ -29,18 +25,19 @@ export type NavLinkProps = {
 
 export type StickyNavProps = {
     currentSectionId: SectionId;
+    onHeightChange: (height: number) => void;
     onLinkPress: (sectionId: SectionId) => void;
     scrollY: SharedValue<number>;
 };
 
 export type UseScrollToSectionParams = {
-    navHeightEstimate: number;
+    navHeight: number;
     scrollViewRef: MutableRefObject<ScrollView | null>;
     sectionOffsets: MutableRefObject<SectionOffsets>;
 };
 
 export type UseScrollSpyParams = {
-    navHeightEstimate: number;
+    navHeight: number;
     scrollToSection: (sectionId: SectionId) => void;
     scrollY: SharedValue<number>;
     sectionOffsets: MutableRefObject<SectionOffsets>;

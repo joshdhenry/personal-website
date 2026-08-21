@@ -315,7 +315,7 @@ export const typeScale = {
     // Sticky nav specific entries, values taken directly from
     // designs/joshhenry.info.dc.html's literal nav styles and
     // designs/README.md's narrow/compact responsive notes.
-    navWordmark: {
+    navName: {
         fontFamily: fontFamily.plexMonoSemiBold,
         fontSize: 13, // .8125rem
         lineHeight: 16,

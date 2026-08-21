@@ -80,9 +80,11 @@ Also serves as a Claude Code learning project.
 - Name event handlers `onX`, never `handleX` (`onPress`, `onProjectsLayout`),
   including hook-returned callbacks. A factory that builds several handlers
   can keep its own descriptive name.
-- Alphabetize: JSX props, StyleSheet keys, and object-literal type fields.
-  Array element order stays whatever is semantically meaningful (e.g. the
-  order stats or nav items should display in), never alphabetized.
+- Alphabetize: JSX props, StyleSheet keys, object-literal type fields, a
+  hook's own returned object, and destructured hook-result variables at call
+  sites (not a `{...spread, extra}` return — no clean way to interleave a
+  spread). Array element order stays whatever is semantically meaningful
+  (e.g. the order stats or nav items should display in), never alphabetized.
 - Avoid `as const` where the same literal-type narrowing is achievable
   another way (an explicit type annotation, `satisfies`). Prefer it only
   when there's no equivalent alternative.
@@ -99,8 +101,10 @@ Also serves as a Claude Code learning project.
 - src/data/ typed content: heroContent.ts, and eventually projects.ts,
   skills.ts, experience.ts (content lives here as data, never hardcoded in
   components)
-- src/types/ shared TypeScript types, one file per domain (e.g. hero.ts,
-  theme.ts) — see "No barrel imports" below
+- src/types/ every type/interface in the app, one file per domain (e.g.
+  hero.ts, theme.ts, interaction.ts for cross-cutting hook state shapes) —
+  never declared inline in the component/hook/theme file that uses it; see
+  "No barrel imports" below
 - src/utils/ pure helper/utility functions, aliased via `@/utils/*`; grouped
   and named by the domain they deal with (e.g. `scroll.ts` for the page's
   scroll-driven effects), never by an individual function's own name; every
@@ -149,7 +153,11 @@ by name only — never a raw value.
 Escape hatch: a section may need a finer-grained shade this list doesn't
 cover (e.g. a second muted tier, or literal macOS traffic-light dot colors).
 Add it as its own named token in src/theme/colors.ts with a one-line comment
-explaining what it's for — never a raw hex value in a component.
+explaining what it's for — never a raw hex value in a component. Name it for
+its role or its relationship to an existing token (e.g.
+`statusPassingBorder`, a tint of `statusPassing`), never for the one
+component that happens to consume it (not `navBackground`) — a real,
+unavoidably specific referent (`trafficLightRed`, `brandLinkedIn`) is fine.
 
 ### Typography
 

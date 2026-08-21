@@ -11,14 +11,14 @@ import { openUrl } from "@/utils/openUrl";
 export const FooterSourceLink = ({ accessibilityLabel, href, label }: FooterSourceLinkProps) => {
     const {
         animatedStyle,
+        isActive,
+        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
-        isActive,
-        isFocused,
     } = usePressScale();
 
     const onPress = () => openUrl(href);

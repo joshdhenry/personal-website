@@ -18,14 +18,14 @@ const isHoverShadowSupported = Platform.OS === "web";
 export const ContactBadge = ({ badge }: ContactBadgeProps) => {
     const {
         animatedStyle,
+        isActive,
+        isFocused,
         onBlur,
         onFocus,
         onHoverIn,
         onHoverOut,
         onPressIn,
         onPressOut,
-        isActive,
-        isFocused,
     } = usePressScale(contactSpace.badgeLiftDistance);
 
     const onPress = () => openUrl(badge.href);

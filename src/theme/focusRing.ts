@@ -1,9 +1,6 @@
 import { colors } from "@/theme/colors";
 import { focusRingSpace } from "@/theme/spacing";
-
-// react-native-web supports CSS properties RN's own style types don't
-// declare (outline*, boxShadow); every web-only style here casts through this.
-export type WebOnlyStyle = Record<string, unknown>;
+import type { WebOnlyStyle } from "@/types/theme";
 
 /** Visible keyboard focus ring shown on web, shared by every interactive badge/link. */
 export const focusRing: WebOnlyStyle = {

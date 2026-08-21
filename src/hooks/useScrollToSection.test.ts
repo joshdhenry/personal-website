@@ -10,7 +10,7 @@ describe("useScrollToSection", () => {
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightEstimate: 64,
+                navHeight: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),
@@ -28,7 +28,7 @@ describe("useScrollToSection", () => {
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightEstimate: 64,
+                navHeight: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),
@@ -45,7 +45,7 @@ describe("useScrollToSection", () => {
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightEstimate: 64,
+                navHeight: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),
@@ -61,7 +61,7 @@ describe("useScrollToSection", () => {
 
         const { result } = renderHook(() =>
             useScrollToSection({
-                navHeightEstimate: 64,
+                navHeight: 64,
                 scrollViewRef,
                 sectionOffsets,
             } as never),

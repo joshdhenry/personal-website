@@ -9,7 +9,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { navLinks, navWordmarkLabel } from "@/data/nav";
+import { navLinks, navNameLabel } from "@/data/nav";
 import { useIsReducedMotionPreferred } from "@/hooks/useIsReducedMotionPreferred";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
@@ -26,14 +26,19 @@ import { NavLink } from "./NavLink";
 const navBackground = Platform.select({
     web: {
         backdropFilter: `blur(${navSpace.backdropBlurRadius}px)`,
-        backgroundColor: colors.navBackground,
+        backgroundColor: colors.bgTranslucent,
     },
     default: {
-        backgroundColor: colors.navBackground,
+        backgroundColor: colors.bgTranslucent,
     },
 });
 
-export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavProps) => {
+export const StickyNav = ({
+    currentSectionId,
+    onHeightChange,
+    onLinkPress,
+    scrollY,
+}: StickyNavProps) => {
     const insets = useSafeAreaInsets();
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
@@ -116,17 +121,17 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
             paddingTop: navSpace.rowPaddingVertical + insets.top,
         },
     ];
-    // ScrollView's flexShrink isn't guaranteed pixel-identical across
-    // platforms, so width is computed explicitly from measured values once
-    // the wordmark renders; flexShrink stays as a one-frame fallback before that.
-    const [wordmarkWidth, setWordmarkWidth] = useState(0);
-    const onWordmarkLayout = (event: LayoutChangeEvent) => {
-        setWordmarkWidth(event.nativeEvent.layout.width);
+    // flexShrink isn't cross-platform reliable on ScrollView, so width is
+    // computed explicitly once the name label renders; flexShrink is the
+    // one-frame fallback before that.
+    const [navNameWidth, setNavNameWidth] = useState(0);
+    const onNavNameLayout = (event: LayoutChangeEvent) => {
+        setNavNameWidth(event.nativeEvent.layout.width);
     };
     const containerWidth = Math.min(width, navSpace.containerMaxWidth);
     const rowContentWidth = containerWidth - rowPaddingHorizontal * 2;
     const availableLinksWidth =
-        wordmarkWidth > 0 ? Math.max(0, rowContentWidth - wordmarkWidth - rowGap) : undefined;
+        navNameWidth > 0 ? Math.max(0, rowContentWidth - navNameWidth - rowGap) : undefined;
     const linksScrollStyle = [
         styles.linksScroll,
         availableLinksWidth !== undefined && { maxWidth: availableLinksWidth },
@@ -137,16 +142,22 @@ export const StickyNav = ({ currentSectionId, onLinkPress, scrollY }: StickyNavP
     ];
     const navAnimatedStyle = [styles.nav, navBackground, revealStyle];
 
+    // Reports the real rendered height so index.tsx can scroll/highlight
+    // precisely, instead of relying only on navSpace's fallback estimate.
+    const onNavLayout = (event: LayoutChangeEvent) => {
+        onHeightChange(event.nativeEvent.layout.height);
+    };
+
     return (
-        <Animated.View style={navAnimatedStyle}>
+        <Animated.View onLayout={onNavLayout} style={navAnimatedStyle}>
             <View style={rowStyle}>
-                <View onLayout={onWordmarkLayout}>
+                <View onLayout={onNavNameLayout}>
                     <NavLink
-                        accessibilityLabel={`${navWordmarkLabel}, scroll to top`}
+                        accessibilityLabel={`${navNameLabel}, scroll to top`}
                         defaultColor={colors.ink}
                         isSelected={currentSectionId === "top"}
-                        label={navWordmarkLabel}
-                        labelStyle={typeScale.navWordmark}
+                        label={navNameLabel}
+                        labelStyle={typeScale.navName}
                         onLinkPress={onLinkPress}
                         sectionId="top"
                     />

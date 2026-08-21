@@ -31,12 +31,8 @@ export const focusRingSpace = {
  */
 export const containerMaxWidth = 1180;
 
-/**
- * Shared translateY lift a "badge" Pressable (hero action badges, contact
- * badges) springs to on press/hover, via usePressScale. One token,
- * referenced by shorthand from heroSpace and contactSpace below, instead of
- * the same literal repeated in each.
- */
+// Shared translateY lift a "badge" Pressable springs to on press/hover, via
+// usePressScale - referenced by heroSpace and contactSpace below.
 export const badgeLiftDistance = -2;
 
 /**
@@ -387,13 +383,13 @@ export const navSpace = {
     rowPaddingHorizontalNarrow: 20,
     /**
      * Row padding at widths <= layoutBreakpoint.compact, tighter than
-     * rowPaddingHorizontalNarrow - the wordmark + 5 links barely fit real
+     * rowPaddingHorizontalNarrow - the name label + 5 links barely fit real
      * phone widths; the links row is a scrollable fallback under that.
      */
     rowPaddingHorizontalCompact: 16,
-    /** Gap between the wordmark and the links group. */
+    /** Gap between the name label and the links group. */
     rowGap: 24,
-    /** Gap between the wordmark and the links group at widths <= layoutBreakpoint.compact. */
+    /** Gap between the name label and the links group at widths <= layoutBreakpoint.compact. */
     rowGapCompact: 12,
     /** Gap between links at desktop widths. */
     linkGap: 26,
@@ -409,10 +405,10 @@ export const navSpace = {
      */
     hiddenTranslateY: -64,
     /**
-     * Nav row height excluding insets.top, for useScrollToSection to land a
-     * target below the nav - deliberately more precise than hiddenTranslateY.
+     * Nav height fallback (excluding insets.top) used only before StickyNav
+     * has rendered once to report its real measured height.
      */
-    navHeightEstimate: 49,
+    navHeightFallback: 49,
     /** Web-only backdrop blur radius behind the translucent nav background. */
     backdropBlurRadius: 12,
 };

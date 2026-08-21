@@ -5,7 +5,7 @@
 
 import type { NavLinkDescriptor } from "@/types/nav";
 
-export const navWordmarkLabel = "JOSH HENRY";
+export const navNameLabel = "JOSH HENRY";
 
 export const navLinks: readonly NavLinkDescriptor[] = [
     { label: "Projects", sectionId: "projects" },
