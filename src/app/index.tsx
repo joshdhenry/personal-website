@@ -54,6 +54,18 @@ export default () => {
     // every scroll frame - only on the frames where it actually changes.
     const [currentSectionId, setCurrentSectionId] = useState<SectionId>("top");
     const currentSectionIdRef = useRef<SectionId>("top");
+    // Set together by handleLinkPress below, whenever a click/tap starts a
+    // programmatic scroll to a known destination; cleared once scroll
+    // position actually reaches it. See updateCurrentSectionId's guard for
+    // why this exists - an animated scrollTo() fires a stream of imprecise
+    // intermediate onScroll events while in flight (and possibly platform-
+    // dependent in how far short of the true target the last one lands;
+    // Android has been observed settling further short than iOS/web), and
+    // without this guard those events would repeatedly resolve to whatever
+    // section is currently passing by, undoing the immediate, correct
+    // selection a click already told us.
+    const pendingSectionIdRef = useRef<SectionId | null>(null);
+    const pendingDirectionRef = useRef<1 | -1>(1);
     const updateCurrentSectionId = (scrollOffset: number, isAtBottom: boolean) => {
         const nextSectionId = resolveCurrentSectionId(
             scrollOffset,
@@ -61,22 +73,40 @@ export default () => {
             navHeightEstimate,
             isAtBottom,
         );
+
+        const pendingSectionId = pendingSectionIdRef.current;
+        if (pendingSectionId !== null) {
+            const pendingOffset = sectionOffsets.current[pendingSectionId];
+            const nextOffset = sectionOffsets.current[nextSectionId];
+            const hasReachedPendingTarget =
+                pendingOffset === null ||
+                nextOffset === null ||
+                (pendingDirectionRef.current === 1
+                    ? nextOffset >= pendingOffset
+                    : nextOffset <= pendingOffset);
+
+            if (!hasReachedPendingTarget) {
+                return;
+            }
+
+            pendingSectionIdRef.current = null;
+        }
+
         if (nextSectionId !== currentSectionIdRef.current) {
             currentSectionIdRef.current = nextSectionId;
             setCurrentSectionId(nextSectionId);
         }
     };
-    // An animated scrollTo() doesn't reliably fire a final onScroll event
-    // exactly at its settled position (the easing curve's last sampled
-    // frame can land a fraction of a pixel short of the target) - left to
-    // resolveCurrentSectionId's strict >= threshold alone, clicking About
-    // could settle the scroll there while the nav kept showing Experience
-    // until the next manual scroll nudged a fresh, accurate onScroll event
-    // through. Since a click already tells us exactly which section the
-    // user means, set it immediately rather than waiting on scroll position
-    // to catch up - onScroll continues to take over normally from here for
-    // any further manual scrolling.
+    // A click already tells us exactly which section the user means, so this
+    // sets it immediately rather than waiting on scroll position to catch
+    // up - see the pendingSectionIdRef comment above for how that immediate
+    // value survives the imprecise onScroll events the ensuing animated
+    // scroll fires before it actually arrives.
     const handleLinkPress = (sectionId: SectionId) => {
+        const targetOffset = sectionOffsets.current[sectionId];
+        pendingDirectionRef.current =
+            targetOffset !== null && targetOffset < scrollY.value ? -1 : 1;
+        pendingSectionIdRef.current = sectionId;
         currentSectionIdRef.current = sectionId;
         setCurrentSectionId(sectionId);
         scrollToSection(sectionId);
