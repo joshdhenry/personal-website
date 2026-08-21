@@ -96,6 +96,8 @@ export const useScrollSpy = ({
                 const { isAtBottom, scrollOffset } = latestScrollRef.current;
                 // Epsilon-tolerant: a stray/rubber-band onScroll can differ from
                 // the click-time offset by a subpixel amount with no real movement.
+                // Any larger movement resolves from where scroll actually stalled,
+                // not the clicked target - an honest highlight over an optimistic one.
                 const hasScrolledSinceClick =
                     Math.abs(scrollOffset - scrollOffsetAtClick) > scrollEpsilonPx;
                 setCurrentSectionId(

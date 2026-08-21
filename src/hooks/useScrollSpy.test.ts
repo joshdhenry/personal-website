@@ -209,6 +209,30 @@ describe("useScrollSpy", () => {
         jest.useRealTimers();
     });
 
+    it("keeps the clicked section highlighted when scrolling upward and no real scroll ever landed", () => {
+        jest.useFakeTimers();
+
+        const { result } = renderScrollSpy(3000);
+
+        act(() => {
+            result.current.updateFromScroll(3000, false);
+        });
+        expect(result.current.currentSectionId).toBe("experience");
+
+        act(() => {
+            result.current.onLinkPress("top");
+        });
+        expect(result.current.currentSectionId).toBe("top");
+
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        expect(result.current.currentSectionId).toBe("top");
+
+        jest.useRealTimers();
+    });
+
     it("resolves to where scroll actually stalled, not the clicked target, when progress never crosses a section boundary", () => {
         jest.useFakeTimers();
 
