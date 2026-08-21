@@ -107,7 +107,8 @@ export const resolveCurrentSectionId = (
 
     for (const sectionId of sectionOrder) {
         const offset = sectionOffsets[sectionId];
-        if (offset !== null && scrollY + navHeight >= offset - scrollEpsilonPx) {
+        const hasReachedOffset = offset !== null && scrollY + navHeight >= offset - scrollEpsilonPx;
+        if (hasReachedOffset) {
             currentSectionId = sectionId;
         }
     }
