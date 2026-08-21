@@ -3,28 +3,8 @@ import Animated from "react-native-reanimated";
 
 import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
-import { focusRingSpace } from "@/theme/spacing";
+import { insetFocusRing, suppressNativeFocusOutline } from "@/theme/focusRing";
 import type { NavLinkProps } from "@/types/nav";
-
-// StickyNav's links render inside a horizontal ScrollView, which clips
-// anything extending past its own box on the cross axis - theme/focusRing's
-// shared outline (drawn outside the element via outlineOffset) loses its
-// top/bottom there, leaving only the left/right edges visible. An inset
-// boxShadow draws within the element's own box instead, so it can't be
-// clipped by an ancestor's overflow regardless of context.
-const navLinkFocusRing = {
-    boxShadow: `inset 0 0 0 ${focusRingSpace.outlineWidth}px ${colors.focusRing}`,
-} as Record<string, unknown>;
-
-// Our ring above is a boxShadow, not an outline, so it no longer occludes
-// the browser's own default focus outline the way theme/focusRing's
-// outline-based style did (same CSS property, so it always fully replaced
-// it). Left unsuppressed, the native outline still renders independently -
-// and gets clipped by StickyNav's ScrollView the exact same way our old
-// ring did, showing as stray vertical slivers next to the real ring.
-const suppressNativeFocusOutline = {
-    outlineStyle: "none",
-} as Record<string, unknown>;
 
 export const NavLink = ({
     accessibilityLabel,
@@ -62,7 +42,7 @@ export const NavLink = ({
     const textStyle = [
         labelStyle,
         { color: isActive || isSelected ? colors.primary : defaultColor },
-        showFocusRing && navLinkFocusRing,
+        showFocusRing && insetFocusRing,
     ];
 
     // accessibilityRole="link" would read more precisely (this jumps to a

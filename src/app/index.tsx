@@ -1,5 +1,5 @@
 import Head from "expo-router/head";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Platform, ScrollView, StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -14,25 +14,14 @@ import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
+import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
 import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import {
-    isScrolledToBottom,
-    readScrollableNodeScrollTop,
-    resolveCurrentSectionId,
-    scrollBottomEpsilonPx,
-} from "@/utils/scroll";
+import { readInitialScrollState, scrollBottomEpsilonPx } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
-
-// Safety-net upper bound on how long a click-triggered scroll's pending
-// target (see pendingSectionIdRef below) is trusted to eventually resolve
-// on its own. Comfortably longer than any real scroll animation on any
-// platform/distance, so it only ever fires for the edge case the position-
-// based clearing can't handle on its own.
-const pendingSectionTimeoutMs = 1500;
 
 export default () => {
     const fontsLoaded = useFontsLoaded();
@@ -54,143 +43,33 @@ export default () => {
         scrollViewRef,
         sectionOffsets,
     });
-
-    // The sticky nav's "current section" highlight (StickyNav.currentSectionId).
-    // A ref alongside the state so handleScroll can compare against the
-    // latest value without setState firing (and re-rendering StickyNav) on
-    // every scroll frame - only on the frames where it actually changes.
-    const [currentSectionId, setCurrentSectionId] = useState<SectionId>("top");
-    const currentSectionIdRef = useRef<SectionId>("top");
-    // Set together by handleLinkPress below, whenever a click/tap starts a
-    // programmatic scroll to a known destination; cleared once scroll
-    // position actually reaches it (or pendingSectionTimeoutMs elapses - see
-    // below). See updateCurrentSectionId's guard for why this exists - an
-    // animated scrollTo() fires a stream of imprecise intermediate onScroll
-    // events while in flight (and possibly platform-dependent in how far
-    // short of the true target the last one lands; Android has been
-    // observed settling further short than iOS/web), and without this
-    // guard those events would repeatedly resolve to whatever section is
-    // currently passing by, undoing the immediate, correct selection a
-    // click already told us.
-    const pendingSectionIdRef = useRef<SectionId | null>(null);
-    const pendingDirectionRef = useRef<1 | -1>(1);
-    const pendingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const clearPendingSectionId = () => {
-        pendingSectionIdRef.current = null;
-        if (pendingTimeoutRef.current !== null) {
-            clearTimeout(pendingTimeoutRef.current);
-            pendingTimeoutRef.current = null;
-        }
-    };
-    useEffect(() => clearPendingSectionId, []);
-    const updateCurrentSectionId = (scrollOffset: number, isAtBottom: boolean) => {
-        const nextSectionId = resolveCurrentSectionId(
-            scrollOffset,
-            sectionOffsets.current,
-            navHeightEstimate,
-            isAtBottom,
-        );
-
-        const pendingSectionId = pendingSectionIdRef.current;
-        if (pendingSectionId !== null) {
-            const pendingOffset = sectionOffsets.current[pendingSectionId];
-            const nextOffset = sectionOffsets.current[nextSectionId];
-            // The target section's own raw offset can be short of what's
-            // actually reachable (the last section can have less remaining
-            // page height below it than the viewport is tall, the same
-            // issue resolveCurrentSectionId's isAtBottom handles for normal
-            // scroll-spy resolution) - isAtBottom is accepted here too as an
-            // alternate "arrived" signal, so a click on a hard-to-reach
-            // target like Contact doesn't wait on a comparison that could
-            // otherwise never become true through ordinary scrolling.
-            const hasReachedPendingTarget =
-                pendingOffset === null ||
-                nextOffset === null ||
-                isAtBottom ||
-                (pendingDirectionRef.current === 1
-                    ? nextOffset >= pendingOffset
-                    : nextOffset <= pendingOffset);
-
-            if (!hasReachedPendingTarget) {
-                return;
-            }
-
-            clearPendingSectionId();
-        }
-
-        if (nextSectionId !== currentSectionIdRef.current) {
-            currentSectionIdRef.current = nextSectionId;
-            setCurrentSectionId(nextSectionId);
-        }
-    };
-    // A click already tells us exactly which section the user means, so this
-    // sets it immediately rather than waiting on scroll position to catch
-    // up - see the pendingSectionIdRef comment above for how that immediate
-    // value survives the imprecise onScroll events the ensuing animated
-    // scroll fires before it actually arrives. The timeout is a safety net
-    // for whenever even isAtBottom's allowance above isn't enough to let
-    // the position-based check resolve (e.g. the animation is still in
-    // flight, or settles somewhere neither check anticipated) - without it,
-    // an unresolved pending target blocks every future onScroll update,
-    // including from the user's own subsequent manual scrolling, in any
-    // direction, indefinitely.
-    const handleLinkPress = (sectionId: SectionId) => {
-        const targetOffset = sectionOffsets.current[sectionId];
-        pendingDirectionRef.current =
-            targetOffset !== null && targetOffset < scrollY.value ? -1 : 1;
-        pendingSectionIdRef.current = sectionId;
-        currentSectionIdRef.current = sectionId;
-        setCurrentSectionId(sectionId);
-        scrollToSection(sectionId);
-
-        if (pendingTimeoutRef.current !== null) {
-            clearTimeout(pendingTimeoutRef.current);
-        }
-        pendingTimeoutRef.current = setTimeout(() => {
-            pendingSectionIdRef.current = null;
-            pendingTimeoutRef.current = null;
-        }, pendingSectionTimeoutMs);
-    };
-    // The most direct signal that the pending guard should stop trusting a
-    // click's target and defer to the user: a real touch/drag gesture
-    // starting on the ScrollView. This never fires for the programmatic
-    // scrollTo() a click starts (only genuine touch input drives it) - RN's
-    // own docs note it also fires when a touch interrupts an in-flight
-    // scroll, which is exactly "the user has taken over" too. Covers the
-    // gap between the position-based check (which can be legitimately
-    // unable to resolve, e.g. Contact's offset exceeding the page's
-    // scrollable extent) and pendingSectionTimeoutMs's slower fallback -
-    // without this, starting a manual scroll before either of those catches
-    // up left the nav stuck on the click's target for as long as a second
-    // or more.
-    const handleScrollBeginDrag = () => {
-        clearPendingSectionId();
-    };
+    const { currentSectionId, handleLinkPress, handleScrollBeginDrag, updateFromScroll } =
+        useScrollSpy({ navHeightEstimate, scrollToSection, scrollY, sectionOffsets });
 
     // scrollY starts at 0, but the browser (e.g. bfcache back/forward
     // navigation) can leave the ScrollView's underlying DOM node already
     // scrolled before any onScroll event reaches React - StickyNav would
     // then wrongly judge the nav should stay hidden. This reads the real
-    // starting offset once on mount without moving the page, so it's a sync,
-    // never a reset. Web-only: readScrollableNodeScrollTop reads DOM state
+    // starting position once on mount without moving the page, so it's a
+    // sync, never a reset. Web-only: readInitialScrollState reads DOM state
     // that has no equivalent on iOS/Android.
     useEffect(() => {
         if (Platform.OS !== "web") {
             return;
         }
 
-        const scrollOffset = readScrollableNodeScrollTop(scrollViewRef.current);
-        scrollY.value = scrollOffset;
-        updateCurrentSectionId(scrollOffset, isScrolledToBottom(scrollViewRef.current));
-        // Only ever needs to run once, on mount - scrollY and the update
-        // function are stable/deliberately excluded so this doesn't re-fire
-        // on every render.
+        const { isAtBottom, scrollTop } = readInitialScrollState(scrollViewRef.current);
+        scrollY.value = scrollTop;
+        updateFromScroll(scrollTop, isAtBottom);
+        // Only ever needs to run once, on mount - scrollY and updateFromScroll
+        // are stable/deliberately excluded so this doesn't re-fire on every
+        // render.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // A plain JS onScroll, not Animated.ScrollView + useAnimatedScrollHandler:
     // Animated.ScrollView's web ref doesn't support imperative .scrollTo(),
-    // which scrollToSection below needs. Writing to a shared value from JS is
+    // which scrollToSection above needs. Writing to a shared value from JS is
     // standard, documented Reanimated usage - the UI-thread worklet reading
     // scrollY.value (StickyNav's reveal) doesn't care whether the write came
     // from JS or UI thread.
@@ -204,7 +83,7 @@ export default () => {
         // scrollBottomEpsilonPx's doc comment for why this is passed through.
         const isAtBottom =
             scrollOffset + layoutMeasurement.height >= contentSize.height - scrollBottomEpsilonPx;
-        updateCurrentSectionId(scrollOffset, isAtBottom);
+        updateFromScroll(scrollOffset, isAtBottom);
     };
 
     const handleSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {

@@ -1,5 +1,6 @@
 import type { ScrollView } from "react-native";
 
+import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
 /**
@@ -21,58 +22,67 @@ export const shouldRevealNav = (scrollY: number, navRevealScrollY: number): bool
 };
 
 /**
- * The real current scroll offset of a ScrollView's underlying node, read
- * directly rather than through an onScroll event. Used once on mount to
- * sync scrollY.value to a starting position React never dispatched a scroll
- * event for (e.g. a bfcache-restored page already scrolled past the reveal
- * threshold). getScrollableNode() returns the DOM node itself on web
- * (react-native-web) but a native tag on iOS/Android, so this is web-only -
- * callers gate on Platform.OS themselves.
- */
-export const readScrollableNodeScrollTop = (scrollView: ScrollView | null): number => {
-    const scrollableNode = scrollView?.getScrollableNode() as HTMLElement | null;
-    return scrollableNode?.scrollTop ?? 0;
-};
-
-/**
  * Subpixel/rounding tolerance for "has scrolling reached the bottom of the
- * page" checks - shared by isScrolledToBottom below and index.tsx's own
+ * page" checks - shared by readInitialScrollState below and index.tsx's own
  * onScroll-event equivalent, so both agree on the same threshold.
  */
 export const scrollBottomEpsilonPx = 2;
 
 /**
- * Whether a ScrollView's underlying node is scrolled (within
- * scrollBottomEpsilonPx) to its maximum extent. Web-only (DOM read), like
- * readScrollableNodeScrollTop above - callers gate on Platform.OS
- * themselves. Used for the same "at the bottom" check resolveCurrentSectionId
- * needs, in the one place (the mount-sync effect) that isn't already
- * handling a real onScroll event with contentSize/layoutMeasurement
- * available on it.
+ * The real current scroll position of a ScrollView's underlying node, read
+ * directly rather than through an onScroll event. Used once on mount to
+ * sync scrollY.value (and the scroll-spy) to a starting position React never
+ * dispatched a scroll event for (e.g. a bfcache-restored page already
+ * scrolled past the reveal threshold). getScrollableNode() returns the DOM
+ * node itself on web (react-native-web) but a native tag on iOS/Android, so
+ * this is web-only - callers gate on Platform.OS themselves. isAtBottom is
+ * read alongside scrollTop from the same node lookup, for the same "at the
+ * bottom" check resolveCurrentSectionId needs, in the one place (the
+ * mount-sync effect) that isn't already handling a real onScroll event with
+ * contentSize/layoutMeasurement available on it.
  */
-export const isScrolledToBottom = (scrollView: ScrollView | null): boolean => {
+export const readInitialScrollState = (
+    scrollView: ScrollView | null,
+): { isAtBottom: boolean; scrollTop: number } => {
     const scrollableNode = scrollView?.getScrollableNode() as HTMLElement | null;
     if (!scrollableNode) {
-        return false;
+        return { isAtBottom: false, scrollTop: 0 };
     }
 
-    return (
-        scrollableNode.scrollTop + scrollableNode.clientHeight >=
-        scrollableNode.scrollHeight - scrollBottomEpsilonPx
-    );
+    return {
+        isAtBottom:
+            scrollableNode.scrollTop + scrollableNode.clientHeight >=
+            scrollableNode.scrollHeight - scrollBottomEpsilonPx,
+        scrollTop: scrollableNode.scrollTop,
+    };
 };
 
 // Top-to-bottom page order - the section furthest down this list whose
-// offset has been reached wins, so this must match the order sections
-// actually render in (src/app/index.tsx), never alphabetized.
-const sectionOrder: readonly SectionId[] = [
-    "top",
-    "projects",
-    "skills",
-    "experience",
-    "about",
-    "contact",
-];
+// offset has been reached wins. Derived from navLinks (the single source of
+// truth for nav order, pinned by data/nav.test.ts) rather than hand-written,
+// so the two can't drift apart.
+const sectionOrder: readonly SectionId[] = ["top", ...navLinks.map((navLink) => navLink.sectionId)];
+
+/**
+ * Whether scrolling has carried a click's target section into (or past)
+ * view, for the sticky nav's pending-target guard: an animated scrollTo()
+ * fires a stream of imprecise intermediate onScroll events before settling,
+ * and without this check those events would resolve to whatever section is
+ * currently passing by, undoing the immediate, correct selection a click
+ * already made. Compares sectionOrder position rather than raw offsets, so
+ * it agrees with resolveCurrentSectionId's own notion of "reached" -
+ * including its isAtBottom handling - instead of re-deriving it.
+ */
+export const hasSectionOrderReachedTarget = (
+    candidateSectionId: SectionId,
+    targetSectionId: SectionId,
+    direction: 1 | -1,
+): boolean => {
+    const candidateIndex = sectionOrder.indexOf(candidateSectionId);
+    const targetIndex = sectionOrder.indexOf(targetSectionId);
+
+    return direction === 1 ? candidateIndex >= targetIndex : candidateIndex <= targetIndex;
+};
 
 /**
  * Which section is currently in view, for the sticky nav's "current

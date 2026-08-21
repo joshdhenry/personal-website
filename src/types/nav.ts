@@ -38,3 +38,10 @@ export type UseScrollToSectionParams = {
     scrollViewRef: MutableRefObject<ScrollView | null>;
     sectionOffsets: MutableRefObject<SectionOffsets>;
 };
+
+export type UseScrollSpyParams = {
+    navHeightEstimate: number;
+    scrollToSection: (sectionId: SectionId) => void;
+    scrollY: SharedValue<number>;
+    sectionOffsets: MutableRefObject<SectionOffsets>;
+};

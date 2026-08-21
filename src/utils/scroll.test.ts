@@ -3,8 +3,8 @@ import type { ScrollView } from "react-native";
 import type { SectionOffsets } from "@/types/nav";
 
 import {
-    isScrolledToBottom,
-    readScrollableNodeScrollTop,
+    hasSectionOrderReachedTarget,
+    readInitialScrollState,
     resolveCurrentSectionId,
     shouldRevealNav,
 } from "./scroll";
@@ -20,53 +20,38 @@ describe("shouldRevealNav", () => {
     });
 });
 
-describe("readScrollableNodeScrollTop", () => {
+describe("readInitialScrollState", () => {
     const asScrollView = (getScrollableNode: () => unknown) =>
         ({ getScrollableNode }) as unknown as ScrollView;
 
-    it("returns 0 when the ref hasn't attached yet", () => {
-        expect(readScrollableNodeScrollTop(null)).toBe(0);
+    it("returns a zeroed, not-at-bottom state when the ref hasn't attached yet", () => {
+        expect(readInitialScrollState(null)).toEqual({ isAtBottom: false, scrollTop: 0 });
     });
 
-    it("returns 0 when the underlying node has no scrollTop", () => {
+    it("returns a zeroed, not-at-bottom state when the underlying node is missing", () => {
         const scrollView = asScrollView(() => null);
 
-        expect(readScrollableNodeScrollTop(scrollView)).toBe(0);
+        expect(readInitialScrollState(scrollView)).toEqual({ isAtBottom: false, scrollTop: 0 });
     });
 
-    it("returns the underlying DOM node's scrollTop", () => {
-        const scrollView = asScrollView(() => ({ scrollTop: 842 }));
-
-        expect(readScrollableNodeScrollTop(scrollView)).toBe(842);
-    });
-});
-
-describe("isScrolledToBottom", () => {
-    const asScrollView = (getScrollableNode: () => unknown) =>
-        ({ getScrollableNode }) as unknown as ScrollView;
-
-    it("returns false when the ref hasn't attached yet", () => {
-        expect(isScrolledToBottom(null)).toBe(false);
-    });
-
-    it("returns false when there's still room left to scroll", () => {
+    it("reads the underlying DOM node's scrollTop when there's still room left to scroll", () => {
         const scrollView = asScrollView(() => ({
             clientHeight: 900,
             scrollHeight: 5822,
             scrollTop: 4000,
         }));
 
-        expect(isScrolledToBottom(scrollView)).toBe(false);
+        expect(readInitialScrollState(scrollView)).toEqual({ isAtBottom: false, scrollTop: 4000 });
     });
 
-    it("returns true once scrolled to the maximum extent", () => {
+    it("reports isAtBottom once scrolled to the maximum extent", () => {
         const scrollView = asScrollView(() => ({
             clientHeight: 900,
             scrollHeight: 5822,
             scrollTop: 4922,
         }));
 
-        expect(isScrolledToBottom(scrollView)).toBe(true);
+        expect(readInitialScrollState(scrollView)).toEqual({ isAtBottom: true, scrollTop: 4922 });
     });
 
     it("tolerates subpixel rounding just short of the maximum extent", () => {
@@ -76,7 +61,24 @@ describe("isScrolledToBottom", () => {
             scrollTop: 4921.8,
         }));
 
-        expect(isScrolledToBottom(scrollView)).toBe(true);
+        expect(readInitialScrollState(scrollView)).toEqual({
+            isAtBottom: true,
+            scrollTop: 4921.8,
+        });
+    });
+});
+
+describe("hasSectionOrderReachedTarget", () => {
+    it("scrolling down (direction 1) has reached the target once it's at or past it", () => {
+        expect(hasSectionOrderReachedTarget("skills", "skills", 1)).toBe(true);
+        expect(hasSectionOrderReachedTarget("experience", "skills", 1)).toBe(true);
+        expect(hasSectionOrderReachedTarget("projects", "skills", 1)).toBe(false);
+    });
+
+    it("scrolling up (direction -1) has reached the target once it's at or before it", () => {
+        expect(hasSectionOrderReachedTarget("skills", "skills", -1)).toBe(true);
+        expect(hasSectionOrderReachedTarget("projects", "skills", -1)).toBe(true);
+        expect(hasSectionOrderReachedTarget("experience", "skills", -1)).toBe(false);
     });
 });
 
