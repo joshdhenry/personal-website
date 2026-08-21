@@ -1,6 +1,6 @@
 import type { ScrollView } from "react-native";
 
-import { scrollBottomEpsilonPx, sectionThresholdEpsilonPx } from "@/constants/scroll";
+import { scrollEpsilonPx } from "@/constants/scroll";
 import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
@@ -28,7 +28,7 @@ export const isAtScrollBottom = (
     currentOffset: number,
     viewportSize: number,
     contentSize: number,
-): boolean => currentOffset + viewportSize >= contentSize - scrollBottomEpsilonPx;
+): boolean => currentOffset + viewportSize >= contentSize - scrollEpsilonPx;
 
 /**
  * Reads a ScrollView's real current scroll position directly from its DOM
@@ -107,7 +107,7 @@ export const resolveCurrentSectionId = (
 
     for (const sectionId of sectionOrder) {
         const offset = sectionOffsets[sectionId];
-        if (offset !== null && scrollY + navHeight >= offset - sectionThresholdEpsilonPx) {
+        if (offset !== null && scrollY + navHeight >= offset - scrollEpsilonPx) {
             currentSectionId = sectionId;
         }
     }

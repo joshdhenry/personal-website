@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { pendingTargetTimeoutMs } from "@/constants/nav";
+import { scrollEpsilonPx } from "@/constants/scroll";
 import type { SectionId, UseScrollSpyParams } from "@/types/nav";
 import { hasSectionOrderReachedTarget, resolveCurrentSectionId } from "@/utils/scroll";
 
@@ -18,9 +19,16 @@ export const useScrollSpy = ({
         direction: 1 | -1;
         furthestSectionId: SectionId;
         sectionId: SectionId;
-        startSectionId: SectionId;
         timeoutId: ReturnType<typeof setTimeout>;
     } | null>(null);
+    // Latest onScroll data, so the safety-net timeout below can resolve a
+    // real section instead of just abandoning a stuck pending target.
+    const latestScrollRef = useRef({ isAtBottom: false, scrollOffset: 0 });
+    // navHeight can change (a resize, StickyNav re-measuring) while a
+    // pending-target timeout is already scheduled; read the latest value at
+    // fire time instead of the one closed over when it was scheduled.
+    const navHeightRef = useRef(navHeight);
+    navHeightRef.current = navHeight;
 
     const clearPendingTarget = useCallback(() => {
         if (pendingTargetRef.current !== null) {
@@ -33,6 +41,7 @@ export const useScrollSpy = ({
 
     const updateFromScroll = useCallback(
         (scrollOffset: number, isAtBottom: boolean) => {
+            latestScrollRef.current = { isAtBottom, scrollOffset };
             const nextSectionId = resolveCurrentSectionId(
                 scrollOffset,
                 sectionOffsets.current,
@@ -77,34 +86,31 @@ export const useScrollSpy = ({
             }
 
             const direction: 1 | -1 = targetOffset < scrollY.value ? -1 : 1;
-            const startSectionId = currentSectionId;
+            const scrollOffsetAtClick = scrollY.value;
             const timeoutId = setTimeout(() => {
-                const pendingTarget = pendingTargetRef.current;
                 pendingTargetRef.current = null;
-                if (pendingTarget === null) {
-                    return;
-                }
-
-                // furthestSectionId only ever moves via a genuine section
-                // crossing in updateFromScroll (offsets are hundreds of px
-                // apart), so it's immune to a stray/rubber-band onScroll that
-                // never actually carried the page anywhere. If it's still
-                // sitting at the click's starting section, nothing scrolled -
-                // keep the clicked target instead of reverting to where the
-                // user was before the click.
+                const { isAtBottom, scrollOffset } = latestScrollRef.current;
+                // Epsilon-tolerant: a stray/rubber-band onScroll can differ from
+                // the click-time offset by a subpixel amount with no real movement.
+                const hasScrolledSinceClick =
+                    Math.abs(scrollOffset - scrollOffsetAtClick) > scrollEpsilonPx;
                 setCurrentSectionId(
-                    pendingTarget.furthestSectionId === pendingTarget.startSectionId
-                        ? pendingTarget.sectionId
-                        : pendingTarget.furthestSectionId,
+                    hasScrolledSinceClick
+                        ? resolveCurrentSectionId(
+                              scrollOffset,
+                              sectionOffsets.current,
+                              navHeightRef.current,
+                              isAtBottom,
+                          )
+                        : sectionId,
                 );
             }, pendingTargetTimeoutMs);
 
             clearPendingTarget();
             pendingTargetRef.current = {
                 direction,
-                furthestSectionId: startSectionId,
+                furthestSectionId: currentSectionId,
                 sectionId,
-                startSectionId,
                 timeoutId,
             };
             setCurrentSectionId(sectionId);

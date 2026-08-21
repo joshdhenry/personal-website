@@ -184,10 +184,8 @@ describe("useScrollSpy", () => {
     });
 
     it("keeps the clicked section highlighted when the safety-net timeout fires and no real scroll ever landed", () => {
-        // Android bug repro: scrollTo() can silently fail to move anything.
-        // With zero real onScroll events, latestScrollRef never updates from
-        // its pre-click value - the fix must not resolve from that stale
-        // data and revert the nav to the section the user was already on.
+        // Android repro: scrollTo() can silently fail to move anything, so
+        // latestScrollRef never updates past its pre-click value.
         jest.useFakeTimers();
 
         const { result } = renderScrollSpy(2000);
@@ -207,6 +205,27 @@ describe("useScrollSpy", () => {
         });
 
         expect(result.current.currentSectionId).toBe("experience");
+
+        jest.useRealTimers();
+    });
+
+    it("resolves to where scroll actually stalled, not the clicked target, when progress never crosses a section boundary", () => {
+        jest.useFakeTimers();
+
+        const { result } = renderScrollSpy(0);
+
+        act(() => {
+            result.current.onLinkPress("contact");
+        });
+        // Real progress, but short of even the first section's threshold.
+        act(() => {
+            result.current.updateFromScroll(500, false);
+        });
+        act(() => {
+            jest.runAllTimers();
+        });
+
+        expect(result.current.currentSectionId).toBe("top");
 
         jest.useRealTimers();
     });
