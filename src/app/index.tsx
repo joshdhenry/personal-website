@@ -1,7 +1,7 @@
 import Head from "expo-router/head";
 import { useEffect, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -27,6 +27,7 @@ import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 export default () => {
     const fontsLoaded = useFontsLoaded();
     const insets = useSafeAreaInsets();
+    const { height: windowHeight } = useWindowDimensions();
 
     const scrollY = useSharedValue(0);
     const scrollViewRef = useRef<ScrollView>(null);
@@ -43,6 +44,31 @@ export default () => {
     // navHeightFallback covers the gap before that first measurement.
     const [measuredNavHeight, setMeasuredNavHeight] = useState<number | null>(null);
     const navHeight = measuredNavHeight ?? navSpace.navHeightFallback + insets.top;
+    // The ScrollView's real content height (Hero through Footer), excluding
+    // extraBottomPadding below - kept separate so adding that padding never
+    // feeds back into its own input.
+    const [naturalContentHeight, setNaturalContentHeight] = useState<number | null>(null);
+    // Contact (the last nav-targetable section) needs at least windowHeight
+    // - navHeight of real content below its own top to ever scroll flush
+    // under the sticky nav - otherwise the browser clamps scrollTo() short
+    // of that target, which reads as "the nav link doesn't scroll far
+    // enough." Short natural content below Contact is common on wide/tall
+    // viewports, where multi-column section layouts make the whole page
+    // shorter. extraBottomPadding reserves exactly the shortfall, never more.
+    const [extraBottomPadding, setExtraBottomPadding] = useState(0);
+    const onContentSizeChange = (_contentWidth: number, contentHeight: number) => {
+        setNaturalContentHeight(contentHeight - extraBottomPadding);
+    };
+    const updateExtraBottomPadding = () => {
+        const contactOffset = sectionOffsets.current.contact;
+        if (contactOffset === null || naturalContentHeight === null) {
+            return;
+        }
+
+        const requiredContentHeight = contactOffset - navHeight + windowHeight;
+        setExtraBottomPadding(Math.max(0, requiredContentHeight - naturalContentHeight));
+    };
+    useEffect(updateExtraBottomPadding, [navHeight, naturalContentHeight, windowHeight]);
     const scrollToSection = useScrollToSection({
         navHeight,
         scrollViewRef,
@@ -116,6 +142,7 @@ export default () => {
     const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
         syncScrollSpyFromLayout();
+        updateExtraBottomPadding();
     };
     const onProjectsLayout = createOnSectionLayout("projects");
     const onSkillsLayout = createOnSectionLayout("skills");
@@ -125,7 +152,8 @@ export default () => {
     const onContactLayout = createOnSectionLayout("contact");
 
     const onTalkToMePress = () => scrollToSection("contact");
-    const contentContainerStyle = [styles.content, { paddingBottom: insets.bottom }];
+    const contentPaddingBottom = insets.bottom + extraBottomPadding;
+    const contentContainerStyle = [styles.content, { paddingBottom: contentPaddingBottom }];
 
     if (shouldGateOnFontsLoaded(Platform.OS, fontsLoaded)) {
         return <View style={styles.loadingPlaceholder} />;
@@ -135,6 +163,7 @@ export default () => {
         <View style={styles.root}>
             <ScrollView
                 contentContainerStyle={contentContainerStyle}
+                onContentSizeChange={onContentSizeChange}
                 onScroll={onScroll}
                 onScrollBeginDrag={onScrollBeginDrag}
                 ref={scrollViewRef}
