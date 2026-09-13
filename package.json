@@ -9,7 +9,9 @@
         "web": "expo start --web",
         "test": "jest",
         "lint": "expo lint",
-        "format": "prettier --write ."
+        "format": "prettier --write .",
+        "deploy": "bash scripts/deploy.sh",
+        "deploy:unlock": "bash -c 'source .env.deploy && ssh-add \"$DEPLOY_SSH_KEY\"'"
     },
     "dependencies": {
         "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
