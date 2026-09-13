@@ -104,11 +104,19 @@ lftp -f "$LFTP_SCRIPT"
 
 if [[ -n "${DEPLOY_SITE_URL:-}" ]]; then
     echo "==> Smoke-testing $DEPLOY_SITE_URL"
-    HTTP_CODE="$(curl -s -o /dev/null -w '%{http_code}' "$DEPLOY_SITE_URL/")"
-    if [[ "$HTTP_CODE" != "200" ]]; then
-        echo "Warning: $DEPLOY_SITE_URL/ returned $HTTP_CODE" >&2
+    # The upload above already succeeded, so a connection failure here (a
+    # DNS hiccup, a stalled handshake) is only a failed smoke test, not a
+    # failed deploy - it must not trip set -e and mask that the site is
+    # already live. --connect-timeout/--max-time bound how long a
+    # black-holed request can hang before that failure is even reported.
+    if HTTP_CODE="$(curl -s -o /dev/null -w '%{http_code}' --connect-timeout 5 --max-time 15 "$DEPLOY_SITE_URL/")"; then
+        if [[ "$HTTP_CODE" != "200" ]]; then
+            echo "Warning: $DEPLOY_SITE_URL/ returned $HTTP_CODE" >&2
+        else
+            echo "    $DEPLOY_SITE_URL/ -> 200"
+        fi
     else
-        echo "    $DEPLOY_SITE_URL/ -> 200"
+        echo "Warning: could not reach $DEPLOY_SITE_URL/ for the smoke test" >&2
     fi
 fi
 

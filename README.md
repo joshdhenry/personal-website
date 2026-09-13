@@ -49,10 +49,11 @@ yarn deploy
 ```
 
 Builds the static export and syncs it straight to Namecheap over SFTP —
-replaces only this site's own top-level entries under `public_html`
-(`index.html`, `favicon.ico`, `_sitemap.html`, `+not-found.html`, `_expo/`,
-`assets/`), never the whole directory, since `public_html` on this account is
-shared with unrelated addon domains. See `scripts/deploy.sh`.
+replaces only this site's own top-level entries under `public_html` (derived
+from whatever `dist/` actually contains at export time, e.g. `index.html`,
+`favicon.ico`, `_expo/`, `assets/`), never the whole directory, since
+`public_html` on this account is shared with unrelated addon domains. See
+`scripts/deploy.sh`.
 
 One-time setup:
 
