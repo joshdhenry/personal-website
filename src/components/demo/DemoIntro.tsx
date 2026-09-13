@@ -34,9 +34,13 @@ export const DemoIntro = ({ isMobileReader, isNarrow }: DemoIntroProps) => {
             <Text style={styles.paragraph}>{paragraph}</Text>
 
             {isMobileReader ? null : (
-                <View accessibilityRole="list" style={styles.steps}>
+                // role, not accessibilityRole: RN's AccessibilityRole type has
+                // no "listitem" value, but the newer cross-platform role prop
+                // does, and it's what a list needs its children tagged with
+                // for a screen reader to announce item count/position.
+                <View role="list" style={styles.steps}>
                     {demoSteps.map((step) => (
-                        <View key={step.id} style={styles.step}>
+                        <View key={step.id} role="listitem" style={styles.step}>
                             <Text style={styles.stepNumber}>{step.number}</Text>
                             <Text style={styles.stepText}>{step.description}</Text>
                         </View>

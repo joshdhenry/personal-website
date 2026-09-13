@@ -1,28 +1,28 @@
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 import { demoPitchBody, demoPitchCtaLabel, demoPitchLabel } from "@/data/demo";
-import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
 import { focusRing } from "@/theme/focusRing";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { demoSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoPitchCardProps } from "@/types/demo";
 
 export const DemoPitchCard = ({ isNarrow, onTalkToMePress }: DemoPitchCardProps) => {
-    const scale = useSharedValue(1);
-    const { isActive, isFocused, onBlur, onFocus, onHoverIn, onHoverOut, onPressIn, onPressOut } =
-        usePressHoverFocus((active) => {
-            scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-        });
+    const {
+        animatedStyle: ctaAnimatedStyle,
+        isActive,
+        onBlur,
+        onFocus,
+        onHoverIn,
+        onHoverOut,
+        onPressIn,
+        onPressOut,
+        showFocusRing,
+    } = usePressScale();
 
-    const ctaAnimatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
-
-    const showFocusRing = Platform.OS === "web" && isFocused;
     const ctaLabelStyle = [
         styles.ctaLabel,
         isActive && styles.ctaLabelActive,

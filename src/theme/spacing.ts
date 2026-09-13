@@ -482,6 +482,9 @@ export const demoSpace = {
      * conversion method as introParagraphMaxWidth above.
      */
     placeholderHintMaxWidth: 384,
+    /** No-snack-url placeholder's repeating diagonal stripe pattern. */
+    placeholderStripeAngleDeg: 135,
+    placeholderStripeWidth: 10,
 };
 
 /**

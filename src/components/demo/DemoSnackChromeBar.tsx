@@ -1,40 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
 
+import { chromeBarLabelStyle, ChromeBarShell } from "@/components/shared/ChromeBarShell";
 import { colors } from "@/theme/colors";
 import { radius } from "@/theme/radii";
-import { demoSpace, heroSpace } from "@/theme/spacing";
-import { typeScale } from "@/theme/typography";
+import { demoSpace } from "@/theme/spacing";
 import type { DemoSnackChromeBarProps } from "@/types/demo";
 
 export const DemoSnackChromeBar = ({ label, liveEditorLabel }: DemoSnackChromeBarProps) => (
-    <View
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
-        style={styles.bar}
-    >
-        <Text style={styles.label}>{label}</Text>
+    <ChromeBarShell>
+        <Text style={chromeBarLabelStyle}>{label}</Text>
         <View style={styles.liveEditor}>
             <View style={styles.liveEditorDot} />
-            <Text style={styles.liveEditorLabel}>{liveEditorLabel}</Text>
+            <Text style={[chromeBarLabelStyle, styles.liveEditorLabel]}>{liveEditorLabel}</Text>
         </View>
-    </View>
+    </ChromeBarShell>
 );
 
 const styles = StyleSheet.create({
-    bar: {
-        alignItems: "center",
-        backgroundColor: colors.bg,
-        borderBottomColor: colors.border,
-        borderBottomWidth: 1,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        paddingHorizontal: heroSpace.terminalChromePaddingHorizontal,
-        paddingVertical: heroSpace.terminalChromePaddingVertical,
-    },
-    label: {
-        ...typeScale.chromeLabel,
-        color: colors.inkMuted,
-    },
     liveEditor: {
         alignItems: "center",
         flexDirection: "row",
@@ -47,7 +29,6 @@ const styles = StyleSheet.create({
         width: demoSpace.liveEditorDotSize,
     },
     liveEditorLabel: {
-        ...typeScale.chromeLabel,
         color: colors.statusPassing,
     },
 });

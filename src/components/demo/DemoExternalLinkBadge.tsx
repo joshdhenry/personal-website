@@ -1,47 +1,40 @@
-import { Linking, Platform, Pressable, StyleSheet, Text } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { Platform, Pressable, StyleSheet, Text } from "react-native";
+import Animated from "react-native-reanimated";
 
-import { usePressHoverFocus } from "@/hooks/usePressHoverFocus";
+import { usePressScale } from "@/hooks/usePressScale";
 import { colors } from "@/theme/colors";
 import { focusRing } from "@/theme/focusRing";
-import { motion } from "@/theme/motion";
 import { radius } from "@/theme/radii";
 import { shadow } from "@/theme/shadow";
 import { contactSpace, demoSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { DemoExternalLinkBadgeProps } from "@/types/demo";
-
-// Same Android elevation-clips-rounded-children issue documented in
-// hero/ActionBadge.tsx - the hover/press shadow is web-only.
-const isHoverShadowSupported = Platform.OS === "web";
+import { getExternalLinkAccessibilityRole, openUrl } from "@/utils/openUrl";
+import { isHoverShadowSupported } from "@/utils/shadow";
 
 export const DemoExternalLinkBadge = ({
     accessibilityLabel,
     label,
     url,
 }: DemoExternalLinkBadgeProps) => {
-    const scale = useSharedValue(1);
-    const { isActive, isFocused, onBlur, onFocus, onHoverIn, onHoverOut, onPressIn, onPressOut } =
-        usePressHoverFocus((active) => {
-            scale.value = withSpring(active ? 0.97 : 1, motion.spring.snappy);
-        });
+    const {
+        animatedStyle,
+        isActive,
+        onBlur,
+        onFocus,
+        onHoverIn,
+        onHoverOut,
+        onPressIn,
+        onPressOut,
+        showFocusRing,
+    } = usePressScale();
 
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
+    const onPress = () => openUrl(url);
 
-    // The OS may not have a handler for this URL (a broken or unexpected
-    // scheme); there's no status UI on a link badge to surface that to, so
-    // the rejection is swallowed rather than left unhandled.
-    const onPress = () => {
-        Linking.openURL(url).catch(() => {});
-    };
-
-    const showFocusRing = Platform.OS === "web" && isFocused;
     const badgeAnimatedStyle = [
         styles.badge,
         isActive && styles.badgeActive,
-        isActive && isHoverShadowSupported && shadow.badgeHover,
+        isActive && isHoverShadowSupported(Platform.OS) && shadow.badgeHover,
         showFocusRing && focusRing,
         animatedStyle,
     ];
@@ -51,7 +44,7 @@ export const DemoExternalLinkBadge = ({
         <Animated.View style={badgeAnimatedStyle}>
             <Pressable
                 accessibilityLabel={accessibilityLabel}
-                accessibilityRole="link"
+                accessibilityRole={getExternalLinkAccessibilityRole(Platform.OS)}
                 onBlur={onBlur}
                 onFocus={onFocus}
                 onHoverIn={onHoverIn}

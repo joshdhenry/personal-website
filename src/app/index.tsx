@@ -142,7 +142,11 @@ export default () => {
     const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
         syncScrollSpyFromLayout();
-        updateExtraBottomPadding();
+        // Only contact's own offset feeds updateExtraBottomPadding - no need
+        // to recompute it for every other section's layout pass too.
+        if (sectionId === "contact") {
+            updateExtraBottomPadding();
+        }
     };
     const onProjectsLayout = createOnSectionLayout("projects");
     const onSkillsLayout = createOnSectionLayout("skills");

@@ -7,9 +7,11 @@ import type { DemoSnackPlaceholderProps } from "@/types/demo";
 
 // The diagonal stripe is decorative only, so native just gets a flat fill
 // rather than an approximated repeating gradient.
+const stripeWidthPx = demoSpace.placeholderStripeWidth;
+const stripePairWidthPx = stripeWidthPx * 2;
 const stripedBackground = Platform.select({
     web: {
-        backgroundImage: `repeating-linear-gradient(135deg, ${colors.placeholderStripeLight} 0 10px, ${colors.bg} 10px 20px)`,
+        backgroundImage: `repeating-linear-gradient(${demoSpace.placeholderStripeAngleDeg}deg, ${colors.placeholderStripeLight} 0 ${stripeWidthPx}px, ${colors.bg} ${stripeWidthPx}px ${stripePairWidthPx}px)`,
     },
     default: {
         backgroundColor: colors.bg,

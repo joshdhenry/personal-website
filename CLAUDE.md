@@ -25,7 +25,11 @@ Also serves as a Claude Code learning project.
 
 - React Native primitives only: View, Text, Image, Pressable, ScrollView,
   FlatList. Never emit DOM elements (div, span, p, a). A DOM element is a bug —
-  it breaks the native target.
+  it breaks the native target. Exception: an `<iframe>` for the Demo section's
+  embedded Expo Snack (src/components/demo/DemoSnackCard.tsx) - there's no
+  React Native primitive that embeds another page, and the iframe is already
+  gated to web-only (shouldRenderIframe), so it never reaches the native
+  target.
 - Default to Expo libraries first except for what is specified. Only use 3rd party
   libraries when the Expo library won't cut it.
 - For a "super clean code" repo, add ESLint (npx expo lint) + Prettier, and set
