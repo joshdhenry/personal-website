@@ -1,26 +1,25 @@
 import {
     Platform,
     Pressable,
+    StyleSheet,
     Text,
     type StyleProp,
-    type TextStyle,
     type ViewStyle,
 } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { usePressScale } from "@/hooks/usePressScale";
+import { colors } from "@/theme/colors";
 import { focusRing } from "@/theme/focusRing";
 import { shadow } from "@/theme/shadow";
+import { typeScale } from "@/theme/typography";
 import { getExternalLinkAccessibilityRole, openUrl } from "@/utils/openUrl";
 import { isHoverShadowSupported } from "@/utils/shadow";
 
 type ExternalLinkBadgeProps = {
     accessibilityLabel: string;
-    badgeActiveStyle: StyleProp<ViewStyle>;
     badgeStyle: StyleProp<ViewStyle>;
     label: string;
-    labelActiveStyle: StyleProp<TextStyle>;
-    labelStyle: StyleProp<TextStyle>;
     liftDistance?: number;
     pressableStyle: StyleProp<ViewStyle>;
     url: string;
@@ -28,18 +27,16 @@ type ExternalLinkBadgeProps = {
 
 // Shared skeleton for every Pressable badge that opens an external URL
 // (hero's action badges, the Demo section's external link badges) - the
-// press/hover/focus/shadow/accessibility wiring lives here once instead of
+// press/hover/focus/shadow/accessibility wiring, and the active/label
+// colors (identical at both current call sites), live here once instead of
 // duplicated per caller, so a future fix to any of it can't silently apply
-// to one badge and not the other. Each caller supplies its own visual
-// tokens (radius, padding, lift distance) via style props, so this makes no
-// assumption about how either badge should actually look.
+// to one badge and not the other. Each caller supplies only what actually
+// varies between them: the badge's own shape (radius, padding, layout) via
+// badgeStyle/pressableStyle, and an optional press/hover lift distance.
 export const ExternalLinkBadge = ({
     accessibilityLabel,
-    badgeActiveStyle,
     badgeStyle,
     label,
-    labelActiveStyle,
-    labelStyle,
     liftDistance,
     pressableStyle,
     url,
@@ -60,12 +57,12 @@ export const ExternalLinkBadge = ({
 
     const badgeAnimatedStyle = [
         badgeStyle,
-        isActive && badgeActiveStyle,
+        isActive && styles.badgeActive,
         isActive && isHoverShadowSupported(Platform.OS) && shadow.badgeHover,
         showFocusRing && focusRing,
         animatedStyle,
     ];
-    const textStyle = [labelStyle, isActive && labelActiveStyle];
+    const labelStyle = [styles.label, isActive && styles.labelActive];
 
     return (
         <Animated.View style={badgeAnimatedStyle}>
@@ -81,8 +78,21 @@ export const ExternalLinkBadge = ({
                 onPressOut={onPressOut}
                 style={pressableStyle}
             >
-                <Text style={textStyle}>{label}</Text>
+                <Text style={labelStyle}>{label}</Text>
             </Pressable>
         </Animated.View>
     );
 };
+
+const styles = StyleSheet.create({
+    badgeActive: {
+        borderColor: colors.primary,
+    },
+    label: {
+        ...typeScale.badgeLabel,
+        color: colors.ink,
+    },
+    labelActive: {
+        color: colors.primary,
+    },
+});

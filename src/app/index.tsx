@@ -1,5 +1,5 @@
 import Head from "expo-router/head";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -14,6 +14,7 @@ import { Hero } from "@/components/hero/Hero";
 import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
+import { navLinks } from "@/data/nav";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
@@ -27,6 +28,12 @@ import {
     resolveExtraBottomPadding,
 } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
+
+// The last nav-targetable section - whichever one it is, it needs enough
+// real content below its own top to scroll flush under the sticky nav (see
+// extraBottomPadding below). Derived from navLinks so reordering or adding
+// nav sections can't silently point this at a section that's no longer last.
+const lastNavSectionId = navLinks[navLinks.length - 1].sectionId;
 
 export default () => {
     const fontsLoaded = useFontsLoaded();
@@ -48,32 +55,56 @@ export default () => {
     // navHeightFallback covers the gap before that first measurement.
     const [measuredNavHeight, setMeasuredNavHeight] = useState<number | null>(null);
     const navHeight = measuredNavHeight ?? navSpace.navHeightFallback + insets.top;
+    // Latest navHeight/windowHeight, read (not depended on) by the stable
+    // callbacks below - the same "latest ref" pattern useScrollSpy uses for
+    // navHeight, so those callbacks never need to be recreated just because
+    // one of these changed.
+    const navHeightRef = useRef(navHeight);
+    navHeightRef.current = navHeight;
+    const windowHeightRef = useRef(windowHeight);
+    windowHeightRef.current = windowHeight;
     // The ScrollView's real content height (Hero through Footer), excluding
-    // extraBottomPadding below - kept separate so adding that padding never
-    // feeds back into its own input.
-    const [naturalContentHeight, setNaturalContentHeight] = useState<number | null>(null);
-    // Contact (the last nav-targetable section) needs at least windowHeight
-    // - navHeight of real content below its own top to ever scroll flush
-    // under the sticky nav - otherwise the browser clamps scrollTo() short
-    // of that target, which reads as "the nav link doesn't scroll far
-    // enough." Short natural content below Contact is common on wide/tall
-    // viewports, where multi-column section layouts make the whole page
-    // shorter. extraBottomPadding reserves exactly the shortfall, never more.
+    // extraBottomPadding below - a ref, not state, since only the resolved
+    // padding itself needs to trigger a re-render.
+    const contentHeightRef = useRef<number | null>(null);
+    // lastNavSectionId needs at least windowHeight - navHeight of real
+    // content below its own top to ever scroll flush under the sticky nav -
+    // otherwise the browser clamps scrollTo() short of that target, which
+    // reads as "the nav link doesn't scroll far enough." Short natural
+    // content below it is common on wide/tall viewports, where
+    // multi-column section layouts make the whole page shorter.
+    // extraBottomPadding reserves exactly the shortfall, never more.
     const [extraBottomPadding, setExtraBottomPadding] = useState(0);
-    const onContentSizeChange = (_contentWidth: number, contentHeight: number) => {
-        setNaturalContentHeight(contentHeight - extraBottomPadding);
-    };
-    const updateExtraBottomPadding = () => {
-        setExtraBottomPadding(
-            resolveExtraBottomPadding(
-                sectionOffsets.current.contact,
-                navHeight,
-                windowHeight,
+    // The functional setState form reads the current extraBottomPadding
+    // without needing it in a dependency array, so this callback's identity
+    // stays fully stable - the ScrollView's onContentSizeChange prop below,
+    // and onContactLayout's resize-observer wiring, never need to tear down
+    // and rebind just because padding (or navHeight/windowHeight) changed.
+    const updateExtraBottomPadding = useCallback(() => {
+        const contentHeight = contentHeightRef.current;
+        if (contentHeight === null) {
+            return;
+        }
+
+        setExtraBottomPadding((currentExtraBottomPadding) => {
+            const naturalContentHeight = contentHeight - currentExtraBottomPadding;
+
+            return resolveExtraBottomPadding(
+                sectionOffsets.current[lastNavSectionId],
+                navHeightRef.current,
+                windowHeightRef.current,
                 naturalContentHeight,
-            ),
-        );
-    };
-    useEffect(updateExtraBottomPadding, [navHeight, naturalContentHeight, windowHeight]);
+            );
+        });
+    }, []);
+    const onContentSizeChange = useCallback(
+        (_contentWidth: number, contentHeight: number) => {
+            contentHeightRef.current = contentHeight;
+            updateExtraBottomPadding();
+        },
+        [updateExtraBottomPadding],
+    );
+    useEffect(updateExtraBottomPadding, [navHeight, windowHeight, updateExtraBottomPadding]);
     const scrollToSection = useScrollToSection({
         navHeight,
         scrollViewRef,
@@ -147,9 +178,9 @@ export default () => {
     const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
         syncScrollSpyFromLayout();
-        // Only contact's own offset feeds updateExtraBottomPadding - no need
-        // to recompute it for every other section's layout pass too.
-        if (sectionId === "contact") {
+        // Only lastNavSectionId's own offset feeds updateExtraBottomPadding -
+        // no need to recompute it for every other section's layout pass too.
+        if (sectionId === lastNavSectionId) {
             updateExtraBottomPadding();
         }
     };
@@ -160,7 +191,7 @@ export default () => {
     const onDemoLayout = createOnSectionLayout("demo");
     const onContactLayout = createOnSectionLayout("contact");
 
-    const onTalkToMePress = () => scrollToSection("contact");
+    const onTalkToMePress = useCallback(() => scrollToSection("contact"), [scrollToSection]);
     const contentPaddingBottom = insets.bottom + extraBottomPadding;
     const contentContainerStyle = [styles.content, { paddingBottom: contentPaddingBottom }];
 

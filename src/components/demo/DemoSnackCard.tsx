@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { useMemo, type CSSProperties } from "react";
 import { StyleSheet, View } from "react-native";
 
 import {
@@ -35,11 +35,15 @@ export const DemoSnackCard = ({
     shouldRenderIframe,
     snackUrl,
 }: DemoSnackCardProps) => {
-    const embedUrl = deriveSnackEmbedUrl(snackUrl);
+    // snackUrl only ever changes when Josh publishes a new Snack, not on any
+    // of this component's more frequent re-renders (scroll-spy, layout) - no
+    // need to re-parse the URL (and re-run its malformed-URL warning) each time.
+    const embedUrl = useMemo(() => deriveSnackEmbedUrl(snackUrl), [snackUrl]);
     const hasSnack = embedUrl.length > 0;
+    const cardStyle = [styles.card, shadow.terminalCard];
 
     return (
-        <View style={[styles.card, shadow.terminalCard]}>
+        <View style={cardStyle}>
             {shouldRenderIframe ? (
                 <>
                     <DemoSnackChromeBar
@@ -64,7 +68,7 @@ export const DemoSnackCard = ({
             ) : isNativeApp ? (
                 <DemoNativeAppCard />
             ) : (
-                <DemoSnackFallbackCard snackUrl={snackUrl} />
+                <DemoSnackFallbackCard hasSnack={hasSnack} snackUrl={snackUrl} />
             )}
         </View>
     );

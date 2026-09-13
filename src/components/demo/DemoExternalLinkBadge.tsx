@@ -4,7 +4,6 @@ import { ExternalLinkBadge } from "@/components/shared/ExternalLinkBadge";
 import { colors } from "@/theme/colors";
 import { radius } from "@/theme/radii";
 import { contactSpace, demoSpace } from "@/theme/spacing";
-import { typeScale } from "@/theme/typography";
 import type { DemoExternalLinkBadgeProps } from "@/types/demo";
 
 export const DemoExternalLinkBadge = ({
@@ -14,11 +13,8 @@ export const DemoExternalLinkBadge = ({
 }: DemoExternalLinkBadgeProps) => (
     <ExternalLinkBadge
         accessibilityLabel={accessibilityLabel}
-        badgeActiveStyle={styles.badgeActive}
         badgeStyle={styles.badge}
         label={label}
-        labelActiveStyle={styles.labelActive}
-        labelStyle={styles.label}
         pressableStyle={styles.pressable}
         url={url}
     />
@@ -30,16 +26,6 @@ const styles = StyleSheet.create({
         borderColor: colors.border,
         borderRadius: radius.imageBand,
         borderWidth: 1,
-    },
-    badgeActive: {
-        borderColor: colors.primary,
-    },
-    label: {
-        ...typeScale.badgeLabel,
-        color: colors.ink,
-    },
-    labelActive: {
-        color: colors.primary,
     },
     pressable: {
         alignItems: "center",

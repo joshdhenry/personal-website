@@ -38,6 +38,7 @@ export type DemoSnackCardProps = {
 };
 
 export type DemoSnackFallbackCardProps = {
+    hasSnack: boolean;
     snackUrl: string;
 };
 

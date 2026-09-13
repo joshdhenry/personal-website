@@ -17,13 +17,17 @@ export const DemoFallbackCardShell = ({
     children,
     compact,
     label,
-}: DemoFallbackCardShellProps) => (
-    <View style={[styles.card, !compact && styles.cardTall]}>
-        <Text style={styles.label}>{label}</Text>
-        <Text style={styles.body}>{body}</Text>
-        {children}
-    </View>
-);
+}: DemoFallbackCardShellProps) => {
+    const cardStyle = [styles.card, !compact && styles.cardTall];
+
+    return (
+        <View style={cardStyle}>
+            <Text style={styles.label}>{label}</Text>
+            <Text style={styles.body}>{body}</Text>
+            {children}
+        </View>
+    );
+};
 
 const styles = StyleSheet.create({
     body: {

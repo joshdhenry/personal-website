@@ -6,7 +6,7 @@ import { radius } from "@/theme/radii";
 import type { TerminalChromeBarProps } from "@/types/hero";
 
 export const TerminalChromeBar = ({ pathLabel, shellLabel }: TerminalChromeBarProps) => (
-    <ChromeBarShell>
+    <ChromeBarShell hideFromAccessibility>
         <View style={styles.trafficLights}>
             <View style={styles.dotRed} />
             <View style={styles.dotYellow} />
