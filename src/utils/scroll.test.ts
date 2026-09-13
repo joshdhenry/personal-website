@@ -8,6 +8,7 @@ import {
     isAtScrollBottom,
     readInitialScrollState,
     resolveCurrentSectionId,
+    resolveExtraBottomPadding,
     shouldRevealNav,
 } from "./scroll";
 
@@ -179,5 +180,29 @@ describe("clampParallaxOffset", () => {
 
     it("clamps to the negative max", () => {
         expect(clampParallaxOffset(2000, 120, -0.055, 28)).toBe(-28);
+    });
+});
+
+describe("resolveExtraBottomPadding", () => {
+    it("reserves nothing before Contact's offset has measured", () => {
+        expect(resolveExtraBottomPadding(null, 64, 900, 6975)).toBe(0);
+    });
+
+    it("reserves nothing before the ScrollView's natural content height has measured", () => {
+        expect(resolveExtraBottomPadding(6215, 64, 900, null)).toBe(0);
+    });
+
+    it("reserves nothing when there's already enough content below Contact's top", () => {
+        // Contact needs 3000 - 64 + 900 = 3836 of total content height;
+        // 6975 already comfortably covers that.
+        expect(resolveExtraBottomPadding(3000, 64, 900, 6975)).toBe(0);
+    });
+
+    it("reserves exactly the shortfall when the max scrollable offset would clamp short", () => {
+        // Contact needs 6000 - 100 + 900 = 6800 of total content height to
+        // scroll flush under the nav; natural content is only 6700 - 100px
+        // short, so the browser's max scrollTop would otherwise clamp the
+        // scroll 100px before reaching that target.
+        expect(resolveExtraBottomPadding(6000, 100, 900, 6700)).toBe(100);
     });
 });

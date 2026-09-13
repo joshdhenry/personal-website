@@ -6,13 +6,19 @@ import { radius } from "@/theme/radii";
 import { demoSpace } from "@/theme/spacing";
 import type { DemoSnackChromeBarProps } from "@/types/demo";
 
-export const DemoSnackChromeBar = ({ label, liveEditorLabel }: DemoSnackChromeBarProps) => (
-    <ChromeBarShell>
+export const DemoSnackChromeBar = ({
+    hasSnack,
+    label,
+    liveEditorLabel,
+}: DemoSnackChromeBarProps) => (
+    <ChromeBarShell hideFromAccessibility={false}>
         <Text style={chromeBarLabelStyle}>{label}</Text>
-        <View style={styles.liveEditor}>
-            <View style={styles.liveEditorDot} />
-            <Text style={[chromeBarLabelStyle, styles.liveEditorLabel]}>{liveEditorLabel}</Text>
-        </View>
+        {hasSnack && (
+            <View style={styles.liveEditor}>
+                <View style={styles.liveEditorDot} />
+                <Text style={[chromeBarLabelStyle, styles.liveEditorLabel]}>{liveEditorLabel}</Text>
+            </View>
+        )}
     </ChromeBarShell>
 );
 

@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
     },
     label: {
-        ...typeScale.demoPlaceholderLabel,
+        ...typeScale.projectsCaption,
         color: colors.inkMuted,
     },
     placeholder: {

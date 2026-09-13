@@ -30,6 +30,9 @@ export const DemoPitchCard = ({ isNarrow, onTalkToMePress }: DemoPitchCardProps)
     ];
     const cardStyle = [styles.card, !isNarrow && styles.cardWide];
 
+    // accessibilityRole="button" (not "link"): react-native-web only fires
+    // a real <a>'s native keyboard Enter/Space activation for role="link",
+    // and this isn't a real <a> (onTalkToMePress scrolls imperatively).
     return (
         <View style={cardStyle}>
             <Text style={styles.label}>{demoPitchLabel}</Text>
@@ -37,7 +40,7 @@ export const DemoPitchCard = ({ isNarrow, onTalkToMePress }: DemoPitchCardProps)
             <Animated.View style={ctaAnimatedStyle}>
                 <Pressable
                     accessibilityLabel={demoPitchCtaLabel}
-                    accessibilityRole="link"
+                    accessibilityRole="button"
                     onBlur={onBlur}
                     onFocus={onFocus}
                     onHoverIn={onHoverIn}

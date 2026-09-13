@@ -43,6 +43,7 @@ export const DemoSnackCard = ({
             {shouldRenderIframe ? (
                 <>
                     <DemoSnackChromeBar
+                        hasSnack={hasSnack}
                         label={demoChromeLabel}
                         liveEditorLabel={demoLiveEditorLabel}
                     />

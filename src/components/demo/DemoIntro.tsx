@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         flexShrink: 0,
     },
     stepText: {
-        ...typeScale.demoStepText,
+        ...typeScale.projectSubtitleAndBody,
         color: colors.inkSecondary,
     },
     steps: {

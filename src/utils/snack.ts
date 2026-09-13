@@ -21,8 +21,10 @@ export const shouldRenderSnackEmbed = (platformOS: string, isCompact: boolean): 
  * "My Device" QR tab (mydevice would open that tab instead).
  * supportedPlatforms is deliberately left unset so visitors can still switch
  * to My Device from inside the embed. A malformed value (not an absolute
- * URL) is treated the same as an unset one - falls back to the placeholder
- * card - rather than throwing during render.
+ * URL) falls back to the placeholder card rather than throwing during
+ * render, same as an unset one, but logs a warning first - unlike the
+ * unset case (the expected pre-launch state), a malformed value is always
+ * a real mistake worth surfacing.
  *
  * The new URL is built by reconstructing a string and re-parsing it, never
  * by mutating a URL instance's properties (aside from searchParams.set,
@@ -53,7 +55,9 @@ export const deriveSnackEmbedUrl = (snackUrl: string): string => {
         embedUrl.searchParams.set("theme", "light");
 
         return embedUrl.toString();
-    } catch {
+    } catch (error: unknown) {
+        console.warn(`Malformed Snack URL "${snackUrl}", falling back to the placeholder`, error);
+
         return "";
     }
 };

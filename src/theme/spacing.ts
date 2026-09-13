@@ -430,8 +430,7 @@ export const demoSpace = {
     sectionPaddingHorizontalNarrow: 24,
     /** Section horizontal padding at widths <= layoutBreakpoint.compact. */
     sectionPaddingHorizontalCompact: 18,
-    /** Section container max-width, matches contactSpace.containerMaxWidth. */
-    containerMaxWidth: 1180,
+    containerMaxWidth,
     /** Outer column gap between the intro row and the Snack card. */
     outerColumnGap: 36,
     /** Two-column intro row grid gap, above layoutBreakpoint.narrow. */

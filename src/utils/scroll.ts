@@ -141,3 +141,33 @@ export const clampParallaxOffset = (
 
     return Math.min(maxOffset, Math.max(-maxOffset, rawOffset));
 };
+
+/**
+ * Extra bottom padding the ScrollView's content needs so Contact (the last
+ * nav-targetable section) can always scroll flush under the sticky nav.
+ * Contact needs at least windowHeight - navHeight of real content below its
+ * own top for that to be reachable at all - short of that (common on
+ * wide/tall viewports, where multi-column section layouts make the whole
+ * page shorter), the browser clamps scrollTo() short of the target. Returns
+ * 0 (no padding, and no early state to preserve) until both measurements
+ * are in.
+ * @param contactOffset - Contact section's measured top offset, or null if unmeasured.
+ * @param navHeight - Current sticky nav height.
+ * @param windowHeight - Current viewport height.
+ * @param naturalContentHeight - The ScrollView's own content height, excluding any padding this function already added, or null if unmeasured.
+ * @returns The padding (px) to reserve; never negative.
+ */
+export const resolveExtraBottomPadding = (
+    contactOffset: number | null,
+    navHeight: number,
+    windowHeight: number,
+    naturalContentHeight: number | null,
+): number => {
+    if (contactOffset === null || naturalContentHeight === null) {
+        return 0;
+    }
+
+    const requiredContentHeight = contactOffset - navHeight + windowHeight;
+
+    return Math.max(0, requiredContentHeight - naturalContentHeight);
+};

@@ -6,12 +6,21 @@ import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 
 // Shared chrome-bar shell for the hero terminal and the Demo section's Snack
-// embed - both are a header strip above a "device" surface, hidden from
-// assistive tech since it's decorative chrome, not content.
-export const ChromeBarShell = ({ children }: { children: ReactNode }) => (
+// embed - both are a header strip above a "device" surface. hideFromAccessibility
+// defaults to true (the hero terminal's path/shell labels and traffic-light
+// dots are decorative flavor, not content) but the Demo Snack chrome bar
+// passes false, since its "live editor" status conveys real state that a
+// screen reader shouldn't have hidden from it the same way.
+export const ChromeBarShell = ({
+    children,
+    hideFromAccessibility = true,
+}: {
+    children: ReactNode;
+    hideFromAccessibility?: boolean;
+}) => (
     <View
-        accessibilityElementsHidden
-        importantForAccessibility="no-hide-descendants"
+        accessibilityElementsHidden={hideFromAccessibility}
+        importantForAccessibility={hideFromAccessibility ? "no-hide-descendants" : "auto"}
         style={styles.bar}
     >
         {children}

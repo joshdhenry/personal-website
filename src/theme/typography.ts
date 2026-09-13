@@ -369,27 +369,15 @@ export const typeScale = {
         lineHeight: 15,
         fontWeight: "600",
     } satisfies TextStyleToken,
-    // Numbered step description text, matches projectSubtitleAndBody's
-    // literal values (.9375rem/1.6/400).
-    demoStepText: {
-        fontFamily: fontFamily.interRegular,
-        fontSize: 15, // .9375rem
-        lineHeight: 24, // 1.6
-        fontWeight: "400",
-    } satisfies TextStyleToken,
     // The pitch card's "I CAN DO THIS FOR YOU" label, the fallback card's
     // "NEEDS A WIDER WINDOW" label, the pitch card's "Talk to me about your
     // app ->" CTA, and the "Open the Snack ->" badge label all reuse
     // skillGroupLabel and badgeLabel above - same .75rem/.06em/400 and
-    // .8125rem/500 values, no need for section-specific duplicates.
+    // .8125rem/500 values. The numbered step description text reuses
+    // projectSubtitleAndBody (.9375rem/1.6/400) and the no-snack-url
+    // placeholder's label reuses projectsCaption (.8125rem/1.4/400) for the
+    // same reason - no need for section-specific duplicates.
 
-    // No-snack-url placeholder's "Snack embed loads here" line.
-    demoPlaceholderLabel: {
-        fontFamily: fontFamily.plexMonoRegular,
-        fontSize: 13, // .8125rem
-        lineHeight: 18.2, // 1.4
-        fontWeight: "400",
-    } satisfies TextStyleToken,
     // No-snack-url placeholder's hint line below the label.
     demoPlaceholderHint: {
         fontFamily: fontFamily.plexMonoRegular,

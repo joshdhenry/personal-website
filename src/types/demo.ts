@@ -21,6 +21,7 @@ export type DemoSectionProps = {
 };
 
 export type DemoSnackChromeBarProps = {
+    hasSnack: boolean;
     label: string;
     liveEditorLabel: string;
 };

@@ -21,7 +21,11 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import { isAtScrollBottom, readInitialScrollState } from "@/utils/scroll";
+import {
+    isAtScrollBottom,
+    readInitialScrollState,
+    resolveExtraBottomPadding,
+} from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
 export default () => {
@@ -60,13 +64,14 @@ export default () => {
         setNaturalContentHeight(contentHeight - extraBottomPadding);
     };
     const updateExtraBottomPadding = () => {
-        const contactOffset = sectionOffsets.current.contact;
-        if (contactOffset === null || naturalContentHeight === null) {
-            return;
-        }
-
-        const requiredContentHeight = contactOffset - navHeight + windowHeight;
-        setExtraBottomPadding(Math.max(0, requiredContentHeight - naturalContentHeight));
+        setExtraBottomPadding(
+            resolveExtraBottomPadding(
+                sectionOffsets.current.contact,
+                navHeight,
+                windowHeight,
+                naturalContentHeight,
+            ),
+        );
     };
     useEffect(updateExtraBottomPadding, [navHeight, naturalContentHeight, windowHeight]);
     const scrollToSection = useScrollToSection({
