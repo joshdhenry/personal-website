@@ -191,7 +191,12 @@ export default () => {
     const onDemoLayout = createOnSectionLayout("demo");
     const onContactLayout = createOnSectionLayout("contact");
 
-    const onTalkToMePress = useCallback(() => scrollToSection("contact"), [scrollToSection]);
+    // onLinkPress (not scrollToSection directly): the Demo section's CTA
+    // triggers the same long animated scroll to Contact a real nav-link
+    // click would, so it needs the same pending-target guard against
+    // onScroll's noisy interim events - otherwise the sticky nav's
+    // highlight can flicker through intermediate sections on the way there.
+    const onTalkToMePress = useCallback(() => onLinkPress("contact"), [onLinkPress]);
     const contentPaddingBottom = insets.bottom + extraBottomPadding;
     const contentContainerStyle = [styles.content, { paddingBottom: contentPaddingBottom }];
 

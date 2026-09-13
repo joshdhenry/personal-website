@@ -37,8 +37,13 @@ export const DemoSnackCard = ({
 }: DemoSnackCardProps) => {
     // snackUrl only ever changes when Josh publishes a new Snack, not on any
     // of this component's more frequent re-renders (scroll-spy, layout) - no
-    // need to re-parse the URL (and re-run its malformed-URL warning) each time.
-    const embedUrl = useMemo(() => deriveSnackEmbedUrl(snackUrl), [snackUrl]);
+    // need to re-parse the URL (and re-run its malformed-URL warning) each
+    // time. Skipped entirely on native: isNativeApp always renders
+    // DemoNativeAppCard below, which never reads embedUrl/hasSnack.
+    const embedUrl = useMemo(
+        () => (isNativeApp ? "" : deriveSnackEmbedUrl(snackUrl)),
+        [isNativeApp, snackUrl],
+    );
     const hasSnack = embedUrl.length > 0;
     const cardStyle = [styles.card, shadow.terminalCard];
 

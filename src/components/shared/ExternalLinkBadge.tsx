@@ -1,11 +1,4 @@
-import {
-    Platform,
-    Pressable,
-    StyleSheet,
-    Text,
-    type StyleProp,
-    type ViewStyle,
-} from "react-native";
+import { Platform, Pressable, StyleSheet, Text } from "react-native";
 import Animated from "react-native-reanimated";
 
 import { usePressScale } from "@/hooks/usePressScale";
@@ -13,17 +6,9 @@ import { colors } from "@/theme/colors";
 import { focusRing } from "@/theme/focusRing";
 import { shadow } from "@/theme/shadow";
 import { typeScale } from "@/theme/typography";
+import type { ExternalLinkBadgeProps } from "@/types/shared";
 import { getExternalLinkAccessibilityRole, openUrl } from "@/utils/openUrl";
 import { isHoverShadowSupported } from "@/utils/shadow";
-
-type ExternalLinkBadgeProps = {
-    accessibilityLabel: string;
-    badgeStyle: StyleProp<ViewStyle>;
-    label: string;
-    liftDistance?: number;
-    pressableStyle: StyleProp<ViewStyle>;
-    url: string;
-};
 
 // Shared skeleton for every Pressable badge that opens an external URL
 // (hero's action badges, the Demo section's external link badges) - the

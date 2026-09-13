@@ -4,7 +4,7 @@ import { snackUrl } from "@/constants/snack";
 import { colors } from "@/theme/colors";
 import { demoSpace } from "@/theme/spacing";
 import type { DemoSectionProps } from "@/types/demo";
-import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
+import { resolveByLayoutMode, resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 import { shouldRenderSnackEmbed } from "@/utils/snack";
 
 import { DemoIntro } from "./DemoIntro";
@@ -13,15 +13,17 @@ import { DemoSnackCard } from "./DemoSnackCard";
 
 export const DemoSection = ({ onTalkToMePress }: DemoSectionProps) => {
     const { width } = useWindowDimensions();
-    const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
+    const layoutMode = resolveResponsiveLayoutMode(width);
+    const { isCompact, isNarrow } = layoutMode;
     const shouldRenderIframe = shouldRenderSnackEmbed(Platform.OS, isCompact);
     const isNativeApp = Platform.OS !== "web";
 
-    const paddingHorizontal = isCompact
-        ? demoSpace.sectionPaddingHorizontalCompact
-        : isNarrow
-          ? demoSpace.sectionPaddingHorizontalNarrow
-          : demoSpace.sectionPaddingHorizontalWide;
+    const paddingHorizontal = resolveByLayoutMode(
+        layoutMode,
+        demoSpace.sectionPaddingHorizontalCompact,
+        demoSpace.sectionPaddingHorizontalNarrow,
+        demoSpace.sectionPaddingHorizontalWide,
+    );
     const paddingVertical = isNarrow
         ? demoSpace.sectionPaddingVerticalNarrow
         : demoSpace.sectionPaddingVerticalWide;
