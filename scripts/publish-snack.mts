@@ -76,6 +76,16 @@ const SATISFIES_PATTERN = /\ssatisfies\s+[A-Za-z_$][\w$]*(?:<[^;\n]*>)?/g;
 const stripSatisfiesOperator = (sourceCode: string): string =>
     sourceCode.replace(SATISFIES_PATTERN, "");
 
+// Snack's in-browser TS parser also can't parse a negative-literal type
+// (e.g. "1 | -1", src/utils/scroll.ts's hasSectionOrderReachedTarget) -
+// loosened to "number" for the Snack copy only, confirmed via a live crash.
+const NEGATIVE_LITERAL_TYPE_PATTERN = /(\|\s*)-\d+\b|-\d+\b(?=\s*\|)/g;
+
+const loosenNegativeLiteralTypes = (sourceCode: string): string =>
+    sourceCode.replace(NEGATIVE_LITERAL_TYPE_PATTERN, (_match, unionPrefix?: string) =>
+        unionPrefix ? `${unionPrefix}number` : "number",
+    );
+
 // Read once and reused for both the uploaded files entry and the
 // dependencies derivation below, so the two can never see different content.
 const packageJsonSourceCode = await readFile("package.json", "utf8");
@@ -96,8 +106,8 @@ const fileEntries: [string, SnackFile][] = await Promise.all(
                 path,
                 {
                     type: "CODE",
-                    contents: stripSatisfiesOperator(
-                        rewriteAliasImports(packageJsonSourceCode, path),
+                    contents: loosenNegativeLiteralTypes(
+                        stripSatisfiesOperator(rewriteAliasImports(packageJsonSourceCode, path)),
                     ),
                 },
             ];
@@ -142,7 +152,9 @@ export default App;
                 path,
                 {
                     type: "CODE",
-                    contents: stripSatisfiesOperator(rewriteAliasImports(sourceCode, path)),
+                    contents: loosenNegativeLiteralTypes(
+                        stripSatisfiesOperator(rewriteAliasImports(sourceCode, path)),
+                    ),
                 },
             ];
         }
