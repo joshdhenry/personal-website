@@ -4,4 +4,4 @@
 export const siteMetaTitle = "Josh Henry, Senior Mobile Software Engineer";
 
 export const siteMetaDescription =
-    "Josh Henry is a Senior Mobile Software Engineer in Portland, OR building cross-platform apps in React Native, iOS, and Android.";
+    "Josh Henry is a Senior Mobile Software Engineer building cross-platform apps in React Native for iOS, Android, and web.";
