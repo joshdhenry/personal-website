@@ -32,6 +32,7 @@ export type DemoSnackPlaceholderProps = {
 };
 
 export type DemoSnackCardProps = {
+    isInsideSnack: boolean;
     isNativeApp: boolean;
     shouldRenderIframe: boolean;
     snackUrl: string;

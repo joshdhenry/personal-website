@@ -20,9 +20,7 @@ export const contactAvailabilityParagraph =
     "Open to senior React Native and some mobile roles. Seeking remote work anywhere in the U.S., or hybrid in Portland, OR. Send me a message and I'll get back to you.";
 
 // Metro asset require, not a JS module import.
-const resumeAsset = Asset.fromModule(
-    require("../../assets/documents/Josh Henry - Portfolio Resume.pdf"),
-);
+const resumeAsset = Asset.fromModule(require("../../assets/documents/josh-henry-resume.pdf"));
 
 export const contactBadges: readonly ContactBadgeDescriptor[] = [
     {

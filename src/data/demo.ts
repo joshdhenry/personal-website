@@ -1,7 +1,31 @@
 /**
- * Typed content for the Demo section. Copy is verbatim per
- * designs/joshhenry.info.dc.html's #app section (designs/CLAUDE.md's Copy
- * rules), except where a comment below notes an intentional deviation.
+ * Typed content for the "Run this site as an app" (Demo) section. Copy is
+ * verbatim per designs/joshhenry.info.dc.html's #app section, per
+ * designs/CLAUDE.md's "Copy rules" ("do not rewrite copy Josh supplied"), with
+ * five exceptions: demoPlaceholderHint replaces the prototype's "Set the
+ * Snack URL in Tweaks" (a reference to the design tool's own editing panel,
+ * which doesn't exist in this app) with this repo's real constants file path;
+ * the native-app-specific strings (the design predates the native-app case
+ * getting its own message instead of the "ON A COMPUTER" fallback); the
+ * mobile intro copy below (the original intro paragraph and steps describe
+ * interacting with the embed, which doesn't render at all on mobile - the
+ * numbered steps are dropped entirely there rather than reworded, since the
+ * fallback card right below already covers the same ground); demoFallbackLabel
+ * /demoFallbackBody, reworded from the original "ON A COMPUTER... you are
+ * already on a phone" because this card also renders for a narrow desktop
+ * browser window, not only an actual phone - width, not device, is what this
+ * repo can actually detect (useWindowDimensions, not Platform.OS, per
+ * designs/README.md's own responsive rule); demoPitchBody, reworded per
+ * Josh's direct edit request (colon -> " - ", "a fix" -> "an update", and the
+ * closing clause rephrased); demoSteps, shortened per Josh's request to make
+ * them more concise; and demoMobileHeading plus the native-app fallback
+ * copy, reframed per Josh's request so mobile readers (who can't run the
+ * embed at all) are told to go see this on the web, rather than being told
+ * to "run this site as an app" when the embed, the whole point of that
+ * framing, is exactly what's hidden from them; and demoNestedSnackLabel/
+ * demoNestedSnackHint, new copy for a case the design doesn't cover at all -
+ * this app running as the Snack embed itself, where showing the normal
+ * iframe would try to nest the page inside itself.
  */
 
 import type { DemoStep } from "@/types/demo";
@@ -68,6 +92,11 @@ export const demoPlaceholderLabel = "Snack embed loads here";
 // design-tool panel) with this repo's real config path.
 export const demoPlaceholderHint =
     "Set the Snack URL in src/constants/snack.ts, for example snack.expo.dev/@joshdhenry/joshhenry-info";
+
+export const demoNestedSnackLabel = "THIS IS THAT SNACK";
+
+export const demoNestedSnackHint =
+    "You're already inside the embed, so it can't nest inside itself here. Open joshhenry.info directly to see this section in place.";
 
 // Native-app-specific copy; the design predates this case having its own
 // message instead of the "ON A COMPUTER" fallback.

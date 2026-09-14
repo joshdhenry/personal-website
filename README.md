@@ -19,11 +19,14 @@ yarn install
 ## Run
 
 ```
-yarn expo start --localhost
+yarn start
 ```
 
 Then press `w` for web, `i` for iOS (Expo Go), or `a` for Android (Expo Go).
 Or jump straight to one platform: `yarn web`, `yarn ios`, `yarn android`.
+
+Android needs an emulator or physical device already reachable via `adb`; if
+a physical device is connected, Expo targets that over booting an emulator.
 
 ## Test, lint, format
 
