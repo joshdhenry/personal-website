@@ -4,6 +4,7 @@
  * CLAUDE.md's Copy rules), except where a comment below notes a deviation.
  */
 
+import { siteUrl } from "@/constants/site";
 import type { DemoStep } from "@/types/demo";
 
 export const demoHeading = "Run this site as an app";
@@ -85,4 +86,4 @@ export const demoNativeAppBody =
 
 export const demoOpenWebsiteLabel = "Open joshhenry.info →";
 
-export const demoWebsiteUrl = "https://joshhenry.info";
+export const demoWebsiteUrl = siteUrl;
