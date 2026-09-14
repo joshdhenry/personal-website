@@ -14,6 +14,7 @@ import { Hero } from "@/components/hero/Hero";
 import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
+import { siteUrl } from "@/constants/site";
 import { navLinks } from "@/data/nav";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
@@ -33,6 +34,11 @@ import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 // scroll (see extraBottomPadding below); derived so reordering navLinks
 // can't silently break that.
 const lastNavSectionId = navLinks[navLinks.length - 1].sectionId;
+
+const pageTitle = "Josh Henry, Senior Mobile Software Engineer";
+const pageDescription =
+    "Josh Henry is a Senior Mobile Software Engineer in Portland, OR building cross-platform apps in React Native, iOS, and Android.";
+const socialPreviewImageUrl = `${siteUrl}/og-image.png`;
 
 export default () => {
     const fontsLoaded = useFontsLoaded();
@@ -204,11 +210,20 @@ export default () => {
                 style={styles.scrollView}
             >
                 <Head>
-                    <title>Josh Henry, Senior Mobile Software Engineer</title>
-                    <meta
-                        content="Josh Henry is a Senior Mobile Software Engineer in Portland, OR building cross-platform apps in React Native, iOS, and Android."
-                        name="description"
-                    />
+                    <title>{pageTitle}</title>
+                    <meta content={pageDescription} name="description" />
+                    <meta content="website" property="og:type" />
+                    <meta content={siteUrl} property="og:url" />
+                    <meta content={pageTitle} property="og:title" />
+                    <meta content={pageDescription} property="og:description" />
+                    <meta content={socialPreviewImageUrl} property="og:image" />
+                    <meta content="1200" property="og:image:width" />
+                    <meta content="630" property="og:image:height" />
+                    <meta content="Josh Henry" property="og:site_name" />
+                    <meta content="summary_large_image" name="twitter:card" />
+                    <meta content={pageTitle} name="twitter:title" />
+                    <meta content={pageDescription} name="twitter:description" />
+                    <meta content={socialPreviewImageUrl} name="twitter:image" />
                 </Head>
                 <Hero scrollY={scrollY} />
                 <View onLayout={onProjectsLayout}>

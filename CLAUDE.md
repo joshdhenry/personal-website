@@ -319,5 +319,4 @@ Feature these projects, ordered for emphasis (RN / mobile first):
 
 ## Future enhancements
 
-- Social preview plus favicon
 - Improved animations
