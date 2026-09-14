@@ -12,7 +12,7 @@
         "format": "prettier --write .",
         "deploy": "bash scripts/deploy.sh",
         "deploy:unlock": "bash -c 'source .env.deploy && ssh-add \"$DEPLOY_SSH_KEY\"'",
-        "publish-snack": "node scripts/publish-snack.mjs"
+        "publish-snack": "tsx scripts/publish-snack.mts"
     },
     "dependencies": {
         "@expo-google-fonts/ibm-plex-mono": "^0.4.1",
@@ -48,6 +48,7 @@
         "prettier": "^3.9.6",
         "react-test-renderer": "19.1.0",
         "snack-sdk": "^6.6.2",
+        "tsx": "^4.23.13",
         "typescript": "~5.9.2"
     },
     "private": true

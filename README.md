@@ -85,7 +85,7 @@ yarn publish-snack
 ```
 
 Pushes the real repo into the Expo Snack embedded in the Demo section
-(`src/constants/snack.ts`'s `snackUrl`). See `scripts/publish-snack.mjs`.
+(`src/constants/snack.ts`'s `snackUrl`). See `scripts/publish-snack.mts`.
 
 One-time setup: generate a token at [expo.dev](https://expo.dev) → account
 settings → Access Tokens, and set it as `EXPO_ACCESS_TOKEN` in your shell.
