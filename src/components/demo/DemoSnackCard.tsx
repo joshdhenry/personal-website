@@ -38,11 +38,11 @@ export const DemoSnackCard = ({
     shouldRenderIframe,
     snackUrl,
 }: DemoSnackCardProps) => {
-    // Memoized: snackUrl rarely changes. Skipped on native - isNativeApp
-    // always renders DemoNativeAppCard, which never reads this.
+    // Memoized: snackUrl rarely changes. Skipped on native and inside the
+    // Snack itself - neither case ever reads embedUrl/hasSnack below.
     const embedUrl = useMemo(
-        () => (isNativeApp ? "" : deriveSnackEmbedUrl(snackUrl)),
-        [isNativeApp, snackUrl],
+        () => (isNativeApp || isInsideSnack ? "" : deriveSnackEmbedUrl(snackUrl)),
+        [isInsideSnack, isNativeApp, snackUrl],
     );
     const hasSnack = embedUrl.length > 0;
     const cardStyle = [styles.card, shadow.terminalCard];

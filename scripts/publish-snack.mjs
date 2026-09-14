@@ -79,6 +79,7 @@ const SATISFIES_PATTERN = /\ssatisfies\s+[A-Za-z_$][\w$]*/g;
 const stripSatisfiesOperator = (sourceCode) => sourceCode.replace(SATISFIES_PATTERN, "");
 
 const files = {};
+let packageJsonSourceCode = "";
 
 for (const path of trackedFiles) {
     const isBinary = BINARY_EXTENSIONS.has(extname(path).toLowerCase());
@@ -150,6 +151,9 @@ export default App;
         };
     } else {
         const sourceCode = readFileSync(path, "utf8");
+        if (path === "package.json") {
+            packageJsonSourceCode = sourceCode;
+        }
         files[path] = {
             type: "CODE",
             contents: stripSatisfiesOperator(rewriteAliasImports(sourceCode, path)),
@@ -167,7 +171,7 @@ console.log(`Publishing ${Object.keys(files).length} files...`);
 // their own entries here too, keyed by the full import path, not just the
 // package name. "expo-router/entry" itself isn't needed - the Snack copy's
 // App.tsx (above) never imports it.
-const realPackageJson = JSON.parse(readFileSync("package.json", "utf8"));
+const realPackageJson = JSON.parse(packageJsonSourceCode);
 const dependencies = {};
 
 for (const [packageName, versionRange] of Object.entries(realPackageJson.dependencies)) {

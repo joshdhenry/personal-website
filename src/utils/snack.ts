@@ -26,6 +26,17 @@ export const isRunningInsideSnack = (hostname: string): boolean =>
     hostname === "snack-runtime.eascdn.net";
 
 /**
+ * Same nested-embed check as isRunningInsideSnack, gated to web - native and
+ * this repo's own Jest environment both lack window.location, and this
+ * always reads false there rather than throwing.
+ */
+export const isRunningInsideSnackEmbed = (platformOS: string): boolean =>
+    platformOS === "web" &&
+    typeof window !== "undefined" &&
+    typeof window.location !== "undefined" &&
+    isRunningInsideSnack(window.location.hostname);
+
+/**
  * Derives the embeddable Snack URL from the bare Snack URL in
  * src/constants/snack.ts. Inserts "/embedded" after the host and forces
  * platform=web so the embed opens on the running web player rather than the
