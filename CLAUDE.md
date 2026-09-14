@@ -136,7 +136,12 @@ extra}` return — no clean way to interleave a spread). Array element order
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/
-  directly); assets/documents/ holds the resume PDF
+  directly); assets/documents/ holds the resume PDF. Both are bundled and
+  get content-hashed filenames at build time.
+- public/ static files Expo's web export copies verbatim to dist/ root, at a
+  stable, unhashed URL — for files that must be referenced by a fixed path
+  (e.g. og-image.png, needed absolute and unchanging for social-preview
+  crawlers). Use assets/ instead unless a file specifically needs that.
 - designs/ exported Claude Design screens; the visual reference for each
   section, and the authoritative source for exact copy/visual spec when it
   is more specific than this file (match these when building)
