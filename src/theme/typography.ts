@@ -341,6 +341,43 @@ export const typeScale = {
         fontWeight: "500",
     } satisfies TextStyleToken,
 
+    // Demo section entries, from designs/joshhenry.info.dc.html's #app
+    // styles. Intro paragraph reuses aboutParagraph (same 1.0625rem/1.7/400).
+    demoPlatformTag: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 12, // .75rem, "iOS + ANDROID"
+        lineHeight: 15,
+        fontWeight: "400",
+        letterSpacing: 1.08, // .09em * 12
+    } satisfies TextStyleToken,
+    // Shared by the pitch card's paragraph and the fallback card's
+    // explanatory paragraph - both are .9375rem/1.7/400 in the prototype.
+    demoBody: {
+        fontFamily: fontFamily.interRegular,
+        fontSize: 15, // .9375rem
+        lineHeight: 25.5, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+    // Shared by the numbered step number ("01"/"02"/"03") - no other mono
+    // 12/600 token exists yet.
+    demoStepNumber: {
+        fontFamily: fontFamily.plexMonoSemiBold,
+        fontSize: 12, // .75rem
+        lineHeight: 15,
+        fontWeight: "600",
+    } satisfies TextStyleToken,
+    // Several Demo labels reuse skillGroupLabel/badgeLabel above, and step
+    // text/placeholder label reuse projectSubtitleAndBody/projectsCaption -
+    // same values, no section-specific duplicates needed.
+
+    // No-snack-url placeholder's hint line below the label.
+    demoPlaceholderHint: {
+        fontFamily: fontFamily.plexMonoRegular,
+        fontSize: 11, // .6875rem
+        lineHeight: 18.7, // 1.7
+        fontWeight: "400",
+    } satisfies TextStyleToken,
+
     // Footer-specific entry, shared by the note, "Source" link, and
     // copyright line. Value taken directly from designs/joshhenry.info.dc.html's
     // literal <footer> styles - none of the three set a font-weight, so

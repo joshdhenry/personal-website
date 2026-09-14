@@ -19,16 +19,16 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
+import type { HeroProps } from "@/types/hero";
 import { resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
 
 import { ActionBadgeRow } from "./ActionBadgeRow";
 import { StatusEyebrow } from "./StatusEyebrow";
 import { TerminalCard } from "./TerminalCard";
 
-// Zero props, so this memo always bails out on the parent's scroll-spy
-// re-renders - only its own hooks (useWindowDimensions, useRiseEntrance) can
-// still trigger a real re-render.
-export const Hero = memo(() => {
+// memo() only bails out on scroll-spy re-renders because scrollY is a
+// referentially-stable SharedValue; an unstable prop here would defeat it.
+export const Hero = memo(({ scrollY }: HeroProps) => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);
 
@@ -84,6 +84,7 @@ export const Hero = memo(() => {
                         commandText={heroTerminalCommandText}
                         isNarrow={isNarrow}
                         pathLabel={heroTerminalPathLabel}
+                        scrollY={scrollY}
                         shellLabel={heroTerminalShellLabel}
                         stats={heroStats}
                         techLogRows={heroTechLogRows}

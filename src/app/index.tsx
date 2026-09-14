@@ -1,18 +1,20 @@
 import Head from "expo-router/head";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
-import { Platform, ScrollView, StyleSheet, View } from "react-native";
+import { Platform, ScrollView, StyleSheet, useWindowDimensions, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { AboutSection } from "@/components/about/AboutSection";
 import { ContactSection } from "@/components/contact/ContactSection";
+import { DemoSection } from "@/components/demo/DemoSection";
 import { ExperienceSection } from "@/components/experience/ExperienceSection";
 import { Footer } from "@/components/footer/Footer";
 import { Hero } from "@/components/hero/Hero";
 import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
+import { navLinks } from "@/data/nav";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
@@ -20,18 +22,29 @@ import { colors } from "@/theme/colors";
 import { motion } from "@/theme/motion";
 import { navSpace } from "@/theme/spacing";
 import type { SectionId, SectionOffsets } from "@/types/nav";
-import { isAtScrollBottom, readInitialScrollState } from "@/utils/scroll";
+import {
+    isAtScrollBottom,
+    readInitialScrollState,
+    resolveExtraBottomPadding,
+} from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
+
+// Whichever section is last in nav order needs to clear the sticky nav on
+// scroll (see extraBottomPadding below); derived so reordering navLinks
+// can't silently break that.
+const lastNavSectionId = navLinks[navLinks.length - 1].sectionId;
 
 export default () => {
     const fontsLoaded = useFontsLoaded();
     const insets = useSafeAreaInsets();
+    const { height: windowHeight } = useWindowDimensions();
 
     const scrollY = useSharedValue(0);
     const scrollViewRef = useRef<ScrollView>(null);
     const sectionOffsets = useRef<SectionOffsets>({
         about: null,
         contact: null,
+        demo: null,
         experience: null,
         projects: null,
         skills: null,
@@ -41,6 +54,47 @@ export default () => {
     // navHeightFallback covers the gap before that first measurement.
     const [measuredNavHeight, setMeasuredNavHeight] = useState<number | null>(null);
     const navHeight = measuredNavHeight ?? navSpace.navHeightFallback + insets.top;
+    // Latest-ref pattern (see useScrollSpy) so callbacks below stay stable
+    // without depending on these values directly.
+    const navHeightRef = useRef(navHeight);
+    navHeightRef.current = navHeight;
+    const windowHeightRef = useRef(windowHeight);
+    windowHeightRef.current = windowHeight;
+    // The ScrollView's real content height (Hero through Footer), excluding
+    // extraBottomPadding below - a ref, not state, since only the resolved
+    // padding itself needs to trigger a re-render.
+    const contentHeightRef = useRef<number | null>(null);
+    // lastNavSectionId needs windowHeight - navHeight of real content below
+    // it to scroll flush under the nav, or the browser clamps short
+    // (worse on wide/tall viewports). Reserves exactly that shortfall.
+    const [extraBottomPadding, setExtraBottomPadding] = useState(0);
+    // Functional setState keeps this callback stable (no dep array), so
+    // onContentSizeChange/onContactLayout never rebind their listeners.
+    const updateExtraBottomPadding = useCallback(() => {
+        const contentHeight = contentHeightRef.current;
+        if (contentHeight === null) {
+            return;
+        }
+
+        setExtraBottomPadding((currentExtraBottomPadding) => {
+            const naturalContentHeight = contentHeight - currentExtraBottomPadding;
+
+            return resolveExtraBottomPadding(
+                sectionOffsets.current[lastNavSectionId],
+                navHeightRef.current,
+                windowHeightRef.current,
+                naturalContentHeight,
+            );
+        });
+    }, []);
+    const onContentSizeChange = useCallback(
+        (_contentWidth: number, contentHeight: number) => {
+            contentHeightRef.current = contentHeight;
+            updateExtraBottomPadding();
+        },
+        [updateExtraBottomPadding],
+    );
+    useEffect(updateExtraBottomPadding, [navHeight, windowHeight, updateExtraBottomPadding]);
     const scrollToSection = useScrollToSection({
         navHeight,
         scrollViewRef,
@@ -114,14 +168,25 @@ export default () => {
     const createOnSectionLayout = (sectionId: SectionId) => (event: LayoutChangeEvent) => {
         sectionOffsets.current[sectionId] = event.nativeEvent.layout.y;
         syncScrollSpyFromLayout();
+        // Only lastNavSectionId's own offset feeds updateExtraBottomPadding -
+        // no need to recompute it for every other section's layout pass too.
+        if (sectionId === lastNavSectionId) {
+            updateExtraBottomPadding();
+        }
     };
     const onProjectsLayout = createOnSectionLayout("projects");
     const onSkillsLayout = createOnSectionLayout("skills");
     const onExperienceLayout = createOnSectionLayout("experience");
     const onAboutLayout = createOnSectionLayout("about");
+    const onDemoLayout = createOnSectionLayout("demo");
     const onContactLayout = createOnSectionLayout("contact");
 
-    const contentContainerStyle = [styles.content, { paddingBottom: insets.bottom }];
+    // onLinkPress (not scrollToSection): gives the Demo CTA's scroll the
+    // same pending-target guard nav links get, avoiding a flickering
+    // sticky-nav highlight mid-scroll.
+    const onTalkToMePress = useCallback(() => onLinkPress("contact"), [onLinkPress]);
+    const contentPaddingBottom = insets.bottom + extraBottomPadding;
+    const contentContainerStyle = [styles.content, { paddingBottom: contentPaddingBottom }];
 
     if (shouldGateOnFontsLoaded(Platform.OS, fontsLoaded)) {
         return <View style={styles.loadingPlaceholder} />;
@@ -131,6 +196,7 @@ export default () => {
         <View style={styles.root}>
             <ScrollView
                 contentContainerStyle={contentContainerStyle}
+                onContentSizeChange={onContentSizeChange}
                 onScroll={onScroll}
                 onScrollBeginDrag={onScrollBeginDrag}
                 ref={scrollViewRef}
@@ -144,7 +210,7 @@ export default () => {
                         name="description"
                     />
                 </Head>
-                <Hero />
+                <Hero scrollY={scrollY} />
                 <View onLayout={onProjectsLayout}>
                     <ProjectsSection />
                 </View>
@@ -156,6 +222,9 @@ export default () => {
                 </View>
                 <View onLayout={onAboutLayout}>
                     <AboutSection />
+                </View>
+                <View onLayout={onDemoLayout}>
+                    <DemoSection onTalkToMePress={onTalkToMePress} />
                 </View>
                 <View onLayout={onContactLayout}>
                     <ContactSection />

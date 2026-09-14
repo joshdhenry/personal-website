@@ -15,6 +15,9 @@ export const colors = {
     inkMutedLight: "#98A1B0",
     // Darker than inkMuted, for long-form reading text (Projects card body copy).
     inkSecondary: "#3A424F",
+    // Lighter stripe in the Demo section's no-snack-url placeholder's
+    // repeating diagonal gradient (paired with colors.bg as the darker one).
+    placeholderStripeLight: "#FAFBFC",
     primary: "#4338CA",
     primaryHover: "#3730A3",
     // Reserved for in-progress/highlight status chips; unused so far.

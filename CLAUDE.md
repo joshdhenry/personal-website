@@ -25,7 +25,11 @@ Also serves as a Claude Code learning project.
 
 - React Native primitives only: View, Text, Image, Pressable, ScrollView,
   FlatList. Never emit DOM elements (div, span, p, a). A DOM element is a bug —
-  it breaks the native target.
+  it breaks the native target. Exception: an `<iframe>` for the Demo section's
+  embedded Expo Snack (src/components/demo/DemoSnackCard.tsx) - there's no
+  React Native primitive that embeds another page, and the iframe is already
+  gated to web-only (shouldRenderIframe), so it never reaches the native
+  target.
 - Default to Expo libraries first except for what is specified. Only use 3rd party
   libraries when the Expo library won't cut it.
 - For a "super clean code" repo, add ESLint (npx expo lint) + Prettier, and set
@@ -101,7 +105,10 @@ extra}` return — no clean way to interleave a spread). Array element order
 ## Project structure
 
 - src/app/ Expo Router routes; single-page portfolio, sections as components
-- src/components/ presentational components, one per file, kept small
+- src/components/ presentational components, one per file, kept small.
+  Section-specific components live in their own section subfolder (hero/,
+  demo/, ...); a component shared across sections lives directly in
+  src/components/, not in a shared/ subfolder
 - src/theme/ named design tokens (colors, spacing, typography, radii,
   breakpoints, motion, shadow), one file per token category — the single
   source of truth for every value
@@ -117,14 +124,15 @@ extra}` return — no clean way to interleave a spread). Array element order
   never declared inline in the component/hook/theme file that uses it; see
   "No barrel imports" below
 - src/utils/ pure helper/utility functions, aliased via `@/utils/*`; grouped
-  and named by the domain they deal with (e.g. `scroll.ts` for the page's
-  scroll-driven effects), never by an individual function's own name; every
-  util file has a colocated `*.test.ts`. Exports functions only.
+  and named by the domain they deal with (e.g. `snack.ts` for everything Snack
+  embed-related, `scroll.ts` for the page's scroll-driven effects), never by
+  an individual function's own name; every util file has a colocated
+  `*.test.ts`. Exports functions only.
 - src/constants/ every named, non-visual behavioral/technical constant
-  (thresholds, timeouts, integration endpoints — see src/data/ above for the
-  data-vs-constant distinction), one file per domain — regardless of whether
-  it's exported or module-local to a hook/component/util. Visual design
-  values still belong in theme/, not here.
+  (thresholds, timeouts, integration endpoints — e.g. `snack.ts`'s published
+  Snack URL — see src/data/ above for the data-vs-constant distinction), one
+  file per domain — regardless of whether it's exported or module-local to a
+  hook/component/util. Visual design values still belong in theme/, not here.
 - src/hooks/ shared React hooks (e.g. reduced-motion, entrance animation)
 - assets/images/ project graphics and photos actually shipped by the app
   (copied from designs/assets/, not required at runtime from designs/

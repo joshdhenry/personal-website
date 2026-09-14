@@ -3,10 +3,12 @@ import type { ScrollView } from "react-native";
 import type { SectionOffsets } from "@/types/nav";
 
 import {
+    clampParallaxOffset,
     hasSectionOrderReachedTarget,
     isAtScrollBottom,
     readInitialScrollState,
     resolveCurrentSectionId,
+    resolveExtraBottomPadding,
     shouldRevealNav,
 } from "./scroll";
 
@@ -102,6 +104,7 @@ describe("resolveCurrentSectionId", () => {
     const sectionOffsets: SectionOffsets = {
         about: 4000,
         contact: 5000,
+        demo: 4500,
         experience: 3000,
         projects: 1000,
         skills: 2000,
@@ -124,7 +127,7 @@ describe("resolveCurrentSectionId", () => {
     it("skips sections that haven't measured an offset yet", () => {
         const partialOffsets: SectionOffsets = { ...sectionOffsets, contact: null };
 
-        expect(resolveCurrentSectionId(9000, partialOffsets, navHeight, false)).toBe("about");
+        expect(resolveCurrentSectionId(9000, partialOffsets, navHeight, false)).toBe("demo");
     });
 
     it("forces the last measured section once scrolled to the bottom, even short of its offset", () => {
@@ -135,7 +138,7 @@ describe("resolveCurrentSectionId", () => {
 
         expect(
             resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeight, false),
-        ).toBe("about");
+        ).toBe("demo");
         expect(resolveCurrentSectionId(shortOfContactOffset, sectionOffsets, navHeight, true)).toBe(
             "contact",
         );
@@ -144,7 +147,7 @@ describe("resolveCurrentSectionId", () => {
     it("at the bottom, skips a trailing section that hasn't measured an offset yet", () => {
         const partialOffsets: SectionOffsets = { ...sectionOffsets, contact: null };
 
-        expect(resolveCurrentSectionId(4900, partialOffsets, navHeight, true)).toBe("about");
+        expect(resolveCurrentSectionId(4900, partialOffsets, navHeight, true)).toBe("demo");
     });
 
     it("resolves to top, not the last section, when isAtBottom is trivially true at scrollY 0", () => {
@@ -159,5 +162,47 @@ describe("resolveCurrentSectionId", () => {
         expect(
             resolveCurrentSectionId(3000 - navHeight - 0.5, sectionOffsets, navHeight, false),
         ).toBe("experience");
+    });
+});
+
+describe("clampParallaxOffset", () => {
+    it("returns 0 at the scroll offset", () => {
+        expect(clampParallaxOffset(120, 120, -0.055, 28)).toBeCloseTo(0);
+    });
+
+    it("scales linearly within the clamp range", () => {
+        expect(clampParallaxOffset(220, 120, -0.055, 28)).toBeCloseTo(-5.5);
+    });
+
+    it("clamps to the positive max", () => {
+        expect(clampParallaxOffset(-1000, 120, -0.055, 28)).toBe(28);
+    });
+
+    it("clamps to the negative max", () => {
+        expect(clampParallaxOffset(2000, 120, -0.055, 28)).toBe(-28);
+    });
+});
+
+describe("resolveExtraBottomPadding", () => {
+    it("reserves nothing before Contact's offset has measured", () => {
+        expect(resolveExtraBottomPadding(null, 64, 900, 6975)).toBe(0);
+    });
+
+    it("reserves nothing before the ScrollView's natural content height has measured", () => {
+        expect(resolveExtraBottomPadding(6215, 64, 900, null)).toBe(0);
+    });
+
+    it("reserves nothing when there's already enough content below Contact's top", () => {
+        // Contact needs 3000 - 64 + 900 = 3836 of total content height;
+        // 6975 already comfortably covers that.
+        expect(resolveExtraBottomPadding(3000, 64, 900, 6975)).toBe(0);
+    });
+
+    it("reserves exactly the shortfall when the max scrollable offset would clamp short", () => {
+        // Contact needs 6000 - 100 + 900 = 6800 of total content height to
+        // scroll flush under the nav; natural content is only 6700 - 100px
+        // short, so the browser's max scrollTop would otherwise clamp the
+        // scroll 100px before reaching that target.
+        expect(resolveExtraBottomPadding(6000, 100, 900, 6700)).toBe(100);
     });
 });

@@ -1,3 +1,5 @@
+import type { SharedValue } from "react-native-reanimated";
+
 export type HeroActionBadgeDescriptor = {
     accessibilityLabel: string;
     href: string;
@@ -19,6 +21,10 @@ export type HeroStat = {
     suffix: string;
 };
 
+export type HeroProps = {
+    scrollY: SharedValue<number>;
+};
+
 export type ActionBadgeProps = {
     badge: HeroActionBadgeDescriptor;
 };
@@ -37,6 +43,7 @@ export type TerminalCardProps = {
     commandText: string;
     isNarrow: boolean;
     pathLabel: string;
+    scrollY: SharedValue<number>;
     shellLabel: string;
     stats: readonly HeroStat[];
     techLogRows: readonly HeroTechLogRow[];

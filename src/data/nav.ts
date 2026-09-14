@@ -12,5 +12,6 @@ export const navLinks: readonly NavLinkDescriptor[] = [
     { label: "Skills", sectionId: "skills" },
     { label: "Experience", sectionId: "experience" },
     { label: "About", sectionId: "about" },
+    { label: "Demo", sectionId: "demo" },
     { label: "Contact", sectionId: "contact" },
 ];

@@ -4,6 +4,9 @@ import { scrollEpsilonPx } from "@/constants/scroll";
 import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
+// This file's scroll-driven effects (nav reveal, section highlight,
+// parallax) are pure functions of scrollY, so all are worklets.
+
 /**
  * Whether the sticky nav should be visible at the given scroll position.
  * Worklet so StickyNav's useAnimatedReaction can call it on the UI thread.
@@ -114,4 +117,47 @@ export const resolveCurrentSectionId = (
     }
 
     return currentSectionId;
+};
+
+/**
+ * Hero terminal card scroll parallax: translateY = clamp((scrollY -
+ * scrollOffset) * multiplier, -maxOffset, maxOffset). Marked as a worklet so
+ * TerminalCard's useAnimatedStyle can call it directly on the UI thread.
+ */
+export const clampParallaxOffset = (
+    scrollY: number,
+    scrollOffset: number,
+    multiplier: number,
+    maxOffset: number,
+): number => {
+    "worklet";
+
+    const rawOffset = (scrollY - scrollOffset) * multiplier;
+
+    return Math.min(maxOffset, Math.max(-maxOffset, rawOffset));
+};
+
+/**
+ * Extra bottom padding so the last nav section can always scroll flush
+ * under the sticky nav - without it, the browser clamps scrollTo() short
+ * whenever there isn't enough content below to fill the viewport.
+ * @param lastSectionOffset - The last nav-targetable section's measured top offset, or null if unmeasured.
+ * @param navHeight - Current sticky nav height.
+ * @param windowHeight - Current viewport height.
+ * @param naturalContentHeight - The ScrollView's own content height, excluding any padding this function already added, or null if unmeasured.
+ * @returns The padding (px) to reserve; never negative.
+ */
+export const resolveExtraBottomPadding = (
+    lastSectionOffset: number | null,
+    navHeight: number,
+    windowHeight: number,
+    naturalContentHeight: number | null,
+): number => {
+    if (lastSectionOffset === null || naturalContentHeight === null) {
+        return 0;
+    }
+
+    const requiredContentHeight = lastSectionOffset - navHeight + windowHeight;
+
+    return Math.max(0, requiredContentHeight - naturalContentHeight);
 };
