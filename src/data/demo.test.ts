@@ -1,3 +1,5 @@
+import { siteHost, siteUrl } from "@/constants/site";
+
 import {
     demoChromeLabel,
     demoFallbackBody,
@@ -36,7 +38,7 @@ describe("demo content", () => {
 
     it("tells mobile readers to see this on the web, not to run it as an app they're already running", () => {
         expect(demoMobileHeading).toBe("Run this site on the web");
-        expect(demoNativeAppBody).toContain("Open joshhenry.info in a browser");
+        expect(demoNativeAppBody).toContain(`Open ${siteHost} in a browser`);
     });
 
     it("never uses an em dash anywhere in Demo copy", () => {
@@ -69,8 +71,8 @@ describe("demo content", () => {
     });
 
     it("points the native-app card at the live website over https", () => {
-        expect(demoWebsiteUrl).toBe("https://joshhenry.info");
-        expect(demoOpenWebsiteLabel).toContain("joshhenry.info");
+        expect(demoWebsiteUrl).toBe(siteUrl);
+        expect(demoOpenWebsiteLabel).toContain(siteHost);
     });
 
     it("has exactly 3 desktop steps, numbered 01 to 03 in order", () => {

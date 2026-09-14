@@ -14,7 +14,9 @@ import { Hero } from "@/components/hero/Hero";
 import { StickyNav } from "@/components/nav/StickyNav";
 import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
+import { ogImageUrl, siteUrl } from "@/constants/site";
 import { navLinks } from "@/data/nav";
+import { siteMetaDescription, siteMetaTitle } from "@/data/siteMeta";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
@@ -204,11 +206,20 @@ export default () => {
                 style={styles.scrollView}
             >
                 <Head>
-                    <title>Josh Henry, Senior Mobile Software Engineer</title>
-                    <meta
-                        content="Josh Henry is a Senior Mobile Software Engineer in Portland, OR building cross-platform apps in React Native, iOS, and Android."
-                        name="description"
-                    />
+                    <title>{siteMetaTitle}</title>
+                    <meta content={siteMetaDescription} name="description" />
+                    <meta content="website" property="og:type" />
+                    <meta content={siteUrl} property="og:url" />
+                    <meta content={siteMetaTitle} property="og:title" />
+                    <meta content={siteMetaDescription} property="og:description" />
+                    <meta content={ogImageUrl} property="og:image" />
+                    <meta content="1200" property="og:image:width" />
+                    <meta content="630" property="og:image:height" />
+                    <meta content="Josh Henry" property="og:site_name" />
+                    <meta content="summary_large_image" name="twitter:card" />
+                    <meta content={siteMetaTitle} name="twitter:title" />
+                    <meta content={siteMetaDescription} name="twitter:description" />
+                    <meta content={ogImageUrl} name="twitter:image" />
                 </Head>
                 <Hero scrollY={scrollY} />
                 <View onLayout={onProjectsLayout}>
