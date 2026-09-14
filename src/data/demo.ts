@@ -17,7 +17,6 @@ export const demoPlatformTag = "iOS + ANDROID";
 export const demoIntroParagraph =
     "This page is a React Native and Expo app. The same codebase renders here in the browser and runs natively on iOS and Android, with native navigation, gestures, and scrolling. The Snack below is the running source and a live simulator beside it. Read the code, tap through the app, or run the same build on your own phone in Expo Go.";
 
-// Shortened per Josh's request.
 export const demoSteps: readonly DemoStep[] = [
     {
         description: "The app builds and loads on its own.",
@@ -43,7 +42,6 @@ export const demoMobileIntroParagraph =
 
 export const demoPitchLabel = "I CAN DO THIS FOR YOU";
 
-// Reworded per Josh's direct edit request.
 export const demoPitchBody =
     "If your product needs to be on iOS, Android, and the web, this is how I build it - one React Native codebase, native modules in Swift, Objective-C, Java, or Kotlin wherever the platform actually calls for them, and over-the-air updates so an update can ship the same day it lands. Stakeholders test a real build on their own phone from a link, long before an app store review ever enters the picture.";
 
