@@ -76,6 +76,20 @@ subfolders, so the JS bundle and images 404'd (this repo reads breakpoints
 via `useWindowDimensions` in JS, not CSS media queries, so no JS also breaks
 layout). `yarn deploy` replaces that manual step entirely.
 
+## Publish the Snack
+
+```
+yarn publish-snack
+```
+
+Pushes the real repo into the Expo Snack embedded in the Demo section
+(`src/constants/snack.ts`'s `snackUrl`). See `scripts/publish-snack.mjs`.
+
+One-time setup: generate a token at [expo.dev](https://expo.dev) → account
+settings → Access Tokens, and set it as `EXPO_ACCESS_TOKEN` in your shell.
+Without it, the script still runs but publishes anonymously to a
+throwaway Snack, not the permanent URL the site links to.
+
 ## Project structure
 
 See [CLAUDE.md](./CLAUDE.md)'s "Project structure" section for a full

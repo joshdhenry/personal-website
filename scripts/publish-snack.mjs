@@ -32,7 +32,12 @@ const RUNTIME_ROOT_FILES = new Set([
     "tsconfig.json",
 ]);
 
-const trackedFiles = execSync("git ls-tree -r HEAD --name-only", { encoding: "utf8" })
+// --cached (tracked) + --others --exclude-standard (untracked, not
+// gitignored) so an uncommitted new file still publishes - readFileSync
+// below already reads working-tree content, not the last commit's.
+const trackedFiles = execSync("git ls-files --cached --others --exclude-standard", {
+    encoding: "utf8",
+})
     .split("\n")
     .filter(Boolean)
     .filter(
