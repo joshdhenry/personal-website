@@ -341,11 +341,8 @@ export const typeScale = {
         fontWeight: "500",
     } satisfies TextStyleToken,
 
-    // Demo ("Run this site as an app") specific entries, values taken
-    // directly from designs/joshhenry.info.dc.html's literal #app styles.
-    // The intro paragraph reuses aboutParagraph below (both are the
-    // prototype's literal 1.0625rem/1.7/400 values) rather than a
-    // demo-specific duplicate.
+    // Demo section entries, from designs/joshhenry.info.dc.html's #app
+    // styles. Intro paragraph reuses aboutParagraph (same 1.0625rem/1.7/400).
     demoPlatformTag: {
         fontFamily: fontFamily.plexMonoRegular,
         fontSize: 12, // .75rem, "iOS + ANDROID"
@@ -369,14 +366,9 @@ export const typeScale = {
         lineHeight: 15,
         fontWeight: "600",
     } satisfies TextStyleToken,
-    // The pitch card's "I CAN DO THIS FOR YOU" label, the fallback card's
-    // "NEEDS A WIDER WINDOW" label, the pitch card's "Talk to me about your
-    // app ->" CTA, and the "Open the Snack ->" badge label all reuse
-    // skillGroupLabel and badgeLabel above - same .75rem/.06em/400 and
-    // .8125rem/500 values. The numbered step description text reuses
-    // projectSubtitleAndBody (.9375rem/1.6/400) and the no-snack-url
-    // placeholder's label reuses projectsCaption (.8125rem/1.4/400) for the
-    // same reason - no need for section-specific duplicates.
+    // Several Demo labels reuse skillGroupLabel/badgeLabel above, and step
+    // text/placeholder label reuse projectSubtitleAndBody/projectsCaption -
+    // same values, no section-specific duplicates needed.
 
     // No-snack-url placeholder's hint line below the label.
     demoPlaceholderHint: {

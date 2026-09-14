@@ -4,13 +4,8 @@ import { scrollEpsilonPx } from "@/constants/scroll";
 import { navLinks } from "@/data/nav";
 import type { SectionId, SectionOffsets } from "@/types/nav";
 
-/**
- * The page's scroll-driven effects (designs/README.md's "Scroll-driven
- * effects"): the sticky nav's reveal threshold, its section highlight, and
- * the hero terminal card's parallax drift. All are pure functions of the
- * shared scrollY value, so all are worklets, callable directly from a
- * UI-thread animation.
- */
+// This file's scroll-driven effects (nav reveal, section highlight,
+// parallax) are pure functions of scrollY, so all are worklets.
 
 /**
  * Whether the sticky nav should be visible at the given scroll position.
@@ -143,14 +138,9 @@ export const clampParallaxOffset = (
 };
 
 /**
- * Extra bottom padding the ScrollView's content needs so the last
- * nav-targetable section can always scroll flush under the sticky nav. That
- * section needs at least windowHeight - navHeight of real content below its
- * own top for that to be reachable at all - short of that (common on
- * wide/tall viewports, where multi-column section layouts make the whole
- * page shorter), the browser clamps scrollTo() short of the target. Returns
- * 0 (no padding, and no early state to preserve) until both measurements
- * are in.
+ * Extra bottom padding so the last nav section can always scroll flush
+ * under the sticky nav - without it, the browser clamps scrollTo() short
+ * whenever there isn't enough content below to fill the viewport.
  * @param lastSectionOffset - The last nav-targetable section's measured top offset, or null if unmeasured.
  * @param navHeight - Current sticky nav height.
  * @param windowHeight - Current viewport height.

@@ -105,7 +105,10 @@ extra}` return — no clean way to interleave a spread). Array element order
 ## Project structure
 
 - src/app/ Expo Router routes; single-page portfolio, sections as components
-- src/components/ presentational components, one per file, kept small
+- src/components/ presentational components, one per file, kept small.
+  Section-specific components live in their own section subfolder (hero/,
+  demo/, ...); a component shared across sections lives directly in
+  src/components/, not in a shared/ subfolder
 - src/theme/ named design tokens (colors, spacing, typography, radii,
   breakpoints, motion, shadow), one file per token category — the single
   source of truth for every value

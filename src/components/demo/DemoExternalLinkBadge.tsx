@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 
-import { ExternalLinkBadge } from "@/components/shared/ExternalLinkBadge";
+import { ExternalLinkBadge } from "@/components/ExternalLinkBadge";
 import { colors } from "@/theme/colors";
 import { radius } from "@/theme/radii";
 import { contactSpace, demoSpace } from "@/theme/spacing";

@@ -5,13 +5,9 @@ import { heroSpace } from "@/theme/spacing";
 import { typeScale } from "@/theme/typography";
 import type { ChromeBarShellProps } from "@/types/shared";
 
-// Shared chrome-bar shell for the hero terminal and the Demo section's Snack
-// embed - both are a header strip above a "device" surface. No default for
-// hideFromAccessibility: the hero terminal's path/shell labels and
-// traffic-light dots are decorative flavor (true), but the Demo Snack chrome
-// bar's "live editor" status conveys real state a screen reader shouldn't
-// have hidden from it (false) - a future caller has to make this call
-// explicitly rather than silently inheriting whichever caller came first.
+// Shared chrome-bar shell for the hero terminal and the Demo Snack card.
+// hideFromAccessibility has no default - each caller states explicitly
+// whether its content is decorative (hero) or real state (Snack status).
 export const ChromeBarShell = ({ children, hideFromAccessibility }: ChromeBarShellProps) => (
     <View
         accessibilityElementsHidden={hideFromAccessibility}

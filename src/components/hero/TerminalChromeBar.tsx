@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 
-import { chromeBarLabelStyle, ChromeBarShell } from "@/components/shared/ChromeBarShell";
+import { chromeBarLabelStyle, ChromeBarShell } from "@/components/ChromeBarShell";
 import { colors } from "@/theme/colors";
 import { radius } from "@/theme/radii";
 import type { TerminalChromeBarProps } from "@/types/hero";

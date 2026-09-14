@@ -1,34 +1,15 @@
 /**
- * Typed content for the "Run this site as an app" (Demo) section. Copy is
- * verbatim per designs/joshhenry.info.dc.html's #app section, per
- * designs/CLAUDE.md's "Copy rules" ("do not rewrite copy Josh supplied"), with
- * five exceptions: demoPlaceholderHint replaces the prototype's "Set the
- * Snack URL in Tweaks" (a reference to the design tool's own editing panel,
- * which doesn't exist in this app) with this repo's real constants file path;
- * the native-app-specific strings (the design predates the native-app case
- * getting its own message instead of the "ON A COMPUTER" fallback); the
- * mobile intro copy below (the original intro paragraph and steps describe
- * interacting with the embed, which doesn't render at all on mobile - the
- * numbered steps are dropped entirely there rather than reworded, since the
- * fallback card right below already covers the same ground); demoFallbackLabel
- * /demoFallbackBody, reworded from the original "ON A COMPUTER... you are
- * already on a phone" because this card also renders for a narrow desktop
- * browser window, not only an actual phone - width, not device, is what this
- * repo can actually detect (useWindowDimensions, not Platform.OS, per
- * designs/README.md's own responsive rule); demoPitchBody, reworded per
- * Josh's direct edit request (colon -> " - ", "a fix" -> "an update", and the
- * closing clause rephrased); demoSteps, shortened per Josh's request to make
- * them more concise; and demoMobileHeading plus the native-app fallback
- * copy, reframed per Josh's request so mobile readers (who can't run the
- * embed at all) are told to go see this on the web, rather than being told
- * to "run this site as an app" when the embed, the whole point of that
- * framing, is exactly what's hidden from them.
+ * Typed content for the Demo section. Copy is verbatim per
+ * designs/joshhenry.info.dc.html's #app section (designs/CLAUDE.md's Copy
+ * rules), except where a comment below notes an intentional deviation.
  */
 
 import type { DemoStep } from "@/types/demo";
 
 export const demoHeading = "Run this site as an app";
 
+// Reframed for mobile readers, who can't run the embed - points them to
+// the web instead of the (here, misleading) "run this as an app" framing.
 export const demoMobileHeading = "Run this site on the web";
 
 export const demoPlatformTag = "iOS + ANDROID";
@@ -36,6 +17,7 @@ export const demoPlatformTag = "iOS + ANDROID";
 export const demoIntroParagraph =
     "This page is a React Native and Expo app. The same codebase renders here in the browser and runs natively on iOS and Android, with native navigation, gestures, and scrolling. The Snack below is the running source and a live simulator beside it. Read the code, tap through the app, or run the same build on your own phone in Expo Go.";
 
+// Shortened per Josh's request.
 export const demoSteps: readonly DemoStep[] = [
     {
         description: "The app builds and loads on its own.",
@@ -54,11 +36,14 @@ export const demoSteps: readonly DemoStep[] = [
     },
 ];
 
+// Mobile-only intro; the steps below it are dropped entirely rather than
+// reworded, since the fallback card covers the same ground.
 export const demoMobileIntroParagraph =
     "This page is a React Native and Expo app that also runs natively on iOS and Android, with native navigation, gestures, and scrolling.";
 
 export const demoPitchLabel = "I CAN DO THIS FOR YOU";
 
+// Reworded per Josh's direct edit request.
 export const demoPitchBody =
     "If your product needs to be on iOS, Android, and the web, this is how I build it - one React Native codebase, native modules in Swift, Objective-C, Java, or Kotlin wherever the platform actually calls for them, and over-the-air updates so an update can ship the same day it lands. Stakeholders test a real build on their own phone from a link, long before an app store review ever enters the picture.";
 
@@ -70,6 +55,8 @@ export const demoLiveEditorLabel = "live editor";
 
 export const demoFallbackLabel = "NEEDS A WIDER WINDOW";
 
+// Reworded from the original phone-only copy - this card also renders for
+// a narrow desktop window, which width (not device) detects.
 export const demoFallbackBody =
     "The code editor and simulator need more screen width to show side by side. Make this window wider, or open the Snack directly.";
 
@@ -79,9 +66,13 @@ export const demoNoSnackMobileText = "Snack link goes here once published";
 
 export const demoPlaceholderLabel = "Snack embed loads here";
 
+// Replaces the prototype's "Set the Snack URL in Tweaks" (its own
+// design-tool panel) with this repo's real config path.
 export const demoPlaceholderHint =
     "Set the Snack URL in src/constants/snack.ts, for example snack.expo.dev/@joshdhenry/joshhenry-info";
 
+// Native-app-specific copy; the design predates this case having its own
+// message instead of the "ON A COMPUTER" fallback.
 export const demoNativeAppLabel = "SEE IT ON THE WEB";
 
 export const demoNativeAppBody =

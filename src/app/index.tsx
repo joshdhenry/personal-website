@@ -29,10 +29,9 @@ import {
 } from "@/utils/scroll";
 import { shouldGateOnFontsLoaded } from "@/utils/shouldGateOnFontsLoaded";
 
-// The last nav-targetable section - whichever one it is, it needs enough
-// real content below its own top to scroll flush under the sticky nav (see
-// extraBottomPadding below). Derived from navLinks so reordering or adding
-// nav sections can't silently point this at a section that's no longer last.
+// Whichever section is last in nav order needs to clear the sticky nav on
+// scroll (see extraBottomPadding below); derived so reordering navLinks
+// can't silently break that.
 const lastNavSectionId = navLinks[navLinks.length - 1].sectionId;
 
 export default () => {
@@ -55,10 +54,8 @@ export default () => {
     // navHeightFallback covers the gap before that first measurement.
     const [measuredNavHeight, setMeasuredNavHeight] = useState<number | null>(null);
     const navHeight = measuredNavHeight ?? navSpace.navHeightFallback + insets.top;
-    // Latest navHeight/windowHeight, read (not depended on) by the stable
-    // callbacks below - the same "latest ref" pattern useScrollSpy uses for
-    // navHeight, so those callbacks never need to be recreated just because
-    // one of these changed.
+    // Latest-ref pattern (see useScrollSpy) so callbacks below stay stable
+    // without depending on these values directly.
     const navHeightRef = useRef(navHeight);
     navHeightRef.current = navHeight;
     const windowHeightRef = useRef(windowHeight);
@@ -67,19 +64,12 @@ export default () => {
     // extraBottomPadding below - a ref, not state, since only the resolved
     // padding itself needs to trigger a re-render.
     const contentHeightRef = useRef<number | null>(null);
-    // lastNavSectionId needs at least windowHeight - navHeight of real
-    // content below its own top to ever scroll flush under the sticky nav -
-    // otherwise the browser clamps scrollTo() short of that target, which
-    // reads as "the nav link doesn't scroll far enough." Short natural
-    // content below it is common on wide/tall viewports, where
-    // multi-column section layouts make the whole page shorter.
-    // extraBottomPadding reserves exactly the shortfall, never more.
+    // lastNavSectionId needs windowHeight - navHeight of real content below
+    // it to scroll flush under the nav, or the browser clamps short
+    // (worse on wide/tall viewports). Reserves exactly that shortfall.
     const [extraBottomPadding, setExtraBottomPadding] = useState(0);
-    // The functional setState form reads the current extraBottomPadding
-    // without needing it in a dependency array, so this callback's identity
-    // stays fully stable - the ScrollView's onContentSizeChange prop below,
-    // and onContactLayout's resize-observer wiring, never need to tear down
-    // and rebind just because padding (or navHeight/windowHeight) changed.
+    // Functional setState keeps this callback stable (no dep array), so
+    // onContentSizeChange/onContactLayout never rebind their listeners.
     const updateExtraBottomPadding = useCallback(() => {
         const contentHeight = contentHeightRef.current;
         if (contentHeight === null) {
@@ -191,11 +181,9 @@ export default () => {
     const onDemoLayout = createOnSectionLayout("demo");
     const onContactLayout = createOnSectionLayout("contact");
 
-    // onLinkPress (not scrollToSection directly): the Demo section's CTA
-    // triggers the same long animated scroll to Contact a real nav-link
-    // click would, so it needs the same pending-target guard against
-    // onScroll's noisy interim events - otherwise the sticky nav's
-    // highlight can flicker through intermediate sections on the way there.
+    // onLinkPress (not scrollToSection): gives the Demo CTA's scroll the
+    // same pending-target guard nav links get, avoiding a flickering
+    // sticky-nav highlight mid-scroll.
     const onTalkToMePress = useCallback(() => onLinkPress("contact"), [onLinkPress]);
     const contentPaddingBottom = insets.bottom + extraBottomPadding;
     const contentContainerStyle = [styles.content, { paddingBottom: contentPaddingBottom }];

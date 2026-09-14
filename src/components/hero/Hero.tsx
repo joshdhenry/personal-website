@@ -26,11 +26,8 @@ import { ActionBadgeRow } from "./ActionBadgeRow";
 import { StatusEyebrow } from "./StatusEyebrow";
 import { TerminalCard } from "./TerminalCard";
 
-// memo() only bails out on the parent's scroll-spy re-renders because
-// scrollY is a referentially-stable SharedValue (created once via
-// useSharedValue in index.tsx) - passing a derived or otherwise unstable
-// value here would defeat the memo and reintroduce a full re-render on
-// every scroll-spy update.
+// memo() only bails out on scroll-spy re-renders because scrollY is a
+// referentially-stable SharedValue; an unstable prop here would defeat it.
 export const Hero = memo(({ scrollY }: HeroProps) => {
     const { width } = useWindowDimensions();
     const { isCompact, isNarrow } = resolveResponsiveLayoutMode(width);

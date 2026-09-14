@@ -454,11 +454,6 @@ export const demoSpace = {
     pitchCardPaddingVertical: 22,
     pitchCardPaddingHorizontal: 24,
     pitchCardGap: 12,
-    /**
-     * Snack card chrome bar padding: reuses
-     * heroSpace.terminalChromePaddingVertical/Horizontal directly rather
-     * than duplicating the same 13/18 values under a demo-specific name.
-     */
     /** "live editor" status dot diameter and its gap from the label text. */
     liveEditorDotSize: 6,
     liveEditorGap: 7,

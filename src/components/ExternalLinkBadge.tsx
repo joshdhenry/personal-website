@@ -10,14 +10,9 @@ import type { ExternalLinkBadgeProps } from "@/types/shared";
 import { getExternalLinkAccessibilityRole, openUrl } from "@/utils/openUrl";
 import { isHoverShadowSupported } from "@/utils/shadow";
 
-// Shared skeleton for every Pressable badge that opens an external URL
-// (hero's action badges, the Demo section's external link badges) - the
-// press/hover/focus/shadow/accessibility wiring, and the active/label
-// colors (identical at both current call sites), live here once instead of
-// duplicated per caller, so a future fix to any of it can't silently apply
-// to one badge and not the other. Each caller supplies only what actually
-// varies between them: the badge's own shape (radius, padding, layout) via
-// badgeStyle/pressableStyle, and an optional press/hover lift distance.
+// Shared skeleton for every Pressable badge that opens an external URL.
+// Callers only supply what varies: shape (badgeStyle/pressableStyle) and
+// an optional press/hover lift distance.
 export const ExternalLinkBadge = ({
     accessibilityLabel,
     badgeStyle,

@@ -1,6 +1,6 @@
 import { Text } from "react-native";
 
-import { chromeBarLabelStyle } from "@/components/shared/ChromeBarShell";
+import { chromeBarLabelStyle } from "@/components/ChromeBarShell";
 import {
     demoFallbackBody,
     demoFallbackLabel,
