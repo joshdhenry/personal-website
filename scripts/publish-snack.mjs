@@ -1,5 +1,5 @@
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { dirname, extname, join, relative } from "node:path";
 
 const { Snack } = await import("snack-sdk");
@@ -33,8 +33,8 @@ const RUNTIME_ROOT_FILES = new Set([
 ]);
 
 // --cached (tracked) + --others --exclude-standard (untracked, not
-// gitignored) so an uncommitted new file still publishes - readFileSync
-// below already reads working-tree content, not the last commit's.
+// gitignored) so an uncommitted new file still publishes - readFile below
+// already reads working-tree content, not the last commit's.
 const trackedFiles = execSync("git ls-files --cached --others --exclude-standard", {
     encoding: "utf8",
 })
@@ -83,46 +83,53 @@ const SATISFIES_PATTERN = /\ssatisfies\s+[A-Za-z_$][\w$]*/g;
 
 const stripSatisfiesOperator = (sourceCode) => sourceCode.replace(SATISFIES_PATTERN, "");
 
-const files = {};
-let packageJsonSourceCode = "";
+// Reads every tracked file concurrently - trackedFiles regularly includes
+// 100+ entries (src/, assets/), and each read is independent.
+const packageJsonReadPromise = readFile("package.json", "utf8");
 
-for (const path of trackedFiles) {
-    const isBinary = BINARY_EXTENSIONS.has(extname(path).toLowerCase());
+const fileEntries = await Promise.all(
+    trackedFiles.map(async (path) => {
+        const isBinary = BINARY_EXTENSIONS.has(extname(path).toLowerCase());
 
-    if (isBinary) {
-        const buffer = readFileSync(path);
-        files[path] = {
-            type: "ASSET",
-            contents: new Blob([buffer]),
-        };
-    } else if (path === "App.tsx") {
-        // expo-router/entry - the real repo's normal entry point - never
-        // successfully boots inside Snack: this is a known, still-open
-        // upstream bug (github.com/expo/snack/issues/459, open since SDK 49)
-        // where Snack's web-preview host can't route any expo-router app
-        // through the entry point's own bootstrap, regardless of project
-        // content (reproduced with a from-scratch hello-world snack).
-        // The confirmed community workaround is to skip expo-router/entry
-        // and boot ExpoRoot directly with an explicit require.context and
-        // location, which sidesteps whatever entry does that fails in
-        // Snack's environment. The real repo's App.tsx (plain
-        // "expo-router/entry" import) is untouched - this only affects the
-        // uploaded Snack copy.
-        //
-        // registerRootComponent(App) is required here even though the plain
-        // default export is enough for Snack's web preview to render (its
-        // browser bundler mounts a module's default export directly,
-        // bypassing React Native's AppRegistry entirely). expo-router/entry's
-        // real entry-classic.js calls registerRootComponent for exactly this
-        // reason: on native, nothing else ever calls AppRegistry.
-        // registerComponent - without it, Expo Go's bridge boots, the bundle
-        // evaluates with no error, but no root component is ever registered
-        // to mount, so the app hangs on "Connecting..." forever (reproduced:
-        // confirmed via Snack's own Appetize-embedded Android/iOS preview,
-        // with the resume PDF asset ruled out as an unrelated red herring).
-        files[path] = {
-            type: "CODE",
-            contents: `import { registerRootComponent } from "expo";
+        if (isBinary) {
+            const buffer = await readFile(path);
+            return [
+                path,
+                {
+                    type: "ASSET",
+                    contents: new Blob([buffer]),
+                },
+            ];
+        } else if (path === "App.tsx") {
+            // expo-router/entry - the real repo's normal entry point - never
+            // successfully boots inside Snack: this is a known, still-open
+            // upstream bug (github.com/expo/snack/issues/459, open since SDK 49)
+            // where Snack's web-preview host can't route any expo-router app
+            // through the entry point's own bootstrap, regardless of project
+            // content (reproduced with a from-scratch hello-world snack).
+            // The confirmed community workaround is to skip expo-router/entry
+            // and boot ExpoRoot directly with an explicit require.context and
+            // location, which sidesteps whatever entry does that fails in
+            // Snack's environment. The real repo's App.tsx (plain
+            // "expo-router/entry" import) is untouched - this only affects the
+            // uploaded Snack copy.
+            //
+            // registerRootComponent(App) is required here even though the plain
+            // default export is enough for Snack's web preview to render (its
+            // browser bundler mounts a module's default export directly,
+            // bypassing React Native's AppRegistry entirely). expo-router/entry's
+            // real entry-classic.js calls registerRootComponent for exactly this
+            // reason: on native, nothing else ever calls AppRegistry.
+            // registerComponent - without it, Expo Go's bridge boots, the bundle
+            // evaluates with no error, but no root component is ever registered
+            // to mount, so the app hangs on "Connecting..." forever (reproduced:
+            // confirmed via Snack's own Appetize-embedded Android/iOS preview,
+            // with the resume PDF asset ruled out as an unrelated red herring).
+            return [
+                path,
+                {
+                    type: "CODE",
+                    contents: `import { registerRootComponent } from "expo";
 import { ExpoRoot } from "expo-router";
 import Head from "expo-router/head";
 
@@ -138,33 +145,34 @@ registerRootComponent(App);
 
 export default App;
 `,
-        };
-    } else if (path === "app.json") {
-        // web.output: "static" builds a separate pre-rendered HTML file per
-        // route via "expo export" (SSG), which Snack's live-preview server
-        // doesn't produce - it serves one dev bundle, SPA-style. With
-        // "static" still set, Snack's web preview shows Expo's own
-        // infrastructure-level 404 (unrelated to this app's own
-        // +not-found.tsx, which never even mounts) instead of the app.
-        // "single" is the standard client-rendered SPA mode Snack expects;
-        // the real repo keeps "static" for the actual joshhenry.info build.
-        const appJson = JSON.parse(readFileSync(path, "utf8"));
-        appJson.expo.web.output = "single";
-        files[path] = {
-            type: "CODE",
-            contents: JSON.stringify(appJson, null, 4),
-        };
-    } else {
-        const sourceCode = readFileSync(path, "utf8");
-        if (path === "package.json") {
-            packageJsonSourceCode = sourceCode;
+                },
+            ];
+        } else if (path === "app.json") {
+            // web.output: "static" builds a separate pre-rendered HTML file per
+            // route via "expo export" (SSG), which Snack's live-preview server
+            // doesn't produce - it serves one dev bundle, SPA-style. With
+            // "static" still set, Snack's web preview shows Expo's own
+            // infrastructure-level 404 (unrelated to this app's own
+            // +not-found.tsx, which never even mounts) instead of the app.
+            // "single" is the standard client-rendered SPA mode Snack expects;
+            // the real repo keeps "static" for the actual joshhenry.info build.
+            const appJson = JSON.parse(await readFile(path, "utf8"));
+            appJson.expo.web.output = "single";
+            return [path, { type: "CODE", contents: JSON.stringify(appJson, null, 4) }];
+        } else {
+            const sourceCode = await readFile(path, "utf8");
+            return [
+                path,
+                {
+                    type: "CODE",
+                    contents: stripSatisfiesOperator(rewriteAliasImports(sourceCode, path)),
+                },
+            ];
         }
-        files[path] = {
-            type: "CODE",
-            contents: stripSatisfiesOperator(rewriteAliasImports(sourceCode, path)),
-        };
-    }
-}
+    }),
+);
+
+const files = Object.fromEntries(fileEntries);
 
 console.log(`Publishing ${Object.keys(files).length} files...`);
 
@@ -176,7 +184,7 @@ console.log(`Publishing ${Object.keys(files).length} files...`);
 // their own entries here too, keyed by the full import path, not just the
 // package name. "expo-router/entry" itself isn't needed - the Snack copy's
 // App.tsx (above) never imports it.
-const realPackageJson = JSON.parse(packageJsonSourceCode);
+const realPackageJson = JSON.parse(await packageJsonReadPromise);
 const dependencies = {};
 
 for (const [packageName, versionRange] of Object.entries(realPackageJson.dependencies)) {
