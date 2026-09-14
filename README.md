@@ -66,8 +66,10 @@ One-time setup:
 3. `cp .env.deploy.example .env.deploy` and fill in the host/user/port/path
    from cPanel (`.env.deploy` is gitignored — never commit it).
 4. This hosting account has no shell access, only SFTP, so the key can't be
-   scripted with a password prompt — unlock it once per terminal session
-   with `yarn deploy:unlock` before running `yarn deploy`.
+   scripted with a password prompt. Before running `yarn deploy`, unlock it
+   once per terminal session with `yarn deploy:unlock` — runs `ssh-add` on
+   the key path from `.env.deploy`, adding it to your shell's `ssh-agent` so
+   `lftp` can use it without prompting.
 
 Previously, images intermittently went missing and layout reverted to its
 mobile default on the live site after a manual drag-and-drop upload through
