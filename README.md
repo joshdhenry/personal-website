@@ -19,11 +19,14 @@ yarn install
 ## Run
 
 ```
-yarn expo start --localhost
+yarn start
 ```
 
 Then press `w` for web, `i` for iOS (Expo Go), or `a` for Android (Expo Go).
 Or jump straight to one platform: `yarn web`, `yarn ios`, `yarn android`.
+
+Android needs an emulator or physical device already reachable via `adb`; if
+a physical device is connected, Expo targets that over booting an emulator.
 
 ## Test, lint, format
 
@@ -63,8 +66,10 @@ One-time setup:
 3. `cp .env.deploy.example .env.deploy` and fill in the host/user/port/path
    from cPanel (`.env.deploy` is gitignored — never commit it).
 4. This hosting account has no shell access, only SFTP, so the key can't be
-   scripted with a password prompt — unlock it once per terminal session
-   with `yarn deploy:unlock` before running `yarn deploy`.
+   scripted with a password prompt. Before running `yarn deploy`, unlock it
+   once per terminal session with `yarn deploy:unlock` — runs `ssh-add` on
+   the key path from `.env.deploy`, adding it to your shell's `ssh-agent` so
+   `lftp` can use it without prompting.
 
 Previously, images intermittently went missing and layout reverted to its
 mobile default on the live site after a manual drag-and-drop upload through
@@ -72,6 +77,20 @@ cPanel File Manager — it silently skipped the `_expo/` and `assets/`
 subfolders, so the JS bundle and images 404'd (this repo reads breakpoints
 via `useWindowDimensions` in JS, not CSS media queries, so no JS also breaks
 layout). `yarn deploy` replaces that manual step entirely.
+
+## Publish the Snack
+
+```
+yarn publish-snack
+```
+
+Pushes the real repo into the Expo Snack embedded in the Demo section
+(`src/constants/snack.ts`'s `snackUrl`). See `scripts/publish-snack.mts`.
+
+One-time setup: generate a token at [expo.dev](https://expo.dev) → account
+settings → Access Tokens, and set it as `EXPO_ACCESS_TOKEN` in your shell.
+Without it, the script still runs but publishes anonymously to a
+throwaway Snack, not the permanent URL the site links to.
 
 ## Project structure
 

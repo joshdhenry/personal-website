@@ -3,6 +3,8 @@
  * section, built from the bare Snack URL in src/constants/snack.ts.
  */
 
+import { snackRuntimeHostname } from "@/constants/snack";
+
 /**
  * Snack's embed layout is internally responsive, so this only needs to gate
  * web + a width floor - not breakpoint.narrow, which is this section's own
@@ -12,9 +14,27 @@ export const shouldRenderSnackEmbed = (platformOS: string, isCompact: boolean): 
     platformOS === "web" && !isCompact;
 
 /**
+ * Detects whether this build is running as the embedded Snack itself, to
+ * avoid nesting the Demo section's own Snack iframe inside itself.
+ */
+export const isRunningInsideSnack = (hostname: string): boolean =>
+    hostname === snackRuntimeHostname;
+
+/**
+ * Same nested-embed check as isRunningInsideSnack, gated to web - native and
+ * this repo's own Jest environment both lack window.location, and this
+ * always reads false there rather than throwing.
+ */
+export const isRunningInsideSnackEmbed = (platformOS: string): boolean =>
+    platformOS === "web" &&
+    typeof window !== "undefined" &&
+    typeof window.location !== "undefined" &&
+    isRunningInsideSnack(window.location.hostname);
+
+/**
  * Derives the embeddable Snack URL - inserts "/embedded" and forces
  * platform=web so the embed opens the web player, not the "My Device" QR
- * tab. supportedPlatforms stays unset so visitors can still switch to it.
+ * tab. A malformed snackUrl falls back to the placeholder instead of throwing.
  */
 export const deriveSnackEmbedUrl = (snackUrl: string): string => {
     if (!snackUrl) {
@@ -29,7 +49,8 @@ export const deriveSnackEmbedUrl = (snackUrl: string): string => {
             ? parsedUrl.pathname.slice("/embedded".length)
             : parsedUrl.pathname;
         // Rebuilt as a string, not mutated - RN's URL polyfill only
-        // implements getters on native, so `embedUrl.pathname = ...` throws.
+        // implements getters on native, so `embedUrl.pathname = ...` throws
+        // (searchParams.set below is a real method, so it's unaffected).
         const embedUrl = new URL(`${parsedUrl.origin}/embedded${pathname}`);
         embedUrl.searchParams.set("preview", "true");
         embedUrl.searchParams.set("platform", "web");

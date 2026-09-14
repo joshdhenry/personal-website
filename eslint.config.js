@@ -22,4 +22,15 @@ module.exports = defineConfig([
             "react/display-name": "off",
         },
     },
+    {
+        // eslint-config-expo's TypeScript ruleset only matches *.ts/*.tsx,
+        // not *.mts (needed here for top-level await in a Node script).
+        files: ["scripts/**/*.mts"],
+        languageOptions: {
+            parser: require("@typescript-eslint/parser"),
+        },
+        plugins: {
+            "@typescript-eslint": require("@typescript-eslint/eslint-plugin"),
+        },
+    },
 ]);

@@ -1,4 +1,9 @@
-import { deriveSnackEmbedUrl, shouldRenderSnackEmbed } from "./snack";
+import {
+    deriveSnackEmbedUrl,
+    isRunningInsideSnack,
+    isRunningInsideSnackEmbed,
+    shouldRenderSnackEmbed,
+} from "./snack";
 
 describe("shouldRenderSnackEmbed", () => {
     it("renders on web, as long as it isn't compact-width", () => {
@@ -51,5 +56,56 @@ describe("deriveSnackEmbedUrl", () => {
         ).toBe(
             "https://snack.expo.dev/embedded/@joshdhenry/joshhenry-info?preview=true&platform=web&theme=light",
         );
+    });
+});
+
+describe("isRunningInsideSnack", () => {
+    it("is true on Snack's web-preview host", () => {
+        expect(isRunningInsideSnack("snack-runtime.eascdn.net")).toBe(true);
+    });
+
+    it("is false on the real site's own host", () => {
+        expect(isRunningInsideSnack("joshhenry.info")).toBe(false);
+    });
+
+    it("is false for an unrelated host that merely contains the same substring", () => {
+        expect(isRunningInsideSnack("not-snack-runtime.eascdn.net.evil.com")).toBe(false);
+    });
+});
+
+describe("isRunningInsideSnackEmbed", () => {
+    afterEach(() => {
+        Object.defineProperty(window, "location", { configurable: true, value: undefined });
+    });
+
+    it("is true on web when window.location's hostname matches Snack's runtime host", () => {
+        Object.defineProperty(window, "location", {
+            configurable: true,
+            value: { hostname: "snack-runtime.eascdn.net" },
+        });
+
+        expect(isRunningInsideSnackEmbed("web")).toBe(true);
+    });
+
+    it("is false on web when the hostname doesn't match", () => {
+        Object.defineProperty(window, "location", {
+            configurable: true,
+            value: { hostname: "joshhenry.info" },
+        });
+
+        expect(isRunningInsideSnackEmbed("web")).toBe(false);
+    });
+
+    it("is false on native, even when window.location's hostname matches", () => {
+        Object.defineProperty(window, "location", {
+            configurable: true,
+            value: { hostname: "snack-runtime.eascdn.net" },
+        });
+
+        expect(isRunningInsideSnackEmbed("ios")).toBe(false);
+    });
+
+    it("is false when window.location is unset, this test environment's default", () => {
+        expect(isRunningInsideSnackEmbed("web")).toBe(false);
     });
 });

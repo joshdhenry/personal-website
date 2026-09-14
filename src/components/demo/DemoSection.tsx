@@ -5,7 +5,7 @@ import { colors } from "@/theme/colors";
 import { demoSpace } from "@/theme/spacing";
 import type { DemoSectionProps } from "@/types/demo";
 import { resolveByLayoutMode, resolveResponsiveLayoutMode } from "@/utils/responsiveLayout";
-import { shouldRenderSnackEmbed } from "@/utils/snack";
+import { isRunningInsideSnackEmbed, shouldRenderSnackEmbed } from "@/utils/snack";
 
 import { DemoIntro } from "./DemoIntro";
 import { DemoPitchCard } from "./DemoPitchCard";
@@ -17,6 +17,7 @@ export const DemoSection = ({ onTalkToMePress }: DemoSectionProps) => {
     const { isCompact, isNarrow } = layoutMode;
     const shouldRenderIframe = shouldRenderSnackEmbed(Platform.OS, isCompact);
     const isNativeApp = Platform.OS !== "web";
+    const isInsideSnack = isRunningInsideSnackEmbed(Platform.OS);
 
     const paddingHorizontal = resolveByLayoutMode(
         layoutMode,
@@ -37,6 +38,7 @@ export const DemoSection = ({ onTalkToMePress }: DemoSectionProps) => {
     const pitchCard = <DemoPitchCard isNarrow={isNarrow} onTalkToMePress={onTalkToMePress} />;
     const snackCard = (
         <DemoSnackCard
+            isInsideSnack={isInsideSnack}
             isNativeApp={isNativeApp}
             shouldRenderIframe={shouldRenderIframe}
             snackUrl={snackUrl}

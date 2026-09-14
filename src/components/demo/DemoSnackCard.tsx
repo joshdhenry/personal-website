@@ -4,6 +4,8 @@ import { StyleSheet, View } from "react-native";
 import {
     demoChromeLabel,
     demoLiveEditorLabel,
+    demoNestedSnackHint,
+    demoNestedSnackLabel,
     demoPlaceholderHint,
     demoPlaceholderLabel,
 } from "@/data/demo";
@@ -31,22 +33,32 @@ const iframeStyle: CSSProperties = {
 };
 
 export const DemoSnackCard = ({
+    isInsideSnack,
     isNativeApp,
     shouldRenderIframe,
     snackUrl,
 }: DemoSnackCardProps) => {
-    // Memoized: snackUrl rarely changes. Skipped on native - isNativeApp
-    // always renders DemoNativeAppCard, which never reads this.
+    // Memoized: snackUrl rarely changes. Skipped on native and inside the
+    // Snack itself - neither case ever reads embedUrl/hasSnack below.
     const embedUrl = useMemo(
-        () => (isNativeApp ? "" : deriveSnackEmbedUrl(snackUrl)),
-        [isNativeApp, snackUrl],
+        () => (isNativeApp || isInsideSnack ? "" : deriveSnackEmbedUrl(snackUrl)),
+        [isInsideSnack, isNativeApp, snackUrl],
     );
     const hasSnack = embedUrl.length > 0;
     const cardStyle = [styles.card, shadow.terminalCard];
 
     return (
         <View style={cardStyle}>
-            {shouldRenderIframe ? (
+            {isInsideSnack ? (
+                <>
+                    <DemoSnackChromeBar
+                        hasSnack
+                        label={demoChromeLabel}
+                        liveEditorLabel={demoLiveEditorLabel}
+                    />
+                    <DemoSnackPlaceholder hint={demoNestedSnackHint} label={demoNestedSnackLabel} />
+                </>
+            ) : shouldRenderIframe ? (
                 <>
                     <DemoSnackChromeBar
                         hasSnack={hasSnack}

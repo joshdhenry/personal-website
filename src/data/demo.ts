@@ -1,7 +1,7 @@
 /**
- * Typed content for the Demo section. Copy is verbatim per
- * designs/joshhenry.info.dc.html's #app section (designs/CLAUDE.md's Copy
- * rules), except where a comment below notes an intentional deviation.
+ * Typed content for the "Run this site as an app" (Demo) section. Copy is
+ * verbatim per designs/joshhenry.info.dc.html's #app section (designs/
+ * CLAUDE.md's Copy rules), except where a comment below notes a deviation.
  */
 
 import type { DemoStep } from "@/types/demo";
@@ -68,6 +68,13 @@ export const demoPlaceholderLabel = "Snack embed loads here";
 // design-tool panel) with this repo's real config path.
 export const demoPlaceholderHint =
     "Set the Snack URL in src/constants/snack.ts, for example snack.expo.dev/@joshdhenry/joshhenry-info";
+
+// New copy for a case the design doesn't cover - this app running as its
+// own Snack embed, where the normal iframe would nest inside itself.
+export const demoNestedSnackLabel = "THIS IS THAT SNACK";
+
+export const demoNestedSnackHint =
+    "You're already inside the embed, so it can't nest inside itself here. Open joshhenry.info directly to see this section in place.";
 
 // Native-app-specific copy; the design predates this case having its own
 // message instead of the "ON A COMPUTER" fallback.
