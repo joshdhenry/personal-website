@@ -52,6 +52,7 @@ export const DemoSnackCard = ({
             {isInsideSnack ? (
                 <>
                     <DemoSnackChromeBar
+                        hasSnack
                         label={demoChromeLabel}
                         liveEditorLabel={demoLiveEditorLabel}
                     />
