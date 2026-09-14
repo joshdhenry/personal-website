@@ -76,15 +76,14 @@ const SATISFIES_PATTERN = /\ssatisfies\s+[A-Za-z_$][\w$]*(?:<[^;\n]*>)?/g;
 const stripSatisfiesOperator = (sourceCode: string): string =>
     sourceCode.replace(SATISFIES_PATTERN, "");
 
-// Snack's in-browser TS parser also can't parse a negative-literal type
-// (e.g. "1 | -1", src/utils/scroll.ts's hasSectionOrderReachedTarget) -
-// loosened to "number" for the Snack copy only, confirmed via a live crash.
-const NEGATIVE_LITERAL_TYPE_PATTERN = /(\|\s*)-\d+\b|-\d+\b(?=\s*\|)/g;
+// Snack's in-browser TS parser can't parse a numeric-literal union type at
+// all (e.g. "1 | -1", src/utils/scroll.ts's hasSectionOrderReachedTarget) -
+// confirmed live: loosening just the negative sign to "1 | number" still
+// crashed identically, so the whole union collapses to "number" instead.
+const NUMERIC_LITERAL_UNION_PATTERN = /-?\d+(?:\s*\|\s*-?\d+)+/g;
 
-const loosenNegativeLiteralTypes = (sourceCode: string): string =>
-    sourceCode.replace(NEGATIVE_LITERAL_TYPE_PATTERN, (_match, unionPrefix?: string) =>
-        unionPrefix ? `${unionPrefix}number` : "number",
-    );
+const collapseNumericLiteralUnionTypes = (sourceCode: string): string =>
+    sourceCode.replace(NUMERIC_LITERAL_UNION_PATTERN, "number");
 
 // Read once and reused for both the uploaded files entry and the
 // dependencies derivation below, so the two can never see different content.
@@ -106,7 +105,7 @@ const fileEntries: [string, SnackFile][] = await Promise.all(
                 path,
                 {
                     type: "CODE",
-                    contents: loosenNegativeLiteralTypes(
+                    contents: collapseNumericLiteralUnionTypes(
                         stripSatisfiesOperator(rewriteAliasImports(packageJsonSourceCode, path)),
                     ),
                 },
@@ -152,7 +151,7 @@ export default App;
                 path,
                 {
                     type: "CODE",
-                    contents: loosenNegativeLiteralTypes(
+                    contents: collapseNumericLiteralUnionTypes(
                         stripSatisfiesOperator(rewriteAliasImports(sourceCode, path)),
                     ),
                 },
