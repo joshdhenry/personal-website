@@ -66,10 +66,25 @@ One-time setup:
 3. `cp .env.deploy.example .env.deploy` and fill in the host/user/port/path
    from cPanel (`.env.deploy` is gitignored — never commit it).
 4. This hosting account has no shell access, only SFTP, so the key can't be
-   scripted with a password prompt. Before running `yarn deploy`, unlock it
-   once per terminal session with `yarn deploy:unlock` — runs `ssh-add` on
-   the key path from `.env.deploy`, adding it to your shell's `ssh-agent` so
-   `lftp` can use it without prompting.
+   scripted with a password prompt. Unlock it once with `yarn deploy:unlock`
+   — runs `ssh-add --apple-use-keychain` on the key path from `.env.deploy`,
+   which both adds it to your shell's `ssh-agent` for now and saves the
+   passphrase in your login Keychain so macOS can silently reload it into a
+   fresh `ssh-agent` later. `yarn deploy` checks the key is unlocked before
+   it starts and fails fast with an actionable error if it isn't — a locked
+   key has no TTY to prompt on, so without this check it just hangs.
+5. Optional, so you never have to run `yarn deploy:unlock` again: add to
+   `~/.ssh/config`
+
+   ```
+   Host *
+       UseKeychain yes
+       AddKeysToAgent yes
+   ```
+
+   This makes macOS auto-load any key from the login Keychain (including
+   this one, once step 4 has saved it there) into `ssh-agent` the first time
+   something tries to use it — no manual unlock, even after a reboot.
 
 Previously, images intermittently went missing and layout reverted to its
 mobile default on the live site after a manual drag-and-drop upload through

@@ -36,6 +36,15 @@ if [[ ! -f "$DEPLOY_SSH_KEY" ]]; then
     exit 1
 fi
 
+# The account has no shell access, so ssh here has no TTY to prompt on: a
+# locked key doesn't fail, it hangs the sftp connect-program forever. Check
+# ssh-agent up front so a locked key is a loud, immediate error instead.
+KEY_FINGERPRINT="$(ssh-keygen -lf "$DEPLOY_SSH_KEY" | awk '{print $2}')"
+if ! ssh-add -l 2>/dev/null | grep -qF "$KEY_FINGERPRINT"; then
+    echo "Deploy key is not unlocked in ssh-agent — run 'yarn deploy:unlock' first (it needs your passphrase, which this script has no TTY to prompt for)." >&2
+    exit 1
+fi
+
 echo "==> Building static export"
 yarn expo export --platform web
 

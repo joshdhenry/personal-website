@@ -11,7 +11,7 @@
         "lint": "expo lint",
         "format": "prettier --write .",
         "deploy": "bash scripts/deploy.sh",
-        "deploy:unlock": "bash -c 'source .env.deploy && ssh-add \"$DEPLOY_SSH_KEY\"'",
+        "deploy:unlock": "bash -c 'source .env.deploy && ssh-add --apple-use-keychain \"$DEPLOY_SSH_KEY\"'",
         "publish-snack": "tsx scripts/publish-snack.mts"
     },
     "dependencies": {
