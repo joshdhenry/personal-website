@@ -70,9 +70,11 @@ One-time setup:
    — runs `ssh-add --apple-use-keychain` on the key path from `.env.deploy`,
    which both adds it to your shell's `ssh-agent` for now and saves the
    passphrase in your login Keychain so macOS can silently reload it into a
-   fresh `ssh-agent` later. `yarn deploy` checks the key is unlocked before
-   it starts and fails fast with an actionable error if it isn't — a locked
-   key has no TTY to prompt on, so without this check it just hangs.
+   fresh `ssh-agent` later. `yarn deploy` warns up front if the key isn't in
+   `ssh-agent` yet (it may still unlock silently from Keychain, see step 5),
+   and forces a locked key with no Keychain entry to fail immediately with a
+   clear error rather than hang — a locked key has no TTY to prompt on, so
+   without this it silently hangs forever instead.
 5. Optional, so you never have to run `yarn deploy:unlock` again: add to
    `~/.ssh/config`
 
