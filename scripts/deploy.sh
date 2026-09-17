@@ -6,10 +6,9 @@
 # only ever touch the top-level entries that belong to this site's own
 # export, never wipe the whole directory.
 #
-# Requires: lftp (`brew install lftp`), an SSH key authorized in cPanel
-# (Manage SSH Keys), and that key unlocked in ssh-agent for this shell
-# (`ssh-add ~/.ssh/joshhenry-deploy`) since the account has no shell access
-# and can't be scripted with a password prompt.
+# Requires: lftp (`brew install lftp`) and an SSH key authorized in cPanel
+# (Manage SSH Keys), unlocked once via `yarn deploy:unlock` — the account has
+# no shell access and can't be scripted with a password prompt.
 
 set -euo pipefail
 
@@ -34,6 +33,17 @@ done
 if [[ ! -f "$DEPLOY_SSH_KEY" ]]; then
     echo "SSH key not found at $DEPLOY_SSH_KEY" >&2
     exit 1
+fi
+
+# Merely absent from ssh-agent isn't fatal on its own — a ~/.ssh/config with
+# UseKeychain/AddKeysToAgent (see README) silently loads it from Keychain the
+# moment the real ssh connection below needs it, without ever showing up
+# here. So this is a hint, not a hard failure; SSH_ASKPASS_REQUIRE=never on
+# that real connection is what actually guarantees a locked key fails fast
+# instead of hanging on an invisible GUI passphrase prompt.
+KEY_FINGERPRINT="$(ssh-keygen -lf "$DEPLOY_SSH_KEY" | awk '{print $2}')"
+if ! ssh-add -l 2>/dev/null | grep -qF "$KEY_FINGERPRINT"; then
+    echo "Note: deploy key isn't in ssh-agent yet. If it's saved in Keychain (see README), the connection below will unlock it silently; otherwise run 'yarn deploy:unlock' first." >&2
 fi
 
 echo "==> Building static export"
@@ -79,7 +89,12 @@ LFTP_SCRIPT="$(mktemp)"
 trap 'rm -f "$LFTP_SCRIPT"' EXIT
 
 {
-    echo "set sftp:connect-program \"ssh -a -x -i $DEPLOY_SSH_KEY -p $DEPLOY_SSH_PORT -o BatchMode=yes\""
+    # SSH_ASKPASS_REQUIRE=never is the actual hang fix: without it, a locked
+    # key with no TTY can still trigger an invisible macOS GUI passphrase
+    # prompt that waits forever instead of failing (BatchMode=yes alone
+    # doesn't stop this on macOS) — this forces an immediate, loud failure
+    # instead, while leaving a Keychain-backed silent unlock unaffected.
+    echo "set sftp:connect-program \"SSH_ASKPASS_REQUIRE=never ssh -a -x -i $DEPLOY_SSH_KEY -p $DEPLOY_SSH_PORT -o BatchMode=yes\""
     echo "set sftp:auto-confirm yes"
     # Left on for the whole script (rm -rf's own -f already tolerates a
     # missing target, so this never masks a real failure) - any genuine
