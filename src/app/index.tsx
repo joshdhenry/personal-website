@@ -16,7 +16,7 @@ import { ProjectsSection } from "@/components/projects/ProjectsSection";
 import { SkillsSection } from "@/components/skills/SkillsSection";
 import { ogImageUrl, siteUrl } from "@/constants/site";
 import { navLinks } from "@/data/nav";
-import { siteMetaDescription, siteMetaTitle } from "@/data/siteMeta";
+import { siteMetaDescription, siteMetaSiteName, siteMetaTitle } from "@/data/siteMeta";
 import { useFontsLoaded } from "@/hooks/useFontsLoaded";
 import { useScrollSpy } from "@/hooks/useScrollSpy";
 import { useScrollToSection } from "@/hooks/useScrollToSection";
@@ -215,7 +215,7 @@ export default () => {
                     <meta content={ogImageUrl} property="og:image" />
                     <meta content="1200" property="og:image:width" />
                     <meta content="630" property="og:image:height" />
-                    <meta content="Josh Henry" property="og:site_name" />
+                    <meta content={siteMetaSiteName} property="og:site_name" />
                     <meta content="summary_large_image" name="twitter:card" />
                     <meta content={siteMetaTitle} name="twitter:title" />
                     <meta content={siteMetaDescription} name="twitter:description" />
