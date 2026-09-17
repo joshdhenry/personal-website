@@ -4,6 +4,7 @@
  * CLAUDE.md's Copy rules), except where a comment below notes a deviation.
  */
 
+import { siteHost, siteUrl } from "@/constants/site";
 import type { DemoStep } from "@/types/demo";
 
 export const demoHeading = "Run this site as an app";
@@ -73,16 +74,14 @@ export const demoPlaceholderHint =
 // own Snack embed, where the normal iframe would nest inside itself.
 export const demoNestedSnackLabel = "THIS IS THAT SNACK";
 
-export const demoNestedSnackHint =
-    "You're already inside the embed, so it can't nest inside itself here. Open joshhenry.info directly to see this section in place.";
+export const demoNestedSnackHint = `You're already inside the embed, so it can't nest inside itself here. Open ${siteHost} directly to see this section in place.`;
 
 // Native-app-specific copy; the design predates this case having its own
 // message instead of the "ON A COMPUTER" fallback.
 export const demoNativeAppLabel = "SEE IT ON THE WEB";
 
-export const demoNativeAppBody =
-    "Open joshhenry.info in a browser to see the same app running on the web.";
+export const demoNativeAppBody = `Open ${siteHost} in a browser to see the same app running on the web.`;
 
-export const demoOpenWebsiteLabel = "Open joshhenry.info →";
+export const demoOpenWebsiteLabel = `Open ${siteHost} →`;
 
-export const demoWebsiteUrl = "https://joshhenry.info";
+export const demoWebsiteUrl = siteUrl;
